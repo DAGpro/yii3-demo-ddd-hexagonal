@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-use App\Blog\Archive\ArchiveController;
-use App\Blog\BlogController;
-use App\Blog\CommentController;
-use App\Blog\Post\PostController;
-use App\Blog\Post\PostRepository;
-use App\Blog\Tag\TagController;
-use App\Contact\ContactController;
-use App\Controller\Actions\ApiInfo;
-use App\Auth\Controller\AuthController;
-use App\Auth\Controller\SignupController;
-use App\Controller\SiteController;
-use App\Middleware\AccessChecker;
-use App\Middleware\ApiDataWrapper;
-use App\User\Controller\ApiUserController;
-use App\User\Controller\UserController;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
+use App\Presentation\Frontend\Api\Component\User\ApiUserController;
+use App\Presentation\Frontend\Api\Controller\Actions\ApiInfo;
+use App\Presentation\Frontend\Web\Component\Auth\AuthController;
+use App\Presentation\Frontend\Web\Component\Auth\SignupController;
+use App\Presentation\Frontend\Web\Component\Blog\Archive\ArchiveController;
+use App\Presentation\Frontend\Web\Component\Blog\BlogController;
+use App\Presentation\Frontend\Web\Component\Blog\Comment\CommentController;
+use App\Presentation\Frontend\Web\Component\Blog\Post\PostController;
+use App\Presentation\Frontend\Web\Component\Blog\Tag\TagController;
+use App\Presentation\Frontend\Web\Component\User\UserController;
+use App\Presentation\Frontend\Web\Controller\Contact\ContactController;
+use App\Presentation\Frontend\Web\Controller\SiteController;
+use App\Presentation\Infrastructure\Api\Middleware\ApiDataWrapper;
+use App\Presentation\Infrastructure\Web\Middleware\AccessChecker;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;

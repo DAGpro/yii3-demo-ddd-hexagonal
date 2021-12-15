@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @var \App\User\User $item
+ * @var \App\Core\Component\User\Domain\User $item
  * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  * @var \Yiisoft\View\WebView $this
  */

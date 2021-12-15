@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @var \Yiisoft\View\WebView $this
  */
 
-use App\Widget\OffsetPagination;
+use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 
 $this->setTitle($translator->translate('menu.users'));
@@ -45,7 +45,7 @@ echo Html::a(
     </thead>
     <tbody>
 <?php
-/** @var \App\User\User $item */
+/** @var \App\Core\Component\User\Domain\User $item */
 foreach ($paginator->read() as $item) {
     echo Html::openTag('tr');
     echo Html::openTag('td');

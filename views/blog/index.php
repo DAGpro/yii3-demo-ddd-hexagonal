@@ -12,9 +12,9 @@ declare(strict_types=1);
  * @var bool $isGuest
  */
 
-use App\Blog\Entity\Post;
-use App\Blog\Widget\PostCard;
-use App\Widget\OffsetPagination;
+use App\Core\Component\Blog\Domain\Post;
+use App\Presentation\Frontend\Web\View\Widget\PostCard;
+use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 
 $this->setTitle($translator->translate('layout.blog'));

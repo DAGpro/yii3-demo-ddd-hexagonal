@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Asset\AppAsset;
-use App\Widget\PerformanceMetrics;
+use App\Presentation\Infrastructure\Web\Asset\AppAsset;
+use App\Presentation\Infrastructure\Web\Widget\PerformanceMetrics;
 use Yiisoft\Form\Widget\Field;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Html\Html;
@@ -20,7 +20,7 @@ use Yiisoft\Yii\Bootstrap5\NavBar;
  * @var string $content
  *
  * @see \App\ApplicationViewInjection
- * @var \App\User\User|null $user
+ * @var \App\Core\Component\User\Domain\User|null $user
  * @var string $csrf
  * @var string $brandLabel
  */

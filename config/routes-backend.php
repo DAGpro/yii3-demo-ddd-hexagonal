@@ -8,7 +8,7 @@ return [
     \Yiisoft\Router\Group::create('')
         ->routes(
             Route::get('/')
-                ->action([\App\Backend\Controller\SiteController::class, 'index'])
+                ->action([\App\Presentation\Backend\Web\Controller\SiteController::class, 'index'])
                 ->name('index'),
         )
         ->host('backend.{_host}')

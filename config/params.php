@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Middleware\LocaleMiddleware;
-use App\ViewInjection\CommonViewInjection;
-use App\ViewInjection\LayoutViewInjection;
-use App\ViewInjection\LinkTagsViewInjection;
-use App\ViewInjection\MetaTagsViewInjection;
+use App\Presentation\Infrastructure\Web\Middleware\LocaleMiddleware;
+use App\Presentation\Infrastructure\Web\ViewInjection\CommonViewInjection;
+use App\Presentation\Infrastructure\Web\ViewInjection\LayoutViewInjection;
+use App\Presentation\Infrastructure\Web\ViewInjection\LinkTagsViewInjection;
+use App\Presentation\Infrastructure\Web\ViewInjection\MetaTagsViewInjection;
 use Yiisoft\Assets\AssetManager;
 use Yiisoft\Cookies\CookieMiddleware;
 use Yiisoft\Definitions\Reference;
@@ -112,11 +112,11 @@ return [
         'autoExit' => false,
         'commands' => [
             'serve' => Serve::class,
-            'user/create' => App\User\Console\CreateCommand::class,
-            'user/assignRole' => App\User\Console\AssignRoleCommand::class,
-            'fixture/add' => App\Command\Fixture\AddCommand::class,
-            'router/list' => App\Command\Router\ListCommand::class,
-            'translator/translate' => App\Command\Translation\TranslateCommand::class,
+            'user/create' => \App\Presentation\Backend\Console\Component\User\CreateCommand::class,
+            'user/assignRole' => \App\Presentation\Backend\Console\Component\User\AssignRoleCommand::class,
+            'fixture/add' => \App\Presentation\Backend\Console\Command\Fixture\AddCommand::class,
+            'router/list' => \App\Presentation\Backend\Console\Command\Router\ListCommand::class,
+            'translator/translate' => \App\Presentation\Backend\Console\Command\Translation\TranslateCommand::class,
         ],
     ],
 

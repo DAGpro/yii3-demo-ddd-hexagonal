@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 /**
  * @var \Yiisoft\Data\Paginator\OffsetPaginator $paginator;
- * @var \App\Blog\Entity\Tag $item
+ * @var \App\Core\Component\Blog\Domain\Tag $item
  * @var \Yiisoft\Translator\TranslatorInterface $translator
  * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  * @var \Yiisoft\View\WebView $this
  */
 
-use App\Widget\OffsetPagination;
+use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 
 $this->setTitle($item->getLabel());
@@ -23,7 +23,7 @@ $pagination = OffsetPagination::widget()
                               ));
 echo Html::tag('h1', Html::encode($item->getLabel()));
 echo Html::openTag('ul');
-/** @var \App\Blog\Entity\Post $post */
+/** @var \App\Core\Component\Blog\Domain\Post $post */
 foreach ($paginator->read() as $post) {
     echo Html::openTag('li', ['class' => 'text-muted']);
     echo Html::a(Html::encode($post->getTitle()), $urlGenerator->generate('blog/post', ['slug' => $post->getSlug()]));
