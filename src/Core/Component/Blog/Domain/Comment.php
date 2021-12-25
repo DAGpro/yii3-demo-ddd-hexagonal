@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Component\Blog\Domain;
 
-use App\Core\Component\User\Domain\User;
+use \App\Core\Component\IdentityAccess\User\Domain\User;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
@@ -62,7 +62,7 @@ class Comment
     private ?DateTimeImmutable $deleted_at = null;
 
     /**
-     * @BelongsTo(target="App\Core\Component\User\Domain\User", nullable=false, load="eager")
+     * @BelongsTo(target="App\Core\Component\IdentityAccess\User\Domain\User", nullable=false, load="eager")
      *
      * @var \Cycle\ORM\Promise\Reference|User
      */

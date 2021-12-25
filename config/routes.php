@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
-use App\Presentation\Frontend\Api\Component\User\ApiUserController;
+use App\Presentation\Frontend\Api\Component\IdentityAccess\User\ApiUserController;
 use App\Presentation\Frontend\Api\Controller\Actions\ApiInfo;
-use App\Presentation\Frontend\Web\Component\Auth\AuthController;
-use App\Presentation\Frontend\Web\Component\Auth\SignupController;
 use App\Presentation\Frontend\Web\Component\Blog\Archive\ArchiveController;
 use App\Presentation\Frontend\Web\Component\Blog\BlogController;
 use App\Presentation\Frontend\Web\Component\Blog\Comment\CommentController;
 use App\Presentation\Frontend\Web\Component\Blog\Post\PostController;
 use App\Presentation\Frontend\Web\Component\Blog\Tag\TagController;
-use App\Presentation\Frontend\Web\Component\User\UserController;
+use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\AuthController;
+use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\SignupController;
+use App\Presentation\Frontend\Web\Component\IdentityAccess\User\UserController;
 use App\Presentation\Frontend\Web\Controller\Contact\ContactController;
 use App\Presentation\Frontend\Web\Controller\SiteController;
 use App\Presentation\Infrastructure\Api\Middleware\ApiDataWrapper;

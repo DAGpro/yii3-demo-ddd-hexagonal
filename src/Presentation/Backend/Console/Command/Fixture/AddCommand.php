@@ -7,7 +7,7 @@ namespace App\Presentation\Backend\Console\Command\Fixture;
 use App\Core\Component\Blog\Domain\Comment;
 use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Domain\Tag;
-use App\Core\Component\User\Domain\User;
+use App\Core\Component\IdentityAccess\User\Domain\User;
 use Faker\Factory;
 use Faker\Generator;
 use Symfony\Component\Console\Command\Command;

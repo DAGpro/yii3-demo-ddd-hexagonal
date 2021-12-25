@@ -20,7 +20,7 @@ use Yiisoft\Yii\Bootstrap5\NavBar;
  * @var string $content
  *
  * @see \App\ApplicationViewInjection
- * @var \App\Core\Component\User\Domain\User|null $user
+ * @var \App\Core\Component\IdentityAccess\User\Domain\User|null $user
  * @var string $csrf
  * @var string $brandLabel
  */

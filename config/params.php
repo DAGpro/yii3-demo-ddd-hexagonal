@@ -114,8 +114,8 @@ return [
         'autoExit' => false,
         'commands' => [
             'serve' => Serve::class,
-            'user/create' => \App\Presentation\Backend\Console\Component\User\CreateCommand::class,
-            'user/assignRole' => \App\Presentation\Backend\Console\Component\User\AssignRoleCommand::class,
+            'user/create' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\CreateCommand::class,
+            'user/assignRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\AssignRoleCommand::class,
             'fixture/add' => \App\Presentation\Backend\Console\Command\Fixture\AddCommand::class,
             'router/list' => \App\Presentation\Backend\Console\Command\Router\ListCommand::class,
             'translator/translate' => \App\Presentation\Backend\Console\Command\Translation\TranslateCommand::class,

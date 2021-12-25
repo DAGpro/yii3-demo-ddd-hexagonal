@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Core\Component\Auth\Identity;
-use App\Core\Component\Auth\IdentityRepository;
+use App\Core\Component\IdentityAccess\Auth\Identity;
+use App\Core\Component\IdentityAccess\Auth\IdentityRepository;
 use Cycle\ORM\ORMInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;

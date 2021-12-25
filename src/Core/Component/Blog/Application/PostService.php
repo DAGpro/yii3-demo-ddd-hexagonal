@@ -8,7 +8,7 @@ use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Domain\Tag;
 use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
 use App\Core\Component\Blog\Infrastructure\Persistence\Tag\TagRepository;
-use App\Core\Component\User\Domain\User;
+use App\Core\Component\IdentityAccess\User\Domain\User;
 use App\Presentation\Frontend\Web\Component\Blog\Post\PostForm;
 
 final class PostService

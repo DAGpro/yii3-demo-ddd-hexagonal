@@ -7,7 +7,7 @@ namespace App\Presentation\Frontend\Web\Component\Blog\Post;
 use App\Core\Component\Blog\Application\PostService;
 use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
-use App\Core\Component\User\Application\UserService;
+use App\Core\Component\IdentityAccess\User\Application\UserService;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
