@@ -23,7 +23,7 @@ final class BlogController
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('blog');
+        $this->viewRenderer = $viewRenderer->withControllerName('component/blog');
     }
 
     public function index(

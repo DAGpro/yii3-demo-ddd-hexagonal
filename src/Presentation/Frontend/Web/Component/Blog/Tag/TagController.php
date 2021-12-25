@@ -19,7 +19,7 @@ final class TagController
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('blog/tag');
+        $this->viewRenderer = $viewRenderer->withControllerName('component/blog/tag');
     }
 
     public function index(CurrentRoute $currentRoute, TagRepository $tagRepository, PostRepository $postRepository, ResponseFactoryInterface $responseFactory): Response

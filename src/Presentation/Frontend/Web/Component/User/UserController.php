@@ -20,7 +20,7 @@ final class UserController
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('user');
+        $this->viewRenderer = $viewRenderer->withControllerName('component/user/user');
     }
 
     public function index(UserRepository $userRepository, CurrentRoute $currentRoute): Response

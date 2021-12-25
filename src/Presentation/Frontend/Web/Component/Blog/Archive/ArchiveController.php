@@ -19,7 +19,7 @@ final class ArchiveController
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('blog/archive');
+        $this->viewRenderer = $viewRenderer->withControllerName('component/blog/archive');
     }
 
     public function index(ArchiveRepository $archiveRepo): Response

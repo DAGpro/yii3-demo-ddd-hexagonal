@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  * @var array $body
  * @var string $csrf
- * @var string $action
+ * @var array $action
  * @var array $tags
  * @var string $title
  */

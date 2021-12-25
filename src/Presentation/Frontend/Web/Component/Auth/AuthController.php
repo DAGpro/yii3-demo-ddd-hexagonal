@@ -24,7 +24,7 @@ final class AuthController
 
     public function __construct(ViewRenderer $viewRenderer, AuthService $authService, WebControllerService $webService)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('auth');
+        $this->viewRenderer = $viewRenderer->withControllerName('component/auth/auth');
         $this->authService = $authService;
         $this->webService = $webService;
     }

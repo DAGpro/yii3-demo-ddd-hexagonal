@@ -61,9 +61,9 @@ if ($item->getComments()) {
             <div class="media-body">
                 <div>
                     <?= Html::a(
-            $comment->getUser()->getLogin(),
-            $urlGenerator->generate('user/profile', ['login' => $comment->getUser()->getLogin()])
-        ) ?>
+                        $comment->getUser()->getLogin(),
+                        $urlGenerator->generate('user/profile', ['login' => $comment->getUser()->getLogin()])
+                    ) ?>
                     <span class="text-muted">
                         <i>created at</i> <?= $comment->getCreatedAt()->format('H:i d.m.Y') ?>
                     </span>

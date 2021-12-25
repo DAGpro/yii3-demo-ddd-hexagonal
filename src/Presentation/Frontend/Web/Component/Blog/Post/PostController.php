@@ -29,7 +29,7 @@ final class PostController
         PostService $postService,
         UserService $userService
     ) {
-        $this->viewRenderer = $viewRenderer->withControllerName('blog/post');
+        $this->viewRenderer = $viewRenderer->withControllerName('component/blog/post');
         $this->webService = $webService;
         $this->postService = $postService;
         $this->userService = $userService;

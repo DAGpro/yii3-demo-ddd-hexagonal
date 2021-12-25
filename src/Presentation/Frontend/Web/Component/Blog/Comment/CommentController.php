@@ -16,7 +16,7 @@ final class CommentController
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('blog/comments');
+        $this->viewRenderer = $viewRenderer->withControllerName('component/blog/comments');
     }
 
     public function index(Request $request, CommentService $service, CurrentRoute $currentRoute): Response

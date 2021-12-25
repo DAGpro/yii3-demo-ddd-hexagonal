@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Form\Helper\HtmlFormErrors;
 use Yiisoft\Form\FormModelInterface;
 use Yiisoft\Form\Widget\Field;
 use Yiisoft\Form\Widget\Form;

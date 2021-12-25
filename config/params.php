@@ -49,8 +49,10 @@ return [
             '@runtime' => '@root/runtime',
             '@src' => '@root/src',
             '@vendor' => '@root/vendor',
-            '@layout' => '@root/views/layout',
-            '@views' => '@root/views',
+            '@layout' => '@src/Presentation/Frontend/Web/View/layout',
+            '@views' => '@src/Presentation/Frontend/Web/View',
+            '@backendLayout' => '@src/Presentation/Backend/Web/View/layout',
+            '@backendView' => '@src/Presentation/Backend/Web/View',
         ],
     ],
 
