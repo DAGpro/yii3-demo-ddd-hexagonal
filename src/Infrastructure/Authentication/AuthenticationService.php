@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Component\IdentityAccess\Auth;
+namespace App\Infrastructure\Authentication;
 
 use App\Core\Component\IdentityAccess\User\Domain\User;
 use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
@@ -10,7 +10,7 @@ use Throwable;
 use Yiisoft\Auth\IdentityInterface;
 use Yiisoft\User\CurrentUser;
 
-final class AuthService
+final class AuthenticationService
 {
     private CurrentUser $currentUser;
     private UserRepository $userRepository;

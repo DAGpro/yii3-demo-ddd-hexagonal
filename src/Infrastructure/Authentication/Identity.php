@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Component\IdentityAccess\Auth;
+namespace App\Infrastructure\Authentication;
 
 use App\Core\Component\IdentityAccess\User\Domain\User;
 use Cycle\Annotated\Annotation\Column;
@@ -12,7 +12,7 @@ use Yiisoft\Security\Random;
 use Yiisoft\User\Login\Cookie\CookieLoginIdentityInterface;
 
 /**
- * @Entity(repository="App\Core\Component\IdentityAccess\Auth\IdentityRepository")
+ * @Entity(repository="App\Infrastructure\Auth\IdentityRepository")
  */
 class Identity implements CookieLoginIdentityInterface
 {

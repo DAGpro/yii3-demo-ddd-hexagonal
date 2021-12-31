@@ -6,7 +6,7 @@ namespace App\Core\Component\IdentityAccess\User\Domain;
 
 use App\Core\Component\Blog\Domain\Comment;
 use App\Core\Component\Blog\Domain\Post;
-use App\Core\Component\IdentityAccess\Auth\Identity;
+use App\Infrastructure\Authentication\Identity;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\HasMany;
@@ -53,9 +53,9 @@ class User
     private DateTimeImmutable $updated_at;
 
     /**
-     * @HasOne(target="App\Core\Component\IdentityAccess\Auth\Identity")
+     * @HasOne(target="App\Infrastructure\Auth\Identity")
      *
-     * @var \Cycle\ORM\Promise\Reference|Identity
+     * @var \Cycle\ORM\Promise\Reference|\App\Infrastructure\Authentication\Identity
      */
     private $identity;
 

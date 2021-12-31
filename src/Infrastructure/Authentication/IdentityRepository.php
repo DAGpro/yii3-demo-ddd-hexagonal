@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Component\IdentityAccess\Auth;
+namespace App\Infrastructure\Authentication;
 
 use Cycle\ORM\Select;
 use Throwable;

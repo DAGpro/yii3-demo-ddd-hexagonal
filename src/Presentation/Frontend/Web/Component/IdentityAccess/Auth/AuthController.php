@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth;
 
-use App\Core\Component\IdentityAccess\Auth\AuthService;
+use App\Infrastructure\Authentication\AuthenticationService;
 use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form\LoginForm;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
@@ -20,9 +20,9 @@ final class AuthController
 {
     private WebControllerService $webService;
     private ViewRenderer $viewRenderer;
-    private AuthService $authService;
+    private AuthenticationService $authService;
 
-    public function __construct(ViewRenderer $viewRenderer, AuthService $authService, WebControllerService $webService)
+    public function __construct(ViewRenderer $viewRenderer, \App\Infrastructure\Authentication\AuthenticationService $authService, WebControllerService $webService)
     {
         $this->viewRenderer = $viewRenderer->withControllerName('component/identity-access/auth/auth');
         $this->authService = $authService;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form;
 
-use App\Core\Component\IdentityAccess\Auth\AuthService;
+use App\Infrastructure\Authentication\AuthenticationService;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
@@ -15,10 +15,10 @@ final class LoginForm extends FormModel
     private string $login = '';
     private string $password = '';
     private bool $rememberMe = false;
-    private AuthService $authService;
+    private AuthenticationService $authService;
     private TranslatorInterface $translator;
 
-    public function __construct(AuthService $authService, TranslatorInterface $translator)
+    public function __construct(AuthenticationService $authService, TranslatorInterface $translator)
     {
         parent::__construct();
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Infrastructure\Web\ViewInjection;
 
-use App\Core\Component\IdentityAccess\Auth\Identity;
+use App\Infrastructure\Authentication\Identity;
 use Yiisoft\User\CurrentUser;
 use Yiisoft\Yii\View\LayoutParametersInjectionInterface;
 
