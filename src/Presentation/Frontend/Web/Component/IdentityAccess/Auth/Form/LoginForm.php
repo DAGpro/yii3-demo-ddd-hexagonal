@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form;
 
-use App\Infrastructure\Authentication\AuthenticationService;
+use App\Core\Component\IdentityAccess\User\Application\UserService;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
@@ -15,15 +15,27 @@ final class LoginForm extends FormModel
     private string $login = '';
     private string $password = '';
     private bool $rememberMe = false;
-    private AuthenticationService $authService;
     private TranslatorInterface $translator;
+    private UserService $userService;
 
-    public function __construct(AuthenticationService $authService, TranslatorInterface $translator)
-    {
+    public function __construct(
+        UserService $userService,
+        TranslatorInterface $translator
+    ) {
         parent::__construct();
 
-        $this->authService = $authService;
         $this->translator = $translator;
+        $this->userService = $userService;
+    }
+
+    public function getLogin(): string
+    {
+        return $this->login;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
     }
 
     public function getAttributeLabels(): array
@@ -55,7 +67,9 @@ final class LoginForm extends FormModel
             function (): Result {
                 $result = new Result();
 
-                if (!$this->authService->login($this->login, $this->password)) {
+                $user = $this->userService->findByLogin($this->login);
+
+                if ($user === null || !$user->validatePassword($this->password)) {
                     $result->addError($this->translator->translate('validator.invalid.login.password'));
                 }
 

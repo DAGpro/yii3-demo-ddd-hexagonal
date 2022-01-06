@@ -6,11 +6,9 @@ namespace App\Core\Component\IdentityAccess\User\Domain;
 
 use App\Core\Component\Blog\Domain\Comment;
 use App\Core\Component\Blog\Domain\Post;
-use App\Infrastructure\Authentication\Identity;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\HasMany;
-use Cycle\Annotated\Annotation\Relation\HasOne;
 use Cycle\Annotated\Annotation\Table;
 use Cycle\Annotated\Annotation\Table\Index;
 use DateTimeImmutable;
@@ -53,13 +51,6 @@ class User
     private DateTimeImmutable $updated_at;
 
     /**
-     * @HasOne(target="App\Infrastructure\Auth\Identity")
-     *
-     * @var \Cycle\ORM\Promise\Reference|\App\Infrastructure\Authentication\Identity
-     */
-    private $identity;
-
-    /**
      * @HasMany(target="App\Core\Component\Blog\Domain\Post")
      *
      * @var ArrayCollection|\App\Core\Component\Blog\Domain\Post[]
@@ -79,7 +70,6 @@ class User
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
         $this->setPassword($password);
-        $this->identity = new Identity();
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
@@ -117,11 +107,6 @@ class User
     public function getUpdatedAt(): DateTimeImmutable
     {
         return $this->updated_at;
-    }
-
-    public function getIdentity(): Identity
-    {
-        return $this->identity;
     }
 
     /**

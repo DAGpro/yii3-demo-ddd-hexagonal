@@ -15,11 +15,25 @@ final class UserService
     private UserRepository $repository;
     private AccessCheckerInterface $accessChecker;
 
-    public function __construct(CurrentUser $currentUser, UserRepository $repository, AccessCheckerInterface $accessChecker)
-    {
+    public function __construct(
+        CurrentUser $currentUser,
+        UserRepository $repository,
+        AccessCheckerInterface $accessChecker
+    ) {
         $this->currentUser = $currentUser;
         $this->repository = $repository;
         $this->accessChecker = $accessChecker;
+    }
+
+    public function createUser(string $login, string $password): void
+    {
+        if (null !== $this->repository->findByLogin($login)) {
+            throw new \Exception('This user already exists!');
+        }
+
+        $user = new User($login, $password);
+
+        $this->repository->save($user);
     }
 
     public function getUser(): ?User
@@ -38,4 +52,10 @@ final class UserService
         $userId = $this->currentUser->getId();
         return null !== $userId && $this->accessChecker->userHasPermission($userId, $permission);
     }
+
+    public function findByLogin(string $login): ?User
+    {
+        return $this->repository->findByLogin($login);
+    }
+
 }

@@ -8,6 +8,7 @@ use App\Core\Component\Blog\Application\PostService;
 use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
 use App\Core\Component\IdentityAccess\User\Application\UserService;
+use App\Infrastructure\Authentication\AuthenticationService;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -21,23 +22,23 @@ final class PostController
     private ViewRenderer $viewRenderer;
     private WebControllerService $webService;
     private PostService $postService;
-    private UserService $userService;
+    private AuthenticationService $authService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
         WebControllerService $webService,
         PostService $postService,
-        UserService $userService
+        AuthenticationService $authenticationService
     ) {
         $this->viewRenderer = $viewRenderer->withControllerName('component/blog/post');
         $this->webService = $webService;
         $this->postService = $postService;
-        $this->userService = $userService;
+        $this->authService = $authenticationService;
     }
 
-    public function index(CurrentRoute $currentRoute, PostRepository $postRepository): Response
+    public function index(CurrentRoute $currentRoute, UserService $userService, PostRepository $postRepository): Response
     {
-        $canEdit = $this->userService->hasPermission('editPost');
+        $canEdit = $userService->hasPermission('editPost');
         $slug = $currentRoute->getArgument('slug');
         $item = $postRepository->fullPostPage($slug);
         if ($item === null) {
@@ -59,7 +60,7 @@ final class PostController
         if ($request->getMethod() === Method::POST) {
             $form = new PostForm();
             if ($form->load($parameters['body']) && $validator->validate($form)->isValid()) {
-                $this->postService->savePost($this->userService->getUser(), new Post(), $form);
+                $this->postService->savePost($this->authService->getUser(), new Post(), $form);
                 return $this->webService->getRedirectResponse('blog/index');
             }
 
@@ -96,7 +97,7 @@ final class PostController
             $form = new PostForm();
             $body = $request->getParsedBody();
             if ($form->load($body) && $validator->validate($form)->isValid()) {
-                $this->postService->savePost($this->userService->getUser(), $post, $form);
+                $this->postService->savePost($this->authService->getUser(), $post, $form);
                 return $this->webService->getRedirectResponse('blog/index');
             }
 

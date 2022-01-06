@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form;
 
-use App\Infrastructure\Authentication\AuthenticationService;
+use App\Core\Component\IdentityAccess\User\Application\UserService;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
@@ -15,14 +15,14 @@ final class SignupForm extends FormModel
     private string $login = '';
     private string $password = '';
     private string $passwordVerify = '';
-    private AuthenticationService $authService;
+    private UserService $userService;
     private TranslatorInterface $translator;
 
-    public function __construct(AuthenticationService $authService, TranslatorInterface $translator)
+    public function __construct(UserService $userService, TranslatorInterface $translator)
     {
         parent::__construct();
 
-        $this->authService = $authService;
+        $this->userService = $userService;
         $this->translator = $translator;
     }
 
@@ -70,7 +70,7 @@ final class SignupForm extends FormModel
                     $result->addError($this->translator->translate('validator.password.not.match'));
                 }
 
-                if ($result->getErrors() === [] && !$this->authService->signup($this->login, $this->password)) {
+                if ($result->getErrors() === [] && null !== $this->userService->findByLogin($this->login)) {
                     $result->addError($this->translator->translate('validator.user.exist'));
                 }
 

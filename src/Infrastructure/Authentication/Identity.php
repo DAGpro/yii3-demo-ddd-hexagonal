@@ -12,14 +12,14 @@ use Yiisoft\Security\Random;
 use Yiisoft\User\Login\Cookie\CookieLoginIdentityInterface;
 
 /**
- * @Entity(repository="App\Infrastructure\Auth\IdentityRepository")
+ * @Entity(repository="App\Infrastructure\Authentication\IdentityRepository")
  */
 class Identity implements CookieLoginIdentityInterface
 {
     /**
      * @Column(type="primary")
      */
-    private ?int $id = null;
+    private ?string $id = null;
 
     /**
      * @Column(type="string(32)")
@@ -31,17 +31,18 @@ class Identity implements CookieLoginIdentityInterface
      *
      * @var \Cycle\ORM\Promise\Reference|User
      */
-    private $user = null;
+    private $user;
     private ?int $user_id = null;
 
-    public function __construct()
+    public function __construct(User $user)
     {
+        $this->user = $user;
         $this->regenerateCookieLoginKey();
     }
 
     public function getId(): ?string
     {
-        return $this->user->getId();
+        return $this->id;
     }
 
     public function getCookieLoginKey(): string
@@ -49,7 +50,7 @@ class Identity implements CookieLoginIdentityInterface
         return $this->authKey;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }

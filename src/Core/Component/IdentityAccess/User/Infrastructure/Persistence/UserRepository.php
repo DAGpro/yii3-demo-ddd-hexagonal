@@ -41,11 +41,6 @@ final class UserRepository extends Select\Repository
         return $this->findBy('login', $login);
     }
 
-    public function findByLoginWithAuthIdentity(string $login): ?User
-    {
-        return $this->select()->where(['login' => $login])->load('identity')->fetchOne();
-    }
-
     /**
      * @throws Throwable
      */
