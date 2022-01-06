@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Component\IdentityAccess\User\Domain;
 
-use App\Core\Component\Blog\Domain\Comment;
-use App\Core\Component\Blog\Domain\Post;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\Annotated\Annotation\Relation\HasMany;
 use Cycle\Annotated\Annotation\Table;
 use Cycle\Annotated\Annotation\Table\Index;
 use DateTimeImmutable;
@@ -49,20 +46,6 @@ class User
      * @Column(type="datetime")
      */
     private DateTimeImmutable $updated_at;
-
-    /**
-     * @HasMany(target="App\Core\Component\Blog\Domain\Post")
-     *
-     * @var ArrayCollection|\App\Core\Component\Blog\Domain\Post[]
-     */
-    private $posts;
-
-    /**
-     * @HasMany(target="App\Core\Component\Blog\Domain\Comment")
-     *
-     * @var ArrayCollection|\App\Core\Component\Blog\Domain\Comment[]
-     */
-    private $comments;
 
     public function __construct(string $login, string $password)
     {
@@ -109,29 +92,4 @@ class User
         return $this->updated_at;
     }
 
-    /**
-     * @return Post[]
-     */
-    public function getPosts(): array
-    {
-        return $this->posts->toArray();
-    }
-
-    public function addPost(Post $post): void
-    {
-        $this->posts->add($post);
-    }
-
-    /**
-     * @return \App\Core\Component\Blog\Domain\Comment[]
-     */
-    public function getComments(): array
-    {
-        return $this->comments->toArray();
-    }
-
-    public function addComment(Comment $post): void
-    {
-        $this->comments->add($post);
-    }
 }
