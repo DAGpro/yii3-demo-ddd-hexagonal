@@ -29,7 +29,7 @@ final class IdentityRepository extends Select\Repository implements IdentityRepo
         return $this->findOne(['id' => $id]);
     }
 
-    public function findByUserId(string $userId): Identity
+    public function findByUserId(int $userId): ?Identity
     {
         return $this->findOne(['user_id' => $userId]);
     }

@@ -4,36 +4,30 @@ declare(strict_types=1);
 
 namespace App\Core\Component\IdentityAccess\User\Infrastructure\Persistence;
 
+use App\Core\Component\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\Core\Component\IdentityAccess\User\Domain\User;
+use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
+use Cycle\ORM\Transaction;
+use Cycle\ORM\TransactionInterface;
+use Spiral\Database\Injection\Parameter;
 use Throwable;
-use Yiisoft\Data\Reader\DataReaderInterface;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
-use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 
-final class UserRepository extends Select\Repository
+final class UserRepository extends Select\Repository implements UserRepositoryInterface
 {
-    private EntityWriter $entityWriter;
+    private TransactionInterface $transaction;
+    private ORMInterface $orm;
 
-    public function __construct(Select $select, EntityWriter $entityWriter)
+    public function __construct(Select $select, ORMInterface $orm)
     {
-        $this->entityWriter = $entityWriter;
+        $this->transaction = new Transaction($orm);
+        $this->orm = $orm;
         parent::__construct($select);
     }
 
-    public function findAll(array $scope = [], array $orderBy = []): DataReaderInterface
+    public function findUser(int $userId): ?User
     {
-        return new EntityReader($this->select()->where($scope)->orderBy($orderBy));
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return User|null
-     */
-    public function findById(string $id): ?User
-    {
-        return $this->findByPK($id);
+        return $this->findOne(['id' => $userId]);
     }
 
     public function findByLogin(string $login): ?User
@@ -41,12 +35,41 @@ final class UserRepository extends Select\Repository
         return $this->findBy('login', $login);
     }
 
+    public function getUsers(array $userIds): iterable
+    {
+        return $this->select()
+            ->where([
+                'id' => [
+                    'in' => new Parameter($userIds),
+                ]
+            ])
+            ->fetchAll();
+    }
+
+    public function removeAll(): void
+    {
+        $source = $this->orm->getSource(User::class);
+        $db = $source->getDatabase();
+        $db->execute('DELETE FROM users');
+    }
+
     /**
      * @throws Throwable
      */
-    public function save(User $user): void
+    public function save(array $users): void
     {
-        $this->entityWriter->write([$user]);
+        foreach ($users as $entity) {
+            $this->transaction->persist($entity);
+        }
+        $this->transaction->run();
+    }
+
+    public function delete(array $users): void
+    {
+        foreach ($users as $entity) {
+            $this->transaction->delete($entity);
+        }
+        $this->transaction->run();
     }
 
     private function findBy(string $field, string $value): ?User

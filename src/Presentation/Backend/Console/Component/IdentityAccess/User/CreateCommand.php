@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\User;
 
-use App\Core\Component\IdentityAccess\User\Domain\User;
-use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
+use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\Infrastructure\Authentication\SignupUserService;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,18 +22,21 @@ final class CreateCommand extends Command
 {
     private Manager $manager;
     private RolesStorageInterface $rolesStorage;
-    private UserRepository $userRepository;
+    private SignupUserService $signupUserService;
+    private UserQueryServiceInterface $userQueryService;
 
     protected static $defaultName = 'user/create';
 
     public function __construct(
         Manager $manager,
         RolesStorageInterface $rolesStorage,
-        UserRepository $userRepository
+        SignupUserService $signupUserService,
+        UserQueryServiceInterface $userQueryService
     ) {
         $this->manager = $manager;
         $this->rolesStorage = $rolesStorage;
-        $this->userRepository = $userRepository;
+        $this->signupUserService = $signupUserService;
+        $this->userQueryService = $userQueryService;
         parent::__construct();
     }
 
@@ -54,23 +58,23 @@ final class CreateCommand extends Command
         $password = $input->getArgument('password');
         $isAdmin = (bool)$input->getArgument('isAdmin');
 
-        $user = new User($login, $password);
         try {
-            $this->userRepository->save($user);
+            $this->signupUserService->signup($login, $password);
 
             if ($isAdmin) {
+
                 $role = $this->rolesStorage->getRoleByName('admin');
-                $userId = $user->getId();
+                $user = $this->userQueryService->findByLogin($login);
+
+                if ($user === null) {
+                    throw new IdentityException('Failed to create user, please try again!');
+                }
 
                 if ($role === null) {
                     throw new Exception('Role admin is NULL');
                 }
 
-                if ($userId === null) {
-                    throw new Exception('User Id is NULL');
-                }
-
-                $this->manager->assign($role, $userId);
+                $this->manager->assign($role, (string)$user->getId());
             }
 
             $io->success('User created');

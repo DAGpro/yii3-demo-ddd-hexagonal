@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\User;
 
+use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\Core\Component\IdentityAccess\User\Domain\User;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,19 +17,18 @@ use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Role;
 use Yiisoft\Rbac\RolesStorageInterface;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Cycle\Command\CycleDependencyProxy;
 
 final class AssignRoleCommand extends Command
 {
-    private CycleDependencyProxy $promise;
     private Manager $manager;
     private RolesStorageInterface $rolesStorage;
+    private UserQueryServiceInterface $userQueryService;
 
     protected static $defaultName = 'user/assignRole';
 
-    public function __construct(CycleDependencyProxy $promise, Manager $manager, RolesStorageInterface $rolesStorage)
+    public function __construct(UserQueryServiceInterface $userQueryService, Manager $manager, RolesStorageInterface $rolesStorage)
     {
-        $this->promise = $promise;
+        $this->userQueryService = $userQueryService;
         $this->manager = $manager;
         $this->rolesStorage = $rolesStorage;
         parent::__construct();
@@ -47,18 +48,13 @@ final class AssignRoleCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $roleName = $input->getArgument('role');
-        $userId = $input->getArgument('userId');
+        $userId = (int)$input->getArgument('userId');
 
         try {
-            $orm = $this->promise->getORM();
-            $userRepo = $orm->getRepository(User::class);
             /** @var User|null $user */
-            $user = $userRepo->findByPK($userId);
-            if (null === $user) {
-                throw new \Exception('Can\'t find user');
-            }
-            if (null === $user->getId()) {
-                throw new \Exception('User Id is NULL');
+            $user = $this->userQueryService->getUser($userId);
+            if ($user === null) {
+                throw new IdentityException('This user was not found!');
             }
 
             $role = $this->rolesStorage->getRoleByName($roleName);
@@ -75,10 +71,10 @@ final class AssignRoleCommand extends Command
                 $this->manager->addRole($role);
             }
 
-            $this->manager->assign($role, $userId);
+            $this->manager->assign($role, (string)$user->getId());
 
             $io->success('Role was assigned to given user');
-        } catch (\Throwable $t) {
+        } catch (IdentityException $t) {
             $io->error($t->getMessage());
             return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }

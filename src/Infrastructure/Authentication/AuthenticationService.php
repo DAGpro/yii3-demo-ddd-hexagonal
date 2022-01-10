@@ -4,48 +4,39 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authentication;
 
-use App\Core\Component\IdentityAccess\User\Application\UserService;
+use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Core\Component\IdentityAccess\User\Domain\User;
-use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
-use Spiral\Database\Database;
-use Spiral\Database\DatabaseManager;
 use Throwable;
 use Yiisoft\Auth\IdentityInterface;
+use Yiisoft\Auth\IdentityRepositoryInterface;
 use Yiisoft\User\CurrentUser;
-use Yiisoft\User\Guest\GuestIdentity;
 
 final class AuthenticationService
 {
     private CurrentUser $currentUser;
-    private UserRepository $userRepository;
-    private UserService $userService;
-    private IdentityRepository $identityRepository;
-    private Database $db;
+    private UserQueryServiceInterface $userQueryService;
+    private IdentityRepositoryInterface $identityRepository;
 
     public function __construct(
         CurrentUser $currentUser,
-        DatabaseManager $databaseManager,
-        UserRepository $userRepository,
-        IdentityRepository $identityRepository,
-        UserService $userService,
+        UserQueryServiceInterface $userQueryService,
+        IdentityRepositoryInterface $identityRepository,
     ) {
         $this->currentUser = $currentUser;
-        $this->userRepository = $userRepository;
-        $this->userService = $userService;
+        $this->userQueryService = $userQueryService;
         $this->identityRepository = $identityRepository;
-        $this->db = $databaseManager->database();
     }
 
     public function login(string $login, string $password): IdentityInterface
     {
-        $user = $this->userRepository->findByLogin($login);
+        $user = $this->userQueryService->findByLogin($login);
 
         if ($user === null || !$user->validatePassword($password)) {
             throw new AuthenticationException('Login or password incorrect!');
         }
 
         $identity = $this->identityRepository->findByUserId($user->getId());
-        if (!$this->currentUser->login($identity)) {
+        if ($identity === null || !$this->currentUser->login($identity)) {
             throw new AuthenticationException('Login failed, please try again!');
         }
 
@@ -67,31 +58,13 @@ final class AuthenticationService
         return $this->currentUser->logout();
     }
 
-    /**
-     * @throws Throwable
-     */
-    public function signup(string $login, string $password): void
-    {
-        try {
-            $this->db->begin();
-            $this->userService->createUser($login, $password);
-            $user = $this->userRepository->findByLogin($login);
-            $identity = new Identity($user);
-            $this->identityRepository->save($identity);
-            $this->db->commit();
-        } catch (Throwable $exception) {
-            $this->db->rollback();
-            throw new AuthenticationException('Failed to register user, please try again!');
-        }
-    }
-
     public function getUser(): ?User
     {
         $identity = $this->currentUser->getIdentity();
-        if ($identity instanceof GuestIdentity) {
-            return null;
+        if ($identity instanceof Identity) {
+            return $identity->getUser();
         }
-        return $identity->getUser();
+        return null;
     }
 
     public function isGuest(): bool

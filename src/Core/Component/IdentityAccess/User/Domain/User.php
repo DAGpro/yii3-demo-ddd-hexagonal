@@ -57,9 +57,9 @@ class User
         $this->comments = new ArrayCollection();
     }
 
-    public function getId(): ?string
+    public function getId(): ?int
     {
-        return $this->id === null ? null : (string)$this->id;
+        return $this->id;
     }
 
     public function getLogin(): string

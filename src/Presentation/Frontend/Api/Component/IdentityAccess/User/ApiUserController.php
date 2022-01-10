@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Api\Component\IdentityAccess\User;
 
+use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Data\Reader\Sort;
@@ -19,9 +20,13 @@ final class ApiUserController
         $this->responseFactory = $responseFactory;
     }
 
-    public function index(UserRepository $userRepository): ResponseInterface
+    public function index(UserQueryServiceInterface $userQueryService): ResponseInterface
     {
-        $dataReader = $userRepository->findAll()->withSort(Sort::only(['login'])->withOrderString('login'));
+        $dataReader = $userQueryService->findAllPreloaded()
+            ->withSort(
+                Sort::only(['login'])
+                    ->withOrderString('login')
+            );
         $users = $dataReader->read();
 
         $items = [];
@@ -32,12 +37,12 @@ final class ApiUserController
         return $this->responseFactory->createResponse($items);
     }
 
-    public function profile(UserRepository $userRepository, CurrentRoute $currentRoute): ResponseInterface
+    public function profile(UserQueryServiceInterface $userQueryService, CurrentRoute $currentRoute): ResponseInterface
     {
         $login = $currentRoute->getArgument('login');
 
         /** @var \App\Core\Component\IdentityAccess\User\Domain\User $user */
-        $user = $userRepository->findByLogin($login);
+        $user = $userQueryService->findByLogin($login);
         if ($user === null) {
             return $this->responseFactory->createResponse('Page not found', 404);
         }

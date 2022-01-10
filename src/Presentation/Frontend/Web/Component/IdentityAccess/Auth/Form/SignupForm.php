@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form;
 
-use App\Core\Component\IdentityAccess\User\Application\UserService;
+use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
@@ -15,10 +15,10 @@ final class SignupForm extends FormModel
     private string $login = '';
     private string $password = '';
     private string $passwordVerify = '';
-    private UserService $userService;
+    private UserQueryServiceInterface $userService;
     private TranslatorInterface $translator;
 
-    public function __construct(UserService $userService, TranslatorInterface $translator)
+    public function __construct(UserQueryServiceInterface $userService, TranslatorInterface $translator)
     {
         parent::__construct();
 

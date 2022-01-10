@@ -115,6 +115,7 @@ return [
         'commands' => [
             'serve' => Serve::class,
             'user/create' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\CreateCommand::class,
+            'user/delete' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\DeleteUserCommand::class,
             'user/assignRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\AssignRoleCommand::class,
             'fixture/add' => \App\Presentation\Backend\Console\Command\Fixture\AddCommand::class,
             'router/list' => \App\Presentation\Backend\Console\Command\Router\ListCommand::class,

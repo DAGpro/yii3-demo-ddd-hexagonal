@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth;
 
-use App\Core\Component\IdentityAccess\User\Application\UserService;
+use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Authentication\AuthenticationException;
 use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form\LoginForm;
@@ -36,7 +36,7 @@ final class AuthController
 
     public function login(
         ServerRequestInterface $request,
-        UserService $userService,
+        UserQueryServiceInterface $userQueryService,
         TranslatorInterface $translator,
         ValidatorInterface $validator,
         CookieLogin $cookieLogin
@@ -46,7 +46,7 @@ final class AuthController
         }
 
         $body = $request->getParsedBody();
-        $loginForm = new LoginForm($userService, $translator);
+        $loginForm = new LoginForm($userQueryService, $translator);
 
         if (
             $request->getMethod() === Method::POST

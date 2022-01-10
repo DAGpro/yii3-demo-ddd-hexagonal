@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Component\IdentityAccess\User\Application;
+namespace App\Core\Component\IdentityAccess\User\Application\Service\AppService;
 
+use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
+use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\Core\Component\IdentityAccess\User\Domain\User;
 use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
 use Yiisoft\Access\AccessCheckerInterface;
 use Yiisoft\User\CurrentUser;
 
-final class UserService
+final class UserService implements UserServiceInterface
 {
-    private CurrentUser $currentUser;
     private UserRepository $repository;
-    private AccessCheckerInterface $accessChecker;
 
     public function __construct(
         CurrentUser $currentUser,
@@ -33,29 +33,24 @@ final class UserService
 
         $user = new User($login, $password);
 
-        $this->repository->save($user);
+        $this->repository->save([$user]);
     }
 
-    public function getUser(): ?User
+    /**
+     * @param string $userId
+     * @throws IdentityException
+     */
+    public function deleteUser(int $userId): void
     {
-        $userId = $this->currentUser->getId();
-
-        if ($userId === null) {
-            return null;
+        if (!($user = $this->repository->findUser($userId))) {
+            throw new IdentityException('This user does not exist!');
         }
 
-        return $this->repository->findById($this->currentUser->getId());
+        $this->repository->delete([$user]);
     }
 
-    public function hasPermission(string $permission): bool
+    public function removeAll(): void
     {
-        $userId = $this->currentUser->getId();
-        return null !== $userId && $this->accessChecker->userHasPermission($userId, $permission);
+        $this->repository->removeAll();
     }
-
-    public function findByLogin(string $login): ?User
-    {
-        return $this->repository->findByLogin($login);
-    }
-
 }

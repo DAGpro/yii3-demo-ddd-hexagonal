@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\User;
 
+use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -23,11 +24,17 @@ final class UserController
         $this->viewRenderer = $viewRenderer->withControllerName('component/identity-access/user/user');
     }
 
-    public function index(UserRepository $userRepository, CurrentRoute $currentRoute): Response
+    public function index(UserQueryServiceInterface $userQueryService, CurrentRoute $currentRoute): Response
     {
         $pageNum = (int)$currentRoute->getArgument('page', '1');
 
-        $dataReader = $userRepository->findAll()->withSort(Sort::only(['login'])->withOrderString('login'));
+        $dataReader = $userQueryService
+            ->findAllPreloaded()
+            ->withSort(
+                Sort::only(['login'])
+                ->withOrderString('login')
+            );
+
         $paginator = (new OffsetPaginator($dataReader))
             ->withPageSize(self::PAGINATION_INDEX)
             ->withCurrentPage($pageNum);
@@ -35,10 +42,13 @@ final class UserController
         return $this->viewRenderer->render('index', ['paginator' => $paginator]);
     }
 
-    public function profile(CurrentRoute $currentRoute, UserRepository $userRepository, ResponseFactoryInterface $responseFactory): Response
-    {
+    public function profile(
+        CurrentRoute $currentRoute,
+        UserQueryServiceInterface $userQueryService,
+        ResponseFactoryInterface $responseFactory
+    ): Response {
         $login = $currentRoute->getArgument('login');
-        $item = $userRepository->findByLogin($login);
+        $item = $userQueryService->findByLogin($login);
         if ($item === null) {
             return $responseFactory->createResponse(404);
         }
