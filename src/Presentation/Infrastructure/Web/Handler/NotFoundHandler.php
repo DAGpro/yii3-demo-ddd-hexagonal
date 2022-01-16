@@ -16,7 +16,7 @@ final class NotFoundHandler implements RequestHandlerInterface
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('site');
+        $this->viewRenderer = $viewRenderer->withControllerName('controller/site');
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
