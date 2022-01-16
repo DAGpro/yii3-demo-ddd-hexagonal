@@ -62,6 +62,6 @@ final class SignupController
 
     private function redirectToMain(): ResponseInterface
     {
-        return $this->webService->getRedirectResponse('site/index');
+        return $this->webService->redirect('site/index');
     }
 }

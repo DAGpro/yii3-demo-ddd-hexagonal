@@ -42,7 +42,7 @@ final class PostController
         $slug = $currentRoute->getArgument('slug');
         $item = $postRepository->fullPostPage($slug);
         if ($item === null) {
-            return $this->webService->getNotFoundResponse();
+            return $this->webService->notFound();
         }
 
         return $this->viewRenderer->render('index', ['item' => $item, 'canEdit' => $canEdit, 'slug' => $slug]);
@@ -61,7 +61,7 @@ final class PostController
             $form = new PostForm();
             if ($form->load($parameters['body']) && $validator->validate($form)->isValid()) {
                 $this->postService->savePost($this->authService->getUser(), new Post(), $form);
-                return $this->webService->getRedirectResponse('blog/index');
+                return $this->webService->redirect('blog/index');
             }
 
             $parameters['errors'] = $form->getFormErrors()->getFirstErrors();
@@ -79,7 +79,7 @@ final class PostController
         $slug = $currentRoute->getArgument('slug');
         $post = $postRepository->fullPostPage($slug);
         if ($post === null) {
-            return $this->webService->getNotFoundResponse();
+            return $this->webService->notFound();
         }
 
         $parameters = [
@@ -98,7 +98,7 @@ final class PostController
             $body = $request->getParsedBody();
             if ($form->load($body) && $validator->validate($form)->isValid()) {
                 $this->postService->savePost($this->authService->getUser(), $post, $form);
-                return $this->webService->getRedirectResponse('blog/index');
+                return $this->webService->redirect('blog/index');
             }
 
             $parameters['body'] = $body;
