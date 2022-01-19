@@ -25,10 +25,14 @@ final class UserService implements UserServiceInterface
         $this->accessChecker = $accessChecker;
     }
 
+    /**
+     * @throws IdentityException
+     * @throws \Throwable
+     */
     public function createUser(string $login, string $password): void
     {
         if (null !== $this->repository->findByLogin($login)) {
-            throw new \Exception('This user already exists!');
+            throw new IdentityException('This user already exists!');
         }
 
         $user = new User($login, $password);
@@ -37,7 +41,6 @@ final class UserService implements UserServiceInterface
     }
 
     /**
-     * @param string $userId
      * @throws IdentityException
      */
     public function deleteUser(int $userId): void
