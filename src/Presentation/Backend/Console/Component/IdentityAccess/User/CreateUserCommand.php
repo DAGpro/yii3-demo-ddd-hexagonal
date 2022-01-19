@@ -18,7 +18,7 @@ use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\RolesStorageInterface;
 use Yiisoft\Yii\Console\ExitCode;
 
-final class CreateCommand extends Command
+final class CreateUserCommand extends Command
 {
     private Manager $manager;
     private RolesStorageInterface $rolesStorage;

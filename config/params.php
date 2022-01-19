@@ -116,7 +116,7 @@ return [
             'serve' => Serve::class,
 
             'user/delete' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\DeleteUserCommand::class,
-            'user/create' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\CreateCommand::class,
+            'user/create' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\CreateUserCommand::class,
 
             'assign/assignRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign\AssignRoleCommand::class,
             'assign/revokeRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign\RevokeRoleCommand::class,
