@@ -6,23 +6,17 @@ namespace App\Core\Component\IdentityAccess\User\Application\Service\AppService;
 
 use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\Core\Component\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\Core\Component\IdentityAccess\User\Domain\User;
-use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
-use Yiisoft\Access\AccessCheckerInterface;
-use Yiisoft\User\CurrentUser;
 
 final class UserService implements UserServiceInterface
 {
-    private UserRepository $repository;
+    private UserRepositoryInterface $repository;
 
     public function __construct(
-        CurrentUser $currentUser,
-        UserRepository $repository,
-        AccessCheckerInterface $accessChecker
+        UserRepositoryInterface $repository,
     ) {
-        $this->currentUser = $currentUser;
         $this->repository = $repository;
-        $this->accessChecker = $accessChecker;
     }
 
     /**
