@@ -114,9 +114,32 @@ return [
         'autoExit' => false,
         'commands' => [
             'serve' => Serve::class,
-            'user/create' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\CreateCommand::class,
+
             'user/delete' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\DeleteUserCommand::class,
-            'user/assignRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\AssignRoleCommand::class,
+            'user/create' => \App\Presentation\Backend\Console\Component\IdentityAccess\User\CreateCommand::class,
+
+            'assign/assignRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign\AssignRoleCommand::class,
+            'assign/revokeRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign\RevokeRoleCommand::class,
+            'assign/assignPermission' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign\AssignPermissionCommand::class,
+            'assign/assignAllPermissions' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign\AssignAllPermissionsCommand::class,
+            'assign/revokePermission' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign\RevokePermissionCommand::class,
+
+            'access/addRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\AddRoleCommand::class,
+            'access/removeRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\RemoveRoleCommand::class,
+            'access/addPermission' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\AddPermissionCommand::class,
+            'access/removePermission' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\RemovePermissionCommand::class,
+            'access/addChildPermission' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\AddChildPermissionCommand::class,
+            'access/addAllChildPermission' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\AddAllChildPermissionsCommand::class,
+            'access/addChildRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\AddChildRoleCommand::class,
+            'access/removeChildPermission' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\RemoveChildPermissionCommand::class,
+            'access/removeChildRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\RemoveChildRoleCommand::class,
+            'access/removeAll' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management\RemoveAllAccessRightsCommand::class,
+
+            'access/list' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\AccessListCommand::class,
+            'access/assignmentsList' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\AssignmentsListCommand::class,
+            'access/viewRole' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\ViewRoleCommand::class,
+            'access/userAssignments' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\UserAssignmentsCommand::class,
+
             'fixture/add' => \App\Presentation\Backend\Console\Command\Fixture\AddCommand::class,
             'router/list' => \App\Presentation\Backend\Console\Command\Router\ListCommand::class,
             'translator/translate' => \App\Presentation\Backend\Console\Command\Translation\TranslateCommand::class,

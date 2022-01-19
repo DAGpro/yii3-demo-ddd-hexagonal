@@ -27,5 +27,19 @@ return [
         ],
     ],
     RuleFactoryInterface::class => ClassNameRuleFactory::class,
-    AccessCheckerInterface::class => Manager::class,
+    AccessCheckerInterface::class => static function(
+        \Psr\Container\ContainerInterface $container
+    ) {
+        return $container->get(Manager::class);
+    },
+    Manager::class =>  static function(
+        \Psr\Container\ContainerInterface $container
+    ) {
+        return new  Manager(
+            $container->get(RolesStorageInterface::class),
+            $container->get(AssignmentsStorageInterface::class),
+            $container->get(RuleFactoryInterface::class),
+            true
+        );
+    }
 ];
