@@ -38,18 +38,19 @@ final class WebControllerService
     }
 
     public function sessionFlashAndRedirect(
-        string $url,
         string $message,
+        string $url,
+        array $urlArguments = [],
         string $key = 'success',
-        bool $removeAfterAccess = true
+        bool $removeFlashAfterAccess = true
     ): ResponseInterface {
         $this->flash->add(
             $key,
             ['body' => $message],
-            $removeAfterAccess
+            $removeFlashAfterAccess
         );
         return $this->responseFactory
             ->createResponse(Status::FOUND)
-            ->withHeader(Header::LOCATION, $url);
+            ->withHeader(Header::LOCATION, $this->urlGenerator->generate($url, $urlArguments));
     }
 }
