@@ -13,7 +13,7 @@ use Yiisoft\Yii\Bootstrap5\Nav;
 use Yiisoft\Yii\Bootstrap5\NavBar;
 
 /**
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Router\CurrentRoute $currentRoute
  * @var \Yiisoft\View\WebView $this
  * @var \Yiisoft\Assets\AssetManager $assetManager
@@ -53,7 +53,7 @@ $this->beginPage();
 
         <?= NavBar::widget()
             ->brandText($brandLabel)
-            ->brandUrl($urlGenerator->generate('site/index'))
+            ->brandUrl($url->generate('backend/dashboard'))
             ->options(['class' => 'navbar navbar-light bg-light navbar-expand-sm text-white'])
             ->begin() ?>
 
@@ -62,31 +62,20 @@ $this->beginPage();
             ->options(['class' => 'navbar-nav mx-auto'])
             ->items(
                 [
-                    [
-                        'label' => $translator->translate('menu.blog'),
-                        'url' => $urlGenerator->generate('blog/index'),
-                        'active' => StringHelper::startsWith(
-                                $currentRouteName,
-                                'blog/'
-                            ) && $currentRouteName !== 'blog/comment/index',
+                    ['label' => $translator->translate('backend_menu.blog'), 'url' => '',
+                        'items' => [
+                            ['label' => $translator->translate('backend_menu.posts'), 'url' => $url->generate('backend/post'), 'active' => StringHelper::startsWith($currentRouteName, 'backend/post')],
+                            ['label' => $translator->translate('backend_menu.comments'), 'url' => $url->generate('backend/comment'), 'active' => StringHelper::startsWith($currentRouteName, 'backend/comment')],
+                            ['label' => $translator->translate('backend_menu.tags'), 'url' => $url->generate('backend/tag'), 'active' => StringHelper::startsWith($currentRouteName, 'backend/tag')],
+                        ]
                     ],
-                    [
-                        'label' => $translator->translate('menu.comments-feed'),
-                        'url' => $urlGenerator->generate('blog/comment/index'),
+                    ['label' => $translator->translate('backend_menu.identityAccess'), 'url' => '',
+                        'items' => [
+                            ['label' => $translator->translate('backend_menu.accessRights'), 'url' => $url->generate('backend/access'), 'active' => StringHelper::startsWith($currentRouteName, 'backend/access')],
+                            ['label' => $translator->translate('backend_menu.user'), 'url' => $url->generate('backend/user'), 'active' => StringHelper::startsWith($currentRouteName, 'backend/user')],
+                        ]
                     ],
-                    [
-                        'label' => $translator->translate('menu.users'),
-                        'url' => $urlGenerator->generate('user/index'),
-                        'active' => StringHelper::startsWith($currentRouteName, 'user/'),
-                    ],
-                    [
-                        'label' => $translator->translate('menu.contact'),
-                        'url' => $urlGenerator->generate('site/contact'),
-                    ],
-                    [
-                        'label' => $translator->translate('menu.swagger'),
-                        'url' => $urlGenerator->generate('swagger/index'),
-                    ],
+                    ['label' => $translator->translate('menu.frontend'), 'url' => $url->generate('site/index'), ],
                 ]
             ) ?>
 
@@ -96,42 +85,61 @@ $this->beginPage();
             ->items(
                 $user === null || $user->getId() === null
                     ? [
-                    [
-                        'label' => $translator->translate('menu.login'),
-                        'url' => $urlGenerator->generate('auth/login'),
-                    ],
-                    [
-                        'label' => $translator->translate('menu.signup'),
-                        'url' => $urlGenerator->generate('auth/signup'),
-                    ],
-                    ['label' => $translator->translate('menu.language'), 'url' => '#', 'items' => [
                         [
-                            'label' => $translator->translate('layout.language.english'),
-                            'url' => $urlGenerator->generate($currentRouteName, ['_language' => 'en']),
+                            'label' => $translator->translate('menu.login'),
+                            'url' => $url->generate('auth/login'),
                         ],
                         [
-                            'label' => $translator->translate('layout.language.russian'),
-                            'url' => $urlGenerator->generate($currentRouteName, ['_language' => 'ru']),
+                            'label' => $translator->translate('menu.signup'),
+                            'url' => $url->generate('auth/signup'),
                         ],
-                    ]]
-                ]
+                        [
+                            'label' => $translator->translate('menu.language'),
+                            'url' => '#',
+                            'items' => [
+                                [
+                                    'label' => $translator->translate('layout.language.english'),
+                                    'url' => $url->generate($currentRouteName,  array_merge($currentRoute->getArguments(), ['_language' => 'en'])),
+                                ],
+                                [
+                                    'label' => $translator->translate('layout.language.russian'),
+                                    'url' => $url->generate($currentRouteName, array_merge($currentRoute->getArguments(), ['_language' => 'ru'])),
+                                ],
+                            ]
+                        ]
+                    ]
                     : [
-                    Form::widget()
-                        ->action($urlGenerator->generate('auth/logout'))
-                        ->csrf($csrf)
-                        ->begin()
-                    . Field::widget()
-                        ->containerClass('mb-1')
-                        ->submitButton(
-                            [
-                                'class' => 'btn btn-primary',
-                                'value' => $translator->translate(
-                                    'menu.logout',
-                                    ['login' => Html::encode($user->getLogin())],
-                                ),
-                            ],
-                        )
-                    . Form::end()],
+                        [
+                            'label' => $translator->translate('menu.language'),
+                            'url' => '#',
+                            'items' => [
+                                [
+                                    'label' => $translator->translate('layout.language.english'),
+                                    'url' => $url->generate($currentRouteName,  array_merge($currentRoute->getArguments(), ['_language' => 'en'])),
+                                ],
+                                [
+                                    'label' => $translator->translate('layout.language.russian'),
+                                    'url' => $url->generate($currentRouteName, array_merge($currentRoute->getArguments(), ['_language' => 'ru'])),
+                                ],
+                            ]
+                        ],
+                        Form::widget()
+                            ->action($url->generate('auth/logout'))
+                            ->csrf($csrf)
+                            ->begin()
+                        . Field::widget()
+                            ->containerClass('mb-1')
+                            ->submitButton(
+                                [
+                                    'class' => 'btn btn-primary',
+                                    'value' => $translator->translate(
+                                        'menu.logout',
+                                        ['login' => Html::encode($user->getLogin())],
+                                    ),
+                                ],
+                            )
+                        . Form::end()
+                    ],
             ) ?>
         <?= NavBar::end() ?>
     </header>
