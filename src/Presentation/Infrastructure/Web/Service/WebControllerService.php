@@ -17,8 +17,11 @@ final class WebControllerService
     private UrlGeneratorInterface $urlGenerator;
     private FlashInterface $flash;
 
-    public function __construct(ResponseFactoryInterface $responseFactory, FlashInterface $flash, UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        ResponseFactoryInterface $responseFactory,
+        FlashInterface $flash,
+        UrlGeneratorInterface $urlGenerator
+    ) {
         $this->responseFactory = $responseFactory;
         $this->urlGenerator = $urlGenerator;
         $this->flash = $flash;
@@ -52,5 +55,12 @@ final class WebControllerService
         return $this->responseFactory
             ->createResponse(Status::FOUND)
             ->withHeader(Header::LOCATION, $this->urlGenerator->generate($url, $urlArguments));
+    }
+
+    public function accessDenied(): ResponseInterface
+    {
+        return $this->responseFactory->createResponse(
+            Status::FORBIDDEN
+        );
     }
 }

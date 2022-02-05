@@ -45,8 +45,8 @@ $this->setTitle($translator->translate('layout.archive.for-year', ['year' => $ye
                 $urlGenerator->generate('blog/post', ['slug' => $item->getSlug()])
             );
             echo ' by ';
-            $login = $item->getUser()->getLogin();
-            echo Html::a(Html::encode($login), $urlGenerator->generate(
+            $login = $item->getAuthor()->getName();
+            echo Html::a(Html::encode($login), $url->generate(
                 'user/profile',
                 ['login' => $login]
             ));

@@ -7,9 +7,9 @@ declare(strict_types=1);
  * @var \Yiisoft\Data\Reader\DataReaderInterface|string[][] $archive
  * @var \Yiisoft\Data\Reader\DataReaderInterface|string[][] $tags
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
- * @var bool $isGuest
+ * @var \App\Core\Component\Blog\Domain\User\Author|null $author
  */
 
 use App\Core\Component\Blog\Domain\Post;
@@ -51,10 +51,10 @@ $pagination = OffsetPagination::widget()
     </div>
     <div class="col-sm-4 col-md-4 col-lg-3">
         <?php
-        if (!$isGuest) {
+        if ($author !== null) {
             echo Html::a(
-                $translator->translate('layout.add.post'),
-                $urlGenerator->generate('blog/add'),
+                $translator->translate('blog.add.post'),
+                $url->generate('blog/author/post/add'),
                 ['class' => 'btn btn-outline-secondary btn-md-12 mb-3']
             );
         } ?>

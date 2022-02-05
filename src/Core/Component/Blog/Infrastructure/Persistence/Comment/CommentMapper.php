@@ -47,6 +47,7 @@ final class CommentMapper extends Mapper
             $this->source->getTable(),
             [
                 'deleted_at' => new \DateTimeImmutable(),
+                'published_at' => null,
                 'public' => false,
             ]
         );
@@ -73,6 +74,11 @@ final class CommentMapper extends Mapper
         if ($entity->isPublic() && $entity->getPublishedAt() === null) {
             $state->register('published_at', $now, true);
             $command->register('published_at', $now, true);
+        }
+
+        if (!$entity->isPublic() && $entity->getPublishedAt() !== null) {
+            $state->register('published_at', null, true);
+            $command->register('published_at', null, true);
         }
     }
 }

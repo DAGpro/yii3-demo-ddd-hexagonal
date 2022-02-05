@@ -4,86 +4,66 @@ declare(strict_types=1);
 
 namespace App\Core\Component\Blog\Infrastructure\Persistence\Post;
 
-use App\Core\Component\Blog\Domain\Post;
+use App\Core\Component\Blog\Domain\Port\PostRepositoryInterface;
+use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
-use DateTimeImmutable;
-use DateTimeInterface;
-use Throwable;
-use Yiisoft\Data\Reader\DataReaderInterface;
-use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
-use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
+use Cycle\ORM\Transaction;
+use Cycle\ORM\TransactionInterface;
+use Spiral\Database\DatabaseInterface;
+use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\SQLite\SQLiteDriver;
+use Spiral\Database\Injection\Fragment;
+use Spiral\Database\Injection\FragmentInterface;
 
-final class PostRepository extends Select\Repository
+final class PostRepository extends Select\Repository implements PostRepositoryInterface
 {
-    private EntityWriter $entityWriter;
+    private TransactionInterface $transaction;
 
-    public function __construct(Select $select, EntityWriter $entityWriter)
+    public function __construct(Select $select, ORMInterface $orm)
     {
-        $this->entityWriter = $entityWriter;
+        $this->transaction = new Transaction($orm);
         parent::__construct($select);
     }
 
+    public function save(array $posts): void
+    {
+        foreach ($posts as $entity) {
+            $this->transaction->persist($entity);
+        }
+        $this->transaction->run();
+    }
+
+    public function delete(array $posts): void
+    {
+        foreach ($posts as $entity) {
+            $this->transaction->delete($entity);
+        }
+        $this->transaction->run();
+    }
+
     /**
-     * Get posts without filter with preloaded Users and Tags
+     * @param string $attr Can be 'day', 'month' or 'year'
      *
-     * @psalm-return DataReaderInterface<int, \App\Core\Component\Blog\Domain\Post>
+     * @return FragmentInterface
      */
-    public function findAllPreloaded(): DataReaderInterface
+    public function extractFromDateColumn(string $attr): FragmentInterface
     {
-        $query = $this->select()
-            ->load(['user', 'tags']);
-        return $this->prepareDataReader($query);
+        $driver = $this->getDriver();
+        $wrappedField = $driver->getQueryCompiler()->quoteIdentifier($attr);
+        if ($driver instanceof SQLiteDriver) {
+            $str = ['year' => '%Y', 'month' => '%m', 'day' => '%d'][$attr];
+            return new Fragment("strftime('{$str}', published_at) {$wrappedField}");
+        }
+        return new Fragment("extract({$attr} from published_at) {$wrappedField}");
     }
 
-    /**
-     * @psalm-return DataReaderInterface<int, \App\Core\Component\Blog\Domain\Post>
-     */
-    public function findByTag($tagId): DataReaderInterface
+    private function getDriver(): DriverInterface
     {
-        $query = $this
-            ->select()
-            ->where(['tags.id' => $tagId])
-            ->load('user', ['method' => Select::SINGLE_QUERY]);
-        return $this->prepareDataReader($query);
-    }
-
-    public function fullPostPage(string $slug): ?Post
-    {
-        $query = $this
-            ->select()
-            ->where(['slug' => $slug])
-            ->load('user', ['method' => Select::SINGLE_QUERY])
-            ->load(['tags'])
-            // force loading in single query with comments
-            ->load('comments.user', ['method' => Select::SINGLE_QUERY])
-            ->load('comments', ['method' => Select::OUTER_QUERY]);
-        return  $query->fetchOne();
-    }
-
-    public function getMaxUpdatedAt(): DateTimeInterface
-    {
-        return new DateTimeImmutable($this->select()->max('updated_at') ?? 'now');
-    }
-
-    public function findBySlug(string $slug): ?Post
-    {
-        return $this->select()->where(['slug' => $slug])->fetchOne();
-    }
-
-    /**
-     * @throws Throwable
-     */
-    public function save(Post $post): void
-    {
-        $this->entityWriter->write([$post]);
-    }
-
-    private function prepareDataReader($query): EntityReader
-    {
-        return (new EntityReader($query))->withSort(
-            Sort::only(['id', 'title', 'public', 'updated_at', 'published_at', 'user_id'])
-                ->withOrder(['published_at' => 'desc'])
-        );
+        return $this->select()
+            ->getBuilder()
+            ->getLoader()
+            ->getSource()
+            ->getDatabase()
+            ->getDriver(DatabaseInterface::READ);
     }
 }

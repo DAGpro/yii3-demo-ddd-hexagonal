@@ -10,7 +10,7 @@ use Yiisoft\Router\UrlGeneratorInterface;
 /**
  * @var KeysetPaginator $data
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var UrlGeneratorInterface $urlGenerator
+ * @var UrlGeneratorInterface $url
  * @var AssetManager $assetManager
  */
 
@@ -31,8 +31,8 @@ use Yiisoft\Router\UrlGeneratorInterface;
     <div class="row load-more-comment-container">
         <div class="col-sm-12">
             <a class="load-more-comment btn btn-primary btn-lg btn-block"
-               href="<?= $urlGenerator->generate('blog/comment/index', ['next' => $data->getNextPageToken()]) ?>">
-                <?= $translator->translate('layout.show-more') ?>
+               href="<?= $url->generate('blog/comment/index', ['next' => $data->getNextPageToken()]) ?>">
+                <?= $translator->translate('view-comment.show-more') ?>
             </a>
         </div>
     </div>

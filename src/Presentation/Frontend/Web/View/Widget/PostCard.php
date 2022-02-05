@@ -8,7 +8,8 @@ use App\Core\Component\Blog\Domain\Post;
 use Yiisoft\Html\Html;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Yii\Bootstrap5\Widget;
-final class PostCard extends Widget
+
+class PostCard extends Widget
 {
     private ?Post $post = null;
 
@@ -58,8 +59,8 @@ final class PostCard extends Widget
             : $this->post->getPublishedAt()->format('M, d');
         $return .= ' by ';
         $return .= Html::a(
-            $this->post->getUser()->getLogin(),
-            $this->urlGenerator->generate('user/profile', ['login' => $this->post->getUser()->getLogin()])
+            $this->post->getAuthor()->getName(),
+            $this->urlGenerator->generate('user/profile', ['login' => $this->post->getAuthor()->getName()])
         )->class('mb-1 text-muted');
 
         $return .= Html::p(
@@ -76,7 +77,7 @@ final class PostCard extends Widget
             $return .= Html::a(
                 $tag->getLabel(),
                 $this->urlGenerator->generate('blog/tag', ['label' => $tag->getLabel()]),
-                ['class' => 'btn btn-outline-secondary btn-sm me-2 mt-1']
+                ['class' => 'btn btn-outline-secondary btn-sm mb-1 me-2 mt-1']
             );
         }
         return $return . Html::closeTag('div');

@@ -1,11 +1,11 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
 
 declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\Blog\Archive;
 
-use App\Core\Component\Blog\Infrastructure\Persistence\Archive\ArchiveRepository;
-use App\Core\Component\Blog\Infrastructure\Persistence\Tag\TagRepository;
+use App\Core\Component\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
+use App\Core\Component\Blog\Application\Service\QueryService\TagQueryServiceInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Router\CurrentRoute;
@@ -15,47 +15,58 @@ final class ArchiveController
 {
     private const POSTS_PER_PAGE = 3;
     private const POPULAR_TAGS_COUNT = 10;
-    private ViewRenderer $viewRenderer;
+    private const ARCHIVE_MONTHS_COUNT = 12;
+
+    private ViewRenderer $view;
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('component/blog/archive');
+        $this->view = $viewRenderer->withControllerName('component/blog/archive');
     }
 
-    public function index(ArchiveRepository $archiveRepo): Response
+    public function index(ArchivePostQueryServiceInterface $archivePostQueryService): Response
     {
-        return $this->viewRenderer->render('index', ['archive' => $archiveRepo->getFullArchive()]);
+        return $this->view->render('index', [
+            'archive' => $archivePostQueryService->getFullArchive()
+        ]);
     }
 
-    public function monthlyArchive(CurrentRoute $currentRoute, TagRepository $tagRepository, ArchiveRepository $archiveRepo): Response
-    {
+    public function monthlyArchive(
+        CurrentRoute $currentRoute,
+        TagQueryServiceInterface $tagQueryService,
+        ArchivePostQueryServiceInterface $archivePostQueryService
+    ): Response {
         $pageNum = (int)$currentRoute->getArgument('page', '1');
         $year = (int)$currentRoute->getArgument('year', '0');
         $month = (int)$currentRoute->getArgument('month', '0');
 
-        $dataReader = $archiveRepo->getMonthlyArchive($year, $month);
+        $dataReader = $archivePostQueryService->getMonthlyArchive($year, $month);
         $paginator = (new OffsetPaginator($dataReader))
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 
-        $data = [
-            'year' => $year,
-            'month' => $month,
-            'paginator' => $paginator,
-            'archive' => $archiveRepo->getFullArchive()->withLimit(12),
-            'tags' => $tagRepository->getTagMentions(self::POPULAR_TAGS_COUNT),
-        ];
-        return $this->viewRenderer->render('monthly-archive', $data);
+        return $this->view->render(
+            'monthly-archive',
+            [
+                'year' => $year,
+                'month' => $month,
+                'paginator' => $paginator,
+                'archive' => $archivePostQueryService->getFullArchive(self::ARCHIVE_MONTHS_COUNT),
+                'tags' => $tagQueryService->getTagMentions(self::POPULAR_TAGS_COUNT),
+            ]
+        );
     }
 
-    public function yearlyArchive(CurrentRoute $currentRoute, ArchiveRepository $archiveRepo): Response
-    {
+    public function yearlyArchive(
+        CurrentRoute $currentRoute,
+        ArchivePostQueryServiceInterface $archivePostQueryService
+    ): Response {
         $year = (int)$currentRoute->getArgument('year', '0');
 
         $data = [
             'year' => $year,
-            'items' => $archiveRepo->getYearlyArchive($year),
+            'items' => $archivePostQueryService->getYearlyArchive($year),
         ];
-        return $this->viewRenderer->render('yearly-archive', $data);
+        return $this->view->render('yearly-archive', $data);
     }
 }

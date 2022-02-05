@@ -141,6 +141,7 @@ return [
             'access/userAssignments' => \App\Presentation\Backend\Console\Component\IdentityAccess\Access\UserAssignmentsCommand::class,
 
             'fixture/add' => \App\Presentation\Backend\Console\Command\Fixture\AddCommand::class,
+            'fixture/addAccess' => \App\Presentation\Backend\Console\Command\Fixture\CreateAccessRights::class,
             'router/list' => \App\Presentation\Backend\Console\Command\Router\ListCommand::class,
             'translator/translate' => \App\Presentation\Backend\Console\Command\Translation\TranslateCommand::class,
         ],

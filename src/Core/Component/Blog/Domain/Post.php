@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Component\Blog\Domain;
 
-use App\Core\Component\IdentityAccess\User\Domain\User;
+use App\Core\Component\Blog\Domain\User\Author;
+use App\Core\Component\Blog\Domain\User\Commentator;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\Annotated\Annotation\Relation\BelongsTo;
+use Cycle\Annotated\Annotation\Relation\Embedded;
 use Cycle\Annotated\Annotation\Relation\HasMany;
 use Cycle\Annotated\Annotation\Relation\ManyToMany;
 use Cycle\Annotated\Annotation\Table;
@@ -21,7 +22,7 @@ use Yiisoft\Security\Random;
  * @Entity(
  *     repository="App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository",
  *     mapper="App\Core\Component\Blog\Infrastructure\Persistence\Post\PostMapper",
- *     constrain="App\Core\Component\Blog\Infrastructure\Persistence\Post\Scope\PublicScope"
+ *     constrain="App\Core\Component\Blog\Infrastructure\Persistence\Post\Scope\PublicAndNotDeletedConstrain",
  * )
  * @Table(
  *     indexes={
@@ -37,24 +38,46 @@ class Post
     private ?int $id = null;
 
     /**
+     * @Column(type="string(191)", default="")
+     */
+    private string $title;
+
+    /**
+     * @Column(type="text")
+     */
+    private string $content;
+
+    /**
      * @Column(type="string(128)")
      */
     private string $slug;
 
+    /** @Embedded(target = "App\Core\Component\Blog\Domain\User\Author") */
+    private Author $author;
+
     /**
-     * @Column(type="string(191)", default="")
+     * @HasMany(target="App\Core\Component\Blog\Domain\Comment")
+     *
+     * @var ArrayCollection|Comment[]
      */
-    private string $title = '';
+    private $comments;
+
+    /**
+     * @ManyToMany(
+     *     target="App\Core\Component\Blog\Domain\Tag",
+     *     though="App\Core\Component\Blog\Infrastructure\Persistence\Post\PostTag",
+     *     fkAction="CASCADE"
+     * )
+     *
+     * @var PivotedCollection|Tag[]
+     */
+    private $tags;
+    private ?int $tag_id = null;
 
     /**
      * @Column(type="bool", default="false")
      */
     private bool $public = false;
-
-    /**
-     * @Column(type="text")
-     */
-    private string $content = '';
 
     /**
      * @Column(type="datetime")
@@ -76,118 +99,38 @@ class Post
      */
     private ?DateTimeImmutable $deleted_at = null;
 
-    /**
-     * @BelongsTo(target="App\Core\Component\IdentityAccess\User\Domain\User", nullable=false)
-     *
-     * @var \Cycle\ORM\Promise\Reference|User
-     */
-    private $user = null;
-    private ?int $user_id = null;
-
-    /**
-     * @ManyToMany(target="App\Core\Component\Blog\Domain\Tag", though="PostTag", fkAction="CASCADE")
-     *
-     * @var PivotedCollection|Tag[]
-     */
-    private $tags;
-    private ?int $tag_id = null;
-
-    /**
-     * @HasMany(target="App\Core\Component\Blog\Domain\Comment")
-     *
-     * @var ArrayCollection|Comment[]
-     */
-    private $comments;
-
-    public function __construct(string $title = '', string $content = '')
+    public function __construct(string $title, string $content, Author $author)
     {
         $this->title = $title;
         $this->content = $content;
-        $this->created_at = new DateTimeImmutable();
-        $this->updated_at = new DateTimeImmutable();
+        $this->author = $author;
         $this->tags = new PivotedCollection();
         $this->comments = new ArrayCollection();
+        $this->created_at = new DateTimeImmutable();
+        $this->updated_at = new DateTimeImmutable();
+
         $this->resetSlug();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function resetSlug(): void
-    {
-        $this->slug = Random::string(128);
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): void
+    public function editPost(string $title, string $content): void
     {
         $this->title = $title;
-    }
-
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function setContent(string $content): void
-    {
         $this->content = $content;
     }
 
-    public function isPublic(): bool
+    public function isAuthor(Author $author) :bool
     {
-        return $this->public;
+        return $this->author->isEqual($author);
     }
 
-    public function setPublic(bool $public): void
+    public function changeAuthor(Author $author) :void
     {
-        $this->public = $public;
+        $this->author = $author;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getAuthor(): Author
     {
-        return $this->created_at;
-    }
-
-    public function getUpdatedAt(): DateTimeImmutable
-    {
-        return $this->updated_at;
-    }
-
-    public function getDeletedAt(): ?DateTimeImmutable
-    {
-        return $this->deleted_at;
-    }
-
-    public function setUser(User $user): void
-    {
-        $this->user = $user;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function getPublishedAt(): ?DateTimeImmutable
-    {
-        return $this->published_at;
-    }
-
-    public function setPublishedAt(?DateTimeImmutable $published_at): void
-    {
-        $this->published_at = $published_at;
+        return $this->author;
     }
 
     /**
@@ -198,9 +141,35 @@ class Post
         return $this->comments->toArray();
     }
 
-    public function addComment(Comment $post): void
+    public function createComment(string $comment, Commentator $commentator): Comment
     {
-        $this->comments->add($post);
+        return new Comment($comment, $this, $commentator);
+    }
+
+    /** Getters Setters */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function resetSlug(): void
+    {
+        $this->slug = Random::string(128);
     }
 
     /**
@@ -225,4 +194,40 @@ class Post
     {
         return $this->getId() === null;
     }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): void
+    {
+        $this->public = $public;
+    }
+
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function getUpdatedAt(): DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function getPublishedAt(): ?DateTimeImmutable
+    {
+        return $this->published_at;
+    }
+
+    public function setPublishedAt(?DateTimeImmutable $published_at): void
+    {
+        $this->published_at = $published_at;
+    }
+
+    public function getDeletedAt(): ?DateTimeImmutable
+    {
+        return $this->deleted_at;
+    }
+
 }

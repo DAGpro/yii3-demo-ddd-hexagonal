@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\Blog\Tag;
 
-use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
-use App\Core\Component\Blog\Infrastructure\Persistence\Tag\TagRepository;
-use Psr\Http\Message\ResponseFactoryInterface;
+use App\Core\Component\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
+use App\Core\Component\Blog\Application\Service\QueryService\TagQueryServiceInterface;
+use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Router\CurrentRoute;
@@ -14,32 +14,38 @@ use Yiisoft\Yii\View\ViewRenderer;
 
 final class TagController
 {
-    private const POSTS_PER_PAGE = 10;
-    private ViewRenderer $viewRenderer;
+    private const POSTS_PER_PAGE = 5;
 
-    public function __construct(ViewRenderer $viewRenderer)
-    {
-        $this->viewRenderer = $viewRenderer->withControllerName('component/blog/tag');
+    private ViewRenderer $view;
+    private WebControllerService $webService;
+
+    public function __construct(
+        ViewRenderer $viewRenderer,
+        WebControllerService $webControllerService
+    ) {
+        $this->view = $viewRenderer->withControllerName('component/blog/tag');
+        $this->webService = $webControllerService;
     }
 
-    public function index(CurrentRoute $currentRoute, TagRepository $tagRepository, PostRepository $postRepository, ResponseFactoryInterface $responseFactory): Response
-    {
-        $label = $currentRoute->getArgument('label');
-        $pageNum = (int) $currentRoute->getArgument('page', '1');
-        $item = $tagRepository->findByLabel($label);
+    public function index(
+        CurrentRoute $currentRoute,
+        TagQueryServiceInterface $tagQueryService,
+        ReadPostQueryServiceInterface $postQueryService
+    ): Response {
+        $label = $currentRoute->getArgument('label', '');
+        $pageNum = (int)$currentRoute->getArgument('page', '1');
 
-        if ($item === null) {
-            return $responseFactory->createResponse(404);
+        if (($tag = $tagQueryService->findByLabel($label)) === null) {
+            return $this->webService->notFound();
         }
-        // preloading of posts
-        $paginator = (new OffsetPaginator($postRepository->findByTag($item->getId())))
+
+        $paginator = (new OffsetPaginator($postQueryService->findByTag($tag)))
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 
-        $data = [
-            'item' => $item,
+        return $this->view->render('index', [
+            'item' => $tag,
             'paginator' => $paginator,
-        ];
-        return $this->viewRenderer->render('index', $data);
+        ]);
     }
 }

@@ -5,23 +5,26 @@ declare(strict_types=1);
 namespace App\Core\Component\Blog\Infrastructure\Persistence\Tag;
 
 use App\Core\Component\Blog\Domain\Post;
-use App\Core\Component\Blog\Domain\PostTag;
+use App\Core\Component\Blog\Domain\Port\TagRepositoryInterface;
 use App\Core\Component\Blog\Domain\Tag;
-use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostTag;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
+use Cycle\ORM\Transaction;
+use Cycle\ORM\TransactionInterface;
+use Spiral\Database\Query\SelectQuery;
 use Yiisoft\Data\Reader\DataReaderInterface;
-use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class TagRepository extends Repository
+final class TagRepository extends Repository implements TagRepositoryInterface
 {
+    private TransactionInterface $transaction;
     private ORMInterface $orm;
 
     public function __construct(Select $select, ORMInterface $orm)
     {
         $this->orm = $orm;
+        $this->transaction = new Transaction($orm);
         parent::__construct($select);
     }
 
@@ -34,8 +37,15 @@ final class TagRepository extends Repository
     public function findByLabel(string $label): ?Tag
     {
         return $this->select()
-                    ->where(['label' => $label])
-                    ->fetchOne();
+            ->where(['label' => $label])
+            ->fetchOne();
+    }
+
+    public function getTag(int $tagId): ?Tag
+    {
+        return $this->select()
+            ->where(['id' => $tagId])
+            ->fetchOne();
     }
 
     /**
@@ -43,7 +53,7 @@ final class TagRepository extends Repository
      *
      * @return DataReaderInterface Collection of Array('label' => 'Tag Label', 'count' => '8')
      */
-    public function getTagMentions(int $limit = 0): DataReaderInterface
+    public function getTagMentions(int $limit = 0): SelectQuery
     {
         /** @var Repository $postTagRepo */
         $postTagRepo = $this->orm->getRepository(PostTag::class);
@@ -131,7 +141,22 @@ final class TagRepository extends Repository
             ->buildQuery()
             ->columns(['label', 'count(*) count']);
 
-        $sort = Sort::only(['count', 'label'])->withOrder(['count' => 'desc']);
-        return (new EntityReader($case3))->withSort($sort)->withLimit($limit);
+        return $case3;
+    }
+
+    public function save(array $tags): void
+    {
+        foreach ($tags as $entity) {
+            $this->transaction->persist($entity);
+        }
+        $this->transaction->run();
+    }
+
+    public function delete(array $tags): void
+    {
+        foreach ($tags as $entity) {
+            $this->transaction->delete($entity);
+        }
+        $this->transaction->run();
     }
 }

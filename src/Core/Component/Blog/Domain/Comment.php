@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Component\Blog\Domain;
 
-use \App\Core\Component\IdentityAccess\User\Domain\User;
+use App\Core\Component\Blog\Domain\User\Commentator;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
+use Cycle\Annotated\Annotation\Relation\Embedded;
 use Cycle\Annotated\Annotation\Table;
 use Cycle\Annotated\Annotation\Table\Index;
 use DateTimeImmutable;
@@ -16,7 +17,6 @@ use DateTimeImmutable;
  * @Entity(
  *     repository="App\Core\Component\Blog\Infrastructure\Persistence\Comment\CommentRepository",
  *     mapper="App\Core\Component\Blog\Infrastructure\Persistence\Comment\CommentMapper",
- *     constrain="App\Core\Component\Blog\Infrastructure\Persistence\Comment\Scope\PublicScope"
  * )
  * @Table(
  *     indexes={
@@ -41,6 +41,17 @@ class Comment
      */
     private string $content;
 
+    /** @Embedded(target = "App\Core\Component\Blog\Domain\User\Commentator") */
+    private Commentator $commentator;
+
+    /**
+     * @BelongsTo(target="App\Core\Component\Blog\Domain\Post",  nullable=false)
+     *
+     * @var \Cycle\ORM\Promise\Reference|Post
+     */
+    private $post = null;
+    private int $post_id;
+
     /**
      * @Column(type="datetime")
      */
@@ -61,27 +72,31 @@ class Comment
      */
     private ?DateTimeImmutable $deleted_at = null;
 
-    /**
-     * @BelongsTo(target="App\Core\Component\IdentityAccess\User\Domain\User", nullable=false, load="eager")
-     *
-     * @var \Cycle\ORM\Promise\Reference|User
-     */
-    private $user = null;
-    private ?int $user_id = null;
-
-    /**
-     * @BelongsTo(target="App\Core\Component\Blog\Domain\Post", nullable=false)
-     *
-     * @var \Cycle\ORM\Promise\Reference|Post
-     */
-    private $post = null;
-    private ?int $post_id = null;
-
-    public function __construct(string $content)
-    {
+    public function __construct(
+        string $content,
+        Post $post,
+        Commentator $commentator
+    ) {
         $this->content = $content;
+        $this->commentator = $commentator;
+        $this->post_id = $post->getId();
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
+    }
+
+    public function isCommentator($commentator): bool
+    {
+        return $this->commentator->isEqual($commentator);
+    }
+
+    public function changeCommentator(Commentator $commentator): void
+    {
+        $this->commentator = $commentator;
+    }
+
+    public function getCommentator(): Commentator
+    {
+        return $this->commentator;
     }
 
     public function getId(): ?int
@@ -109,31 +124,6 @@ class Comment
         $this->public = $public;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->created_at;
-    }
-
-    public function getUpdatedAt(): DateTimeImmutable
-    {
-        return $this->updated_at;
-    }
-
-    public function getDeletedAt(): ?DateTimeImmutable
-    {
-        return $this->deleted_at;
-    }
-
-    public function setUser(User $user): void
-    {
-        $this->user = $user;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
     public function setPost(Post $post): void
     {
         $this->post = $post;
@@ -142,6 +132,16 @@ class Comment
     public function getPost(): ?Post
     {
         return $this->post;
+    }
+
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function getUpdatedAt(): DateTimeImmutable
+    {
+        return $this->updated_at;
     }
 
     public function getPublishedAt(): ?DateTimeImmutable
@@ -153,4 +153,10 @@ class Comment
     {
         $this->published_at = $published_at;
     }
+
+    public function getDeletedAt(): ?DateTimeImmutable
+    {
+        return $this->deleted_at;
+    }
+
 }

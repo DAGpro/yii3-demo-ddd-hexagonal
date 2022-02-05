@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 /**
  * @var \Yiisoft\Data\Reader\DataReaderInterface|string[][] $archive
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  * @var \Yiisoft\View\WebView $this
  */
 
@@ -60,7 +60,7 @@ $this->setTitle($translator->translate('layout.archive'));
             }
             echo Html::closeTag('div'), $sectionEnd;
         } else {
-            echo $sectionBegin, $translator->translate('layout.no-records'), $sectionEnd;
+            echo $sectionBegin, $translator->translate('layout.no records'), $sectionEnd;
         }
         ?>
     </div>

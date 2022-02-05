@@ -38,7 +38,12 @@ class Tag
     private DateTimeImmutable $created_at;
 
     /**
-     * @ManyToMany(target="App\Core\Component\Blog\Domain\Post", though="PostTag", fkAction="CASCADE", indexCreate=false)
+     * @ManyToMany(
+     *     target="App\Core\Component\Blog\Domain\Post",
+     *     though="App\Core\Component\Blog\Infrastructure\Persistence\Post\PostTag",
+     *     fkAction="CASCADE",
+     *     indexCreate=false
+     * )
      *
      * @var PivotedCollection|Post[]
      */
@@ -51,7 +56,7 @@ class Tag
         $this->posts = new PivotedCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -66,11 +71,6 @@ class Tag
         $this->label = $label;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->created_at;
-    }
-
     /**
      * @return Post[]
      */
@@ -83,4 +83,10 @@ class Tag
     {
         $this->posts->add($post);
     }
+
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
 }

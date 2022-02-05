@@ -13,7 +13,7 @@ use Yiisoft\Html\Html;
 
 ?>
 <h4 class="text-muted mb-3">
-    Popular tags
+    <?=$translator->translate('blog.popular.tags')?>
 </h4>
 <ul class="list-group mb-3">
     <?php

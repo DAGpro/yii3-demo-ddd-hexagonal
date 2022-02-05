@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Presentation\Backend\Web\Component\Blog\Form;
+
+use App\Core\Component\Blog\Domain\Comment;
+use Yiisoft\Form\FormModel;
+use Yiisoft\Validator\Rule\Boolean;
+use Yiisoft\Validator\Rule\Number;
+use Yiisoft\Validator\Rule\Required;
+
+final class CommentForm extends FormModel
+{
+    private string $comment_id;
+    private string $content;
+    private bool $public;
+
+    public function __construct(?Comment $comment)
+    {
+        $this->comment_id = $comment ? (string)$comment->getId() : '';
+        $this->content = $comment ? $comment->getContent() : '';
+        $this->public = $comment && $comment->isPublic();
+        parent::__construct();
+    }
+
+    public function getCommentId(): string
+    {
+        return $this->comment_id;
+    }
+
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    public function getPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function getAttributeLabels(): array
+    {
+        return [
+            'comment_id' => 'Comment Id',
+            'content' => 'Content',
+            'public' => 'Publish?'
+        ];
+    }
+
+    public function getFormName(): string
+    {
+        return '';
+    }
+
+    public function getRules(): array
+    {
+        return [
+            'content' => [
+                Required::rule(),
+            ],
+            'comment_id' => [
+                Required::rule(),
+                Number::rule(),
+            ],
+            'public' => [
+                Boolean::rule(),
+            ]
+        ];
+    }
+
+}

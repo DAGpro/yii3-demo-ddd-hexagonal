@@ -16,7 +16,7 @@ use Cycle\ORM\Mapper\Mapper;
 final class PostMapper extends Mapper
 {
     /**
-     * @param \App\Core\Component\Blog\Domain\Post $entity
+     * @param Post $entity
      */
     public function queueUpdate($entity, Node $node, State $state): ContextCarrierInterface
     {
@@ -34,7 +34,7 @@ final class PostMapper extends Mapper
     }
 
     /**
-     * @param \App\Core\Component\Blog\Domain\Post $entity
+     * @param Post $entity
      */
     public function queueDelete($entity, Node $node, State $state): CommandInterface
     {
@@ -68,11 +68,15 @@ final class PostMapper extends Mapper
 
     private function touch(Post $entity, Node $node, State $state, ContextCarrierInterface $command)
     {
-        $now = new \DateTimeImmutable();
-
         if ($entity->isPublic() && $entity->getPublishedAt() === null) {
+            $now = new \DateTimeImmutable();
             $state->register('published_at', $now, true);
             $command->register('published_at', $now, true);
+        }
+
+        if (!$entity->isPublic() && $entity->getPublishedAt() !== null) {
+            $state->register('published_at', null, true);
+            $command->register('published_at', null, true);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Component\Blog\Domain;
+namespace App\Core\Component\Blog\Infrastructure\Persistence\Post;
 
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
