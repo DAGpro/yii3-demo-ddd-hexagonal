@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Presentation\Infrastructure\Web\Asset\AppAsset;
+use App\Presentation\Infrastructure\Web\Widget\FlashMessage;
 use App\Presentation\Infrastructure\Web\Widget\PerformanceMetrics;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Html\Html;
@@ -140,6 +141,7 @@ $this->beginPage();
         </header>
 
         <main class="container py-3">
+            <?= FlashMessage::widget()?>
             <?= $content ?>
         </main>
 

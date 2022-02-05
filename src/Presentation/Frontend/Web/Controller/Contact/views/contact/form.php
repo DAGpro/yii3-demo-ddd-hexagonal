@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Infrastructure\Web\Widget\FlashMessage;
 use Yiisoft\Form\Widget\Field;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Form\Widget\ResetButton;
@@ -21,8 +20,6 @@ use Yiisoft\View\WebView;
 
 $this->setTitle($translator->translate('menu.contact'));
 ?>
-
-<?= FlashMessage::widget() ?>
 
 <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
