@@ -23,6 +23,7 @@ use Yiisoft\Yii\Bootstrap5\NavBar;
  * @var \App\Core\Component\IdentityAccess\User\Domain\User|null $user
  * @var string $csrf
  * @var string $brandLabel
+ * @var bool $canAddPost
  */
 
 $assetManager->register(AppAsset::class);
@@ -120,22 +121,23 @@ $this->beginPage();
                             'url' => $url->generate('auth/signup'),
                             'visible' => $isGuest,
                         ],
-                        $isGuest ? '' : Form::widget()
-                            ->action($urlGenerator->generate('auth/logout'))
-                            ->csrf($csrf)
-                            ->begin()
-                        . Field::widget()
-                            ->containerClass('mb-1')
-                            ->submitButton(
-                                [
-                                    'class' => 'btn btn-primary',
-                                    'value' => $translator->translate(
-                                        'menu.logout',
-                                        ['login' => Html::encode($user->getLogin())],
-                                    ),
-                                ],
-                            )
-                        . Form::end()
+                        $user === null
+                            ? ''
+                            :
+                            ['label' => Html::encode($user->getLogin()),
+                                'url' => '',
+                                'items' =>
+                                    [
+                                        $canAddPost ? ['label' => 'Posts', 'url' => $url->generate('blog/author/posts', ['author' => $user->getLogin()])] : '',
+                                        ['label' => 'Cabinet', 'url' => $url->generate('user/cabinet')],
+                                        Form::widget()
+                                            ->action($url->generate('auth/logout'))
+                                            ->csrf($csrf)
+                                            ->begin()
+                                        . Html::submitButton($translator->translate('menu.logout', ['login' => Html::encode($user->getLogin())]), ['class' => 'dropdown-item'])
+                                        . Form::end(),
+                                    ],
+                            ],
                     ],
                 ) ?>
             <?= NavBar::end() ?>
