@@ -5,9 +5,18 @@ declare(strict_types=1);
 namespace App\Presentation\Backend\Console\Command\Fixture;
 
 use App\Core\Component\Blog\Domain\Comment;
+use App\Core\Component\Blog\Domain\Port\PostRepositoryInterface;
 use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Domain\Tag;
+use App\Core\Component\Blog\Domain\User\Author;
+use App\Core\Component\Blog\Domain\User\Commentator;
+use App\Core\Component\Blog\Infrastructure\Persistence\Tag\TagRepository;
+use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
+use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
+use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\Core\Component\IdentityAccess\User\Domain\User;
+use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
+use App\Infrastructure\Authentication\SignupUserService;
 use Faker\Factory;
 use Faker\Generator;
 use Symfony\Component\Console\Command\Command;
@@ -17,7 +26,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Cycle\Command\CycleDependencyProxy;
-use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 
 final class AddCommand extends Command
 {
@@ -26,15 +34,27 @@ final class AddCommand extends Command
     private CycleDependencyProxy $promise;
     private Generator $faker;
     /** @var User[] */
-    private array $users = [];
-    /** @var \App\Core\Component\Blog\Domain\Tag[] */
+    private iterable $users = [];
+    /** @var Tag[] */
     private array $tags = [];
+    /** @var Author[] */
+    private iterable $authors;
+    private AssignAccessServiceInterface $assignAccessService;
+    private AccessRightsServiceInterface $accessRightsService;
 
     private const DEFAULT_COUNT = 10;
+    private SignupUserService $signupUserService;
 
-    public function __construct(CycleDependencyProxy $promise)
-    {
+    public function __construct(
+        CycleDependencyProxy $promise,
+        AccessRightsServiceInterface $accessRightsService,
+        AssignAccessServiceInterface $assignAccessService,
+        SignupUserService $signupUserService,
+    ) {
         $this->promise = $promise;
+        $this->assignAccessService = $assignAccessService;
+        $this->accessRightsService = $accessRightsService;
+        $this->signupUserService = $signupUserService;
         parent::__construct();
     }
 
@@ -59,11 +79,16 @@ final class AddCommand extends Command
         $this->faker = Factory::create();
 
         try {
+            if (!$this->accessRightsService->existRole('author')) {
+                $io->error('Add access rights before creating fixtures!');
+                return ExitCode::OK;
+            }
+
             $this->addUsers($count);
+            $this->addAccessRightsToUsers((int)round($count / 3));
             $this->addTags($count);
             $this->addPosts($count);
 
-            $this->saveEntities();
         } catch (\Throwable $t) {
             $io->error($t->getMessage());
             return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
@@ -72,23 +97,35 @@ final class AddCommand extends Command
         return ExitCode::OK;
     }
 
-    private function saveEntities(): void
-    {
-        (new EntityWriter($this->promise->getORM()))->write($this->users);
-    }
-
     private function addUsers(int $count): void
     {
         for ($i = 0; $i < $count; ++$i) {
             $login = $this->faker->firstName . rand(0, 9999);
-            $user = new User($login, $login);
-            $this->users[] = $user;
+
+            $this->signupUserService->signup($login, $login);
+        }
+        /**
+         * @var $userRepository UserRepository
+         */
+        $userRepository = $this->promise->getORM()->getRepository(User::class);
+        $this->users = $userRepository->select()->orderBy('id', 'DESC')->limit($count)->fetchAll();
+    }
+
+    public function addAccessRightsToUsers(int $countUsers): void
+    {
+        $usersKeys = array_rand($this->users, $countUsers);
+
+        /** @var User $user */
+        foreach ($usersKeys as $key) {
+            $user = $this->users[$key];
+            $this->assignAccessService->assignRole(new RoleDTO('author'), (string)$user->getId());
+            $this->authors[] = new Author($user->getId(), $user->getLogin());
         }
     }
 
     private function addTags(int $count): void
     {
-        /** @var \App\Core\Component\Blog\Infrastructure\Persistence\Tag\TagRepository $tagRepository */
+        /** @var TagRepository $tagRepository */
         $tagRepository = $this->promise->getORM()->getRepository(Tag::class);
         $this->tags = [];
         $tagWords = [];
@@ -110,14 +147,21 @@ final class AddCommand extends Command
 
     private function addPosts(int $count): void
     {
-        if (count($this->users) === 0) {
+        if (count($this->authors) === 0) {
             throw new \Exception('No users');
         }
+        $posts = [];
         for ($i = 0; $i < $count; ++$i) {
-            /** @var User $postUser */
-            $postUser = $this->users[array_rand($this->users)];
-            $post = new Post($this->faker->text(64), $this->faker->realText(rand(1000, 4000)));
-            $postUser->addPost($post);
+
+            /** @var Author $postAuthor */
+            $postAuthor = $this->authors[array_rand($this->authors)];
+
+            $posts[] = $post = new Post(
+                $this->faker->text(64),
+                $this->faker->realText(random_int(1000, 4000)),
+                clone $postAuthor
+            );
+
             $public = rand(0, 2) > 0;
             $post->setPublic($public);
             if ($public) {
@@ -131,19 +175,38 @@ final class AddCommand extends Command
                 // todo: uncomment when issue is resolved https://github.com/cycle/orm/issues/70
                 // $tag->addPost($post);
             }
-            // add comments
-            $commentsCount = rand(0, $count);
-            for ($j = 0; $j <= $commentsCount; ++$j) {
-                $comment = new Comment($this->faker->realText(rand(100, 500)));
+        }
+
+        /** @var PostRepositoryInterface $postRepository */
+        $postRepository = $this->promise->getORM()->getRepository(Post::class);
+        $postRepository->save($posts);
+        $postsSaveds = $postRepository
+            ->select()
+            ->limit($count)
+            ->orderBy('id', 'DESC')
+            ->fetchAll();
+
+        // add comments
+
+        $comments = [];
+        $commentCount = (int)round($count/2.5);
+        foreach ($postsSaveds as $post) {
+            for ($j = 0; $j <= $commentCount; ++$j) {
+
+                $commentUser = $this->users[array_rand($this->users)];
+                $commentator = new Commentator($commentUser->getId(), $commentUser->getLogin());
+
+                $comment = $post->createComment($this->faker->realText(random_int(100, 500)), clone $commentator);
                 $commentPublic = rand(0, 3) > 0;
                 $comment->setPublic($commentPublic);
                 if ($commentPublic) {
                     $comment->setPublishedAt(new \DateTimeImmutable(date('r', rand(time(), strtotime('-1 years')))));
                 }
-                $commentUser = $this->users[array_rand($this->users)];
-                $commentUser->addComment($comment);
-                $comment->setPost($post);
+
+                $comments[] = $comment;
             }
         }
+
+        $this->promise->getORM()->getRepository(Comment::class)->save($comments);
     }
 }
