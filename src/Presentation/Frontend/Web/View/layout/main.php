@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Presentation\Infrastructure\Web\Asset\AppAsset;
 use App\Presentation\Infrastructure\Web\Widget\PerformanceMetrics;
-use Yiisoft\Form\Widget\Field;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Html\Html;
 use Yiisoft\Strings\StringHelper;
@@ -12,7 +11,7 @@ use Yiisoft\Yii\Bootstrap5\Nav;
 use Yiisoft\Yii\Bootstrap5\NavBar;
 
 /**
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Router\CurrentRoute $currentRoute
  * @var \Yiisoft\View\WebView $this
  * @var \Yiisoft\Assets\AssetManager $assetManager
@@ -53,7 +52,7 @@ $this->beginPage();
 
             <?= NavBar::widget()
                 ->brandText($brandLabel)
-                ->brandUrl($urlGenerator->generate('site/index'))
+                ->brandUrl($url->generate('site/index'))
                 ->options(['class' => 'navbar navbar-light bg-light navbar-expand-sm text-white'])
                 ->begin() ?>
 
@@ -64,7 +63,7 @@ $this->beginPage();
                     [
                         [
                             'label' => $translator->translate('menu.blog'),
-                            'url' => $urlGenerator->generate('blog/index'),
+                            'url' => $url->generate('blog/index'),
                             'active' => StringHelper::startsWith(
                                 $currentRouteName,
                                 'blog/'
@@ -72,20 +71,20 @@ $this->beginPage();
                         ],
                         [
                             'label' => $translator->translate('menu.comments-feed'),
-                            'url' => $urlGenerator->generate('blog/comment/index'),
+                            'url' => $url->generate('blog/comment/index'),
                         ],
                         [
                             'label' => $translator->translate('menu.users'),
-                            'url' => $urlGenerator->generate('user/index'),
+                            'url' => $url->generate('user/index'),
                             'active' => StringHelper::startsWith($currentRouteName, 'user/'),
                         ],
                         [
                             'label' => $translator->translate('menu.contact'),
-                            'url' => $urlGenerator->generate('site/contact'),
+                            'url' => $url->generate('site/contact'),
                         ],
                         [
                             'label' => $translator->translate('menu.swagger'),
-                            'url' => $urlGenerator->generate('swagger/index'),
+                            'url' => $url->generate('swagger/index'),
                         ],
                     ]
                 ) ?>
@@ -101,22 +100,22 @@ $this->beginPage();
                             'items' => [
                                 [
                                     'label' => $translator->translate('layout.language.english'),
-                                    'url' => $urlGenerator->generateFromCurrent(['_language' => 'en'], 'site/index'),
+                                    'url' => $url->generateFromCurrent(['_language' => 'en'], 'site/index'),
                                 ],
                                 [
                                     'label' => $translator->translate('layout.language.russian'),
-                                    'url' => $urlGenerator->generateFromCurrent(['_language' => 'ru'], 'site/index'),
+                                    'url' => $url->generateFromCurrent(['_language' => 'ru'], 'site/index'),
                                 ],
                             ],
                         ],
                         [
                             'label' => $translator->translate('menu.login'),
-                            'url' => $urlGenerator->generate('auth/login'),
+                            'url' => $url->generate('auth/login'),
                             'visible' => $isGuest,
                         ],
                         [
                             'label' => $translator->translate('menu.signup'),
-                            'url' => $urlGenerator->generate('auth/signup'),
+                            'url' => $url->generate('auth/signup'),
                             'visible' => $isGuest,
                         ],
                         $isGuest ? '' : Form::widget()

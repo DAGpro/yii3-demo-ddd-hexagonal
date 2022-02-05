@@ -15,17 +15,17 @@ echo Carousel::widget()
     ->items([
         [
             'content' => '<div class="d-block w-100 bg-info" style="height: 200px"></div>',
-            'caption' => $translator->translate('home.caption.slide1'),
+            'caption' => $translator->translate('view-site.caption.slide1'),
             'captionOptions' => ['class' => ['d-none', 'd-md-block']],
         ],
         [
             'content' => '<div class="d-block w-100 bg-secondary" style="height: 200px"></div>',
-            'caption' => $translator->translate('home.caption.slide2'),
+            'caption' => $translator->translate('view-site.caption.slide2'),
             'captionOptions' => ['class' => ['d-none', 'd-md-block']],
         ],
         [
             'content' => '<div class="d-block w-100 bg-dark" style="height: 200px"></div>',
-            'caption' => $translator->translate('home.caption.slide3'),
+            'caption' => $translator->translate('view-site.caption.slide3'),
             'captionOptions' => ['class' => ['d-none', 'd-md-block']],
         ],
     ]);

@@ -17,10 +17,10 @@ use App\Presentation\Frontend\Web\View\Widget\PostCard;
 use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 
-$this->setTitle($translator->translate('layout.blog'));
+$this->setTitle($translator->translate('view-blog.blog'));
 $pagination = OffsetPagination::widget()
                               ->paginator($paginator)
-                              ->urlGenerator(fn ($page) => $urlGenerator->generate('blog/index', ['page' => $page]));
+                              ->urlGenerator(fn ($page) => $url->generate('blog/index', ['page' => $page]));
 ?>
 <h1><?= Html::encode($this->getTitle())?></h1>
 <div class="row">
@@ -29,7 +29,7 @@ $pagination = OffsetPagination::widget()
         $pageSize = $paginator->getCurrentPageSize();
         if ($pageSize > 0) {
             echo Html::p(
-                $translator->translate('layout.pagination-summary', [
+                $translator->translate('pagination-summary', [
                     'pageSize' => $pageSize,
                     'total' => $paginator->getTotalItems(),
                 ]),
@@ -37,7 +37,7 @@ $pagination = OffsetPagination::widget()
             );
         } else {
             echo Html::p(
-                $translator->translate('layout.no-records')
+                $translator->translate('views.no-records')
         );
         }
         /** @var Post $item */

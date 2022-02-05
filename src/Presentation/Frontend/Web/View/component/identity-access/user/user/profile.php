@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var \App\Core\Component\IdentityAccess\User\Domain\User $item
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  */
 

@@ -41,9 +41,9 @@ final class LoginForm extends FormModel
     public function getAttributeLabels(): array
     {
         return [
-            'login' => $this->translator->translate('layout.login'),
-            'password' => $this->translator->translate('layout.password'),
-            'rememberMe' => $this->translator->translate('layout.remember'),
+            'login' => $this->translator->translate('identityAccess.form.login'),
+            'password' => $this->translator->translate('identityAccess.form.password'),
+            'rememberMe' => $this->translator->translate('identityAccess.form.remember'),
         ];
     }
 

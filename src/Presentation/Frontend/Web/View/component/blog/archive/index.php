@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 use Yiisoft\Html\Html;
 
-$this->setTitle($translator->translate('layout.archive'));
+$this->setTitle($translator->translate('blog.archive'));
 
 ?>
 <h1><?= Html::encode($this->getTitle()) ?></h1>
@@ -38,7 +38,7 @@ $this->setTitle($translator->translate('layout.archive'));
                     // print Year
                     echo $sectionBegin, Html::a(
                         $year,
-                        $urlGenerator->generate('blog/archive/year', ['year' => $year]),
+                        $url->generate('blog/archive/year', ['year' => $year]),
                         ['class' => 'h5']
                     ), Html::openTag(
                         'div',
@@ -49,7 +49,7 @@ $this->setTitle($translator->translate('layout.archive'));
                 // Print month name
                 echo Html::a(
                     Date('F', mktime(0, 0, 0, (int)$month, 1, (int)$year)),
-                    $urlGenerator->generate('blog/archive/month', [
+                    $url->generate('blog/archive/month', [
                         'year' => $year,
                         'month' => $month,
                     ]),

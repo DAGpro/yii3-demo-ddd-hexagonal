@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @var \Yiisoft\Data\Reader\DataReaderInterface|string[][] $tags
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  */
 
@@ -31,7 +31,7 @@ use Yiisoft\Html\Html;
             echo Html::openTag('div', ['class' => 'd-flex justify-content-between align-items-center']);
             echo Html::a(
                 Html::encode($label),
-                $urlGenerator->generate('blog/tag', ['label' => $label]),
+                $url->generate('blog/tag', ['label' => $label]),
                 ['class' => 'text-muted overflow-hidden']
             ), ' ', Html::span($count, ['class' => 'badge rounded-pill bg-secondary']);
             echo Html::closeTag('div');

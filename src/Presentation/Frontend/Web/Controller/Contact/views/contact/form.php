@@ -57,12 +57,12 @@ $this->setTitle($translator->translate('menu.contact'));
                         <?= ResetButton::widget()
                             ->attributes(['class' => 'btn btn-danger btn-lg'])
                             ->id('reset-button')
-                            ->value($translator->translate('layout.reset'))
+                            ->value($translator->translate('button.reset'))
                         ?>
                         <?= SubmitButton::widget()
                             ->attributes(['class' => 'btn btn-primary btn-lg'])
                             ->id('contact-button')
-                            ->value($translator->translate('layout.submit'))
+                            ->value($translator->translate('button.submit'))
                         ?>
                     </div>
                     <?= Form::end() ?>

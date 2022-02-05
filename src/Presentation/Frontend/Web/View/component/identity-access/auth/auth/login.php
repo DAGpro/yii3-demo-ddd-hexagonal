@@ -10,12 +10,12 @@ use Yiisoft\Html\Html;
 /**
  * @var \Yiisoft\View\WebView $this
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var string $csrf
  * @var FormModelInterface $formModel
  */
 
-$this->setTitle($translator->translate('layout.login'));
+$this->setTitle($translator->translate('identityAccess.form.login'));
 
 $error = $error ?? null;
 ?>
@@ -29,7 +29,7 @@ $error = $error ?? null;
                 </div>
                 <div class="card-body p-5 text-center">
                     <?= Form::widget()
-                        ->action($urlGenerator->generate('auth/login'))
+                        ->action($url->generate('auth/login'))
                         ->attributes(['enctype' => 'multipart/form-data'])
                         ->csrf($csrf)
                         ->id('loginForm')
@@ -56,7 +56,7 @@ $error = $error ?? null;
                             [
                                 'class' => 'btn btn-primary btn-lg mt-3',
                                 'id' => 'login-button',
-                                'value' => $translator->translate('layout.submit'),
+                                'value' => $translator->translate('button.submit'),
                             ]
                         ) ?>
                     <?= Form::end() ?>

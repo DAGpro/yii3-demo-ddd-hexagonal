@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @var \Yiisoft\Data\Paginator\OffsetPaginator $paginator;
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  */
 
@@ -16,23 +16,23 @@ $this->setTitle($translator->translate('menu.users'));
 
 $pagination = OffsetPagination::widget()
                               ->paginator($paginator)
-                              ->urlGenerator(fn ($page) => $urlGenerator->generate('user/index', ['page' => $page]));
+                              ->urlGenerator(fn ($page) => $url->generate('user/index', ['page' => $page]));
 
 echo Html::tag('h1', $this->getTitle());
 echo Html::p('Total users: ' . $paginator->getTotalItems(), ['class' => 'text-muted']);
 echo Html::a(
     'API v1 Info',
-    $urlGenerator->generate('api/info/v1'),
+    $url->generate('api/info/v1'),
     ['class' => 'btn btn-link']
 ), '<br>';
 echo Html::a(
     'API v2 Info',
-    $urlGenerator->generate('api/info/v2'),
+    $url->generate('api/info/v2'),
     ['class' => 'btn btn-link']
 ), '<br>';
 echo Html::a(
     'API Users List Data',
-    $urlGenerator->generate('api/user/index'),
+    $url->generate('api/user/index'),
     ['class' => 'btn btn-link']
 ), '<br>';
 ?>
@@ -51,12 +51,12 @@ foreach ($paginator->read() as $item) {
     echo Html::openTag('td');
     echo Html::a(
         Html::encode($item->getLogin()),
-        $urlGenerator->generate('user/profile', ['login' => $item->getLogin()]),
+        $url->generate('user/profile', ['login' => $item->getLogin()]),
         ['class' => 'btn btn-link']
     );
     echo Html::a(
         Html::encode('API User Data'),
-        $urlGenerator->generate('api/user/profile', ['login' => $item->getLogin()]),
+        $url->generate('api/user/profile', ['login' => $item->getLogin()]),
         ['class' => 'btn btn-link']
     );
     echo Html::closeTag('td');

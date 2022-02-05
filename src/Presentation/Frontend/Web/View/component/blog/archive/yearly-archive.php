@@ -6,27 +6,27 @@ declare(strict_types=1);
  * @var int $year
  * @var \App\Core\Component\Blog\Domain\Post[]|\Yiisoft\Data\Reader\DataReaderInterface $items
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  */
 
 use App\Core\Component\Blog\Domain\Post;
 use Yiisoft\Html\Html;
 
-$this->setTitle($translator->translate('layout.archive.for-year', ['year' => $year]));
+$this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year]));
 
 ?>
-<h1><?= $translator->translate('layout.archive.for-year', ['year' => '<small class="text-muted">' . $year . '</small>']) ?></h1>
+<h1><?= $translator->translate('blog.archive.for-year', ['year' => '<small class="text-muted">' . $year . '</small>']) ?></h1>
 <div class="row">
     <div class="col-sm-8 col-md-8 col-lg-9">
         <?php
         if (count($items) > 0) {
             echo Html::p(
-                $translator->translate('layout.total.posts', ['count' => count($items)]),
+                $translator->translate('blog.total.posts', ['count' => count($items)]),
                 ['class' => 'text-muted']
             );
         } else {
-            echo Html::p($translator->translate('layout.no-records'));
+            echo Html::p($translator->translate('views.no-records'));
         }
         $currentMonth = null;
         $monthName = '';
@@ -42,7 +42,7 @@ $this->setTitle($translator->translate('layout.archive.for-year', ['year' => $ye
             echo Html::openTag('div');
             echo Html::a(
                 Html::encode($item->getTitle()),
-                $urlGenerator->generate('blog/post', ['slug' => $item->getSlug()])
+                $url->generate('blog/post', ['slug' => $item->getSlug()])
             );
             echo ' by ';
             $login = $item->getAuthor()->getName();

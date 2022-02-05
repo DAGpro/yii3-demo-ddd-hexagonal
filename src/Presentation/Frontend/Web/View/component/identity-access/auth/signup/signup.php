@@ -10,7 +10,7 @@ use Yiisoft\Html\Html;
 /**
  * @var \Yiisoft\View\WebView $this
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var string $csrf
  * @var FormModelInterface $formModel
  */
@@ -27,7 +27,7 @@ $this->setTitle($translator->translate('Signup'));
                 </div>
                 <div class="card-body p-5 text-center">
                     <?= Form::widget()
-                        ->action($urlGenerator->generate('auth/signup'))
+                        ->action($url->generate('auth/signup'))
                         ->attributes(['enctype' => 'multipart/form-data'])
                         ->csrf($csrf)
                         ->id('signupForm')
@@ -40,7 +40,7 @@ $this->setTitle($translator->translate('Signup'));
                             [
                                 'class' => 'btn btn-primary btn-lg mt-3',
                                 'id' => 'register-button',
-                                'value' => $translator->translate('layout.submit'),
+                                'value' => $translator->translate('button.submit'),
                             ]
                         ) ?>
 

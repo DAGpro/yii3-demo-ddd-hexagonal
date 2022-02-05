@@ -42,7 +42,7 @@ use Yiisoft\Html\Html;
                         [
                             'class' => 'btn btn-primary btn-lg mt-3',
                             'id' => 'register-button',
-                            'value' => $translator->translate('layout.submit'),
+                            'value' => $translator->translate('button.submit'),
                         ]
                     ) ?>
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var \App\Core\Component\Blog\Domain\Post $post
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Translator\TranslatorInterface $translator
  * @var \Yiisoft\View\WebView $this
  * @var \App\Core\Component\Blog\Domain\User\Author $author
@@ -33,13 +33,13 @@ if (!empty($errors)) {
         <?php
         echo Html::a(
             $post->getAuthor()->getName(),
-            $urlGenerator->generate('user/profile', ['login' => $post->getAuthor()->getName()]),
+            $url->generate('user/profile', ['login' => $post->getAuthor()->getName()]),
             ['class' => 'mr-3']
         );
 
         echo Html::a(
             'Edit',
-            $urlGenerator->generate('blog/author/post/edit', ['slug' => $post->getSlug()]),
+            $url->generate('blog/author/post/edit', ['slug' => $post->getSlug()]),
             ['class' => 'btn btn-outline-secondary btn-sm ms-2']
         );
         ?>
@@ -53,7 +53,7 @@ if ($post->getTags()) {
     foreach ($post->getTags() as $tag) {
         echo Html::a(
             Html::encode($tag->getLabel()),
-            $urlGenerator->generate('blog/tag', ['label' => $tag->getLabel()]),
+            $url->generate('blog/tag', ['label' => $tag->getLabel()]),
             ['class' => 'btn btn-outline-secondary btn-sm mb-1 me-2']
         );
     }

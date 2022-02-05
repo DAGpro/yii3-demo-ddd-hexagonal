@@ -5,14 +5,14 @@ declare(strict_types=1);
 /**
  * @var \Yiisoft\Data\Reader\DataReaderInterface|string[][] $archive
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  */
 
 use Yiisoft\Html\Html;
 
 ?>
-<h4 class="text-muted mb-3"><?= $translator->translate('layout.archive') ?></h4>
+<h4 class="text-muted mb-3"><?= $translator->translate('blog.archive') ?></h4>
 <ul class="list-group mb-3">
     <?php
     $currentYear = null;
@@ -39,7 +39,7 @@ use Yiisoft\Html\Html;
             // Print month name
             echo Html::a(
                 Date('F', mktime(0, 0, 0, (int)$month, 1, (int)$year)),
-                $urlGenerator->generate('blog/archive/month', [
+                $url->generate('blog/archive/month', [
                     'year' => $year,
                     'month' => $month,
                 ]),
@@ -48,10 +48,10 @@ use Yiisoft\Html\Html;
             echo Html::closeTag('div');
             $currentYear = $year;
         }
-        echo Html::a('Open archive', $urlGenerator->generate('blog/archive/index'), ['class' => 'mt-2']);
+        echo Html::a('Open archive', $url->generate('blog/archive/index'), ['class' => 'mt-2']);
         echo $blockEnd;
     } else {
-        echo $blockBegin, $translator->translate('layout.no-records'), $blockEnd;
+        echo $blockBegin, $translator->translate('views.no-records'), $blockEnd;
     }
     ?>
 </ul>
