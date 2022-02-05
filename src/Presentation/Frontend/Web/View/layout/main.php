@@ -87,6 +87,7 @@ $this->beginPage();
                             'label' => $translator->translate('menu.swagger'),
                             'url' => $url->generate('swagger/index'),
                         ],
+                        ['label' => $translator->translate('menu.backend'), 'url' => $url->generate('backend/dashboard'), ],
                     ]
                 ) ?>
 
