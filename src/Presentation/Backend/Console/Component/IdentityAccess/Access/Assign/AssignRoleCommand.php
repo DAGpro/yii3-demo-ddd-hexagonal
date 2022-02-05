@@ -71,7 +71,7 @@ class AssignRoleCommand extends Command
                 $this->accessManagementService->addRole($role);
             }
 
-            $user = $this->userQueryService->getUser($userId);
+            $user = $this->userQueryService->getUser((int)$userId);
             if ($user === null) {
                 throw new IdentityException('This user was not found!');
             }
