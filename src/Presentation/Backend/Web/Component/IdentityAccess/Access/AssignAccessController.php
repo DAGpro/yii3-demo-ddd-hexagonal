@@ -29,8 +29,8 @@ class AssignAccessController
     public function assignRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $userId = $body['user_id'] ?? null;
-        $roleName = $body['role'] ?? null;
+        $userId = !empty($body['user_id']) ? $body['user_id'] : null;
+        $roleName = !empty($body['role']) ? $body['role'] : null;
 
         if ($userId === null || $roleName === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -62,8 +62,8 @@ class AssignAccessController
     public function revokeRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $userId = $body['user_id'] ?? null;
-        $roleName = $body['role'] ?? null;
+        $userId = !empty($body['user_id']) ? $body['user_id'] : null;
+        $roleName = !empty($body['role']) ? $body['role'] : null;
 
         if ($userId === null  || $roleName === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -95,8 +95,8 @@ class AssignAccessController
     public function assignPermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $userId = $body['user_id'] ?? null;
-        $permissionName = $body['permission'] ?? null;
+        $userId = !empty($body['user_id']) ? $body['user_id'] : null;
+        $permissionName = !empty($body['permission']) ? $body['permission'] : null;
 
         if ($userId === null  || $permissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -128,8 +128,8 @@ class AssignAccessController
     public function revokePermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $userId = $body['user_id'] ?? null;
-        $permissionName = $body['permission'] ?? null;
+        $userId = !empty($body['user_id']) ? $body['user_id'] : null;
+        $permissionName = !empty($body['permission']) ? $body['permission'] : null;
 
         if ($userId === null  || $permissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -161,7 +161,7 @@ class AssignAccessController
     public function revokeAll(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $userId = $body['user_id'] ?? null;
+        $userId = !empty($body['user_id']) ? $body['user_id'] : null;
 
         if ($userId === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -190,7 +190,7 @@ class AssignAccessController
         }
     }
 
-    public function clearAssignments(Request $request): ResponseInterface
+    public function clearAssignments(): ResponseInterface
     {
         try {
             $this->assignAccessService->clearAssignments();

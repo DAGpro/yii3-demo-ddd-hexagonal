@@ -76,7 +76,7 @@ final class CommentController
     public function draftComment(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $commentId = $body['comment_id'] !== '' ? $body['comment_id'] : null;
+        $commentId = !empty($body['comment_id']) ? $body['comment_id'] : null;
 
         if ($commentId === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -103,7 +103,7 @@ final class CommentController
     public function publicComment(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $commentId = $body['comment_id'] !== '' ? $body['comment_id'] : null;
+        $commentId = !empty($body['comment_id']) ? $body['comment_id'] : null;
 
         if ($commentId === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -165,7 +165,7 @@ final class CommentController
     public function delete(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $commentId = $body['comment_id'] !== '' ? $body['comment_id'] : null;
+        $commentId = !empty($body['comment_id']) ? $body['comment_id'] : null;
 
         if ($commentId === null) {
             return $this->webService->sessionFlashAndRedirect(

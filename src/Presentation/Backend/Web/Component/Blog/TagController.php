@@ -91,7 +91,7 @@ final class TagController
     public function delete(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $tagId = $body['tag_id'] ?? null;
+        $tagId = !empty($body['tag_id']) ? $body['tag_id'] : null;
 
         if ($tagId === null) {
             return $this->webService->sessionFlashAndRedirect(

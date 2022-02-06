@@ -31,7 +31,7 @@ class AccessManagementController
     public function addRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $roleName = $body['role'] ?? null;
+        $roleName = !empty($body['role']) ? $body['role'] : null;
         if ($roleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required role parameter in POST request',
@@ -62,7 +62,7 @@ class AccessManagementController
     public function removeRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $roleName = $body['role'] ?? null;
+        $roleName = !empty($body['role']) ? $body['role'] : null;
         if ($roleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required role parameter in POST request',
@@ -93,7 +93,7 @@ class AccessManagementController
     public function addPermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $permissionName = $body['permission'] ?? null;
+        $permissionName = !empty($body['permission']) ? $body['permission'] : null;
         if ($permissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required permission parameter in POST request',
@@ -124,7 +124,7 @@ class AccessManagementController
     public function removePermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $permissionName = $body['permission'] ?? null;
+        $permissionName = !empty($body['permission']) ? $body['permission'] : null;
         if ($permissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required permission parameter in POST request',
@@ -155,8 +155,8 @@ class AccessManagementController
     public function addChildRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = $body['parent_role'] ?? null;
-        $childRoleName = $body['child_role'] ?? null;
+        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
+        $childRoleName = !empty($body['child_role']) ? $body['child_role'] : null;
         if ($parentRoleName === null || $childRoleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child role parameters in POST request',
@@ -189,8 +189,8 @@ class AccessManagementController
     public function removeChildRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = $body['parent_role'] ?? null;
-        $childRoleName = $body['child_role'] ?? null;
+        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
+        $childRoleName = !empty($body['child_role']) ? $body['child_role'] : null;
         if ($parentRoleName === null || $childRoleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child role parameters in POST request',
@@ -223,8 +223,8 @@ class AccessManagementController
     public function addChildPermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = $body['parent_role'] ?? null;
-        $childPermissionName = $body['child_permission'] ?? null;
+        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
+        $childPermissionName = !empty($body['child_permission']) ? $body['child_permission'] : null;
         if ($parentRoleName === null || $childPermissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child permission parameters in POST request',
@@ -257,8 +257,8 @@ class AccessManagementController
     public function removeChildPermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = $body['parent_role'] ?? null;
-        $childPermissionName = $body['child_permission'] ?? null;
+        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
+        $childPermissionName = !empty($body['child_permission']) ? $body['child_permission'] : null;
         if ($parentRoleName === null || $childPermissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child permission parameters in POST request',
@@ -291,7 +291,7 @@ class AccessManagementController
     public function removeChildren(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = $body['parent_role'] ?? null;
+        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
         if ($parentRoleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role parameter in POST request',

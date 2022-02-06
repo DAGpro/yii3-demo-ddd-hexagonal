@@ -77,7 +77,7 @@ final class PostController
     public function draftPost(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $postId = $body['post_id'] !== '' ? $body['post_id'] : null;
+        $postId = !empty($body['post_id']) ? $body['post_id'] : null;
 
         if ($postId === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -104,7 +104,7 @@ final class PostController
     public function publicPost(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $postId = $body['post_id'] !== '' ? $body['post_id'] : null;
+        $postId = !empty($body['post_id']) ? $body['post_id'] : null;
 
         if ($postId === null) {
             return $this->webService->sessionFlashAndRedirect(
@@ -169,7 +169,7 @@ final class PostController
     public function delete(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $postId = $body['post_id'] !== '' ? $body['post_id'] : null;
+        $postId = !empty($body['post_id']) ? $body['post_id'] : null;
 
         if ($postId === null) {
             return $this->webService->sessionFlashAndRedirect(
