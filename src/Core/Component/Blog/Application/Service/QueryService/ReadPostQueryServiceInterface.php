@@ -7,6 +7,7 @@ namespace App\Core\Component\Blog\Application\Service\QueryService;
 use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Domain\Tag;
 use App\Core\Component\Blog\Domain\User\Author;
+use DateTimeImmutable;
 use Yiisoft\Data\Reader\DataReaderInterface;
 
 interface ReadPostQueryServiceInterface
@@ -32,4 +33,6 @@ interface ReadPostQueryServiceInterface
     public function getPost(int $id): ?Post;
 
     public function fullPostPage(string $slug): ?Post;
+
+    public function getMaxUpdatedAt(): DateTimeImmutable;
 }

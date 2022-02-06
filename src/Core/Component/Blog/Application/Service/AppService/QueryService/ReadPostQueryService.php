@@ -10,6 +10,7 @@ use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Domain\Tag;
 use App\Core\Component\Blog\Domain\User\Author;
 use Cycle\ORM\Select;
+use DateTimeImmutable;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
@@ -96,6 +97,11 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
                 'where' => ['public' => true]
             ])
             ->fetchOne();
+    }
+
+    public function getMaxUpdatedAt(): DateTimeImmutable
+    {
+        return new DateTimeImmutable($this->repository->select()->max('updated_at') ?? 'now');
     }
 
     private function prepareDataReader($query): EntityReader
