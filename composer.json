@@ -164,8 +164,8 @@
                 "delegates-console.php"
             ],
             "routes": [
-                "routes-backend.php",
-                "routes.php"
+                "routes/backend/*.php",
+                "routes/*.php"
             ],
             "bootstrap": "bootstrap.php",
             "bootstrap-web": [
