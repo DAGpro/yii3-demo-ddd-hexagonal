@@ -27,7 +27,9 @@ You'll need at least PHP 8.0.
 4. Go to index page. Cycle ORM will create tables, indexes and relations automatically in the configured DB.
    If you want to disable this behavior then comment out line with `Generator\SyncTables::class` in the `config/packges/yiisoft/yii-cycle/params.php`.
    In this case you should create migrations to sync changes of entities with DB.
-5. Run `./yii fixture/add 20` to create some random data.
+5. Run `./yii fixture/addAccess` to create demo access rights
+6. Run `./yii fixture/add 20` to create some random data.
+7. Run `./yii assign/assignRole <userId> admin` add admin rights to the user to access the backend
 
 ## Console
 
