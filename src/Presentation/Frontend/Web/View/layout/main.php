@@ -10,6 +10,7 @@ use Yiisoft\Html\Html;
 use Yiisoft\Strings\StringHelper;
 use Yiisoft\Yii\Bootstrap5\Nav;
 use Yiisoft\Yii\Bootstrap5\NavBar;
+use Yiisoft\Form\Widget\Field;
 
 /**
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
@@ -134,7 +135,11 @@ $this->beginPage();
                                             ->action($url->generate('auth/logout'))
                                             ->csrf($csrf)
                                             ->begin()
-                                        . Html::submitButton($translator->translate('menu.logout', ['login' => Html::encode($user->getLogin())]), ['class' => 'dropdown-item'])
+                                        . Field::widget()
+                                            ->attributes(['class' => 'dropdown-item'])
+                                            ->containerClass('mb-1')
+                                            ->submitButton()
+                                            ->value($translator->translate('menu.logout', ['login' => Html::encode($user->getLogin())]))
                                         . Form::end(),
                                     ],
                             ],

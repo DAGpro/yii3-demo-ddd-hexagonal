@@ -9,7 +9,7 @@ use Cycle\ORM\Select\ScopeInterface;
 
 final class PublicAndNotDeletedConstrain implements ScopeInterface
 {
-    public function apply(QueryBuilder $query)
+    public function apply(QueryBuilder $query): void
     {
         $query->where('deleted_at', '=', null)->andWhere('public' , '=', 1);
     }

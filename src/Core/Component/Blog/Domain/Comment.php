@@ -5,71 +5,52 @@ declare(strict_types=1);
 namespace App\Core\Component\Blog\Domain;
 
 use App\Core\Component\Blog\Domain\User\Commentator;
+use App\Core\Component\Blog\Infrastructure\Persistence\Comment\CommentRepository;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\Scope\PublicAndNotDeletedConstrain;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Cycle\Annotated\Annotation\Relation\Embedded;
-use Cycle\Annotated\Annotation\Table;
 use Cycle\Annotated\Annotation\Table\Index;
+use Cycle\ORM\Entity\Behavior;
 use DateTimeImmutable;
 
-/**
- * @Entity(
- *     repository="App\Core\Component\Blog\Infrastructure\Persistence\Comment\CommentRepository",
- *     mapper="App\Core\Component\Blog\Infrastructure\Persistence\Comment\CommentMapper",
- * )
- * @Table(
- *     indexes={
- *         @Index(columns={"public","published_at"})
- *     }
- * )
- */
+#[Entity(
+    repository: CommentRepository::class,
+    scope: PublicAndNotDeletedConstrain::class
+)]
+#[Index(columns: ['public', 'published_at'])]
+#[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
+#[Behavior\UpdatedAt(field: 'updated_at', column: 'updated_at')]
+#[Behavior\SoftDelete(field: 'deleted_at', column: 'deleted_at')]
 class Comment
 {
-    /**
-     * @Column(type="primary")
-     */
+    #[Column(type: 'primary')]
     private ?int $id = null;
 
-    /**
-     * @Column(type="bool", default="false")
-     */
+    #[Column(type: 'bool', default: 'false', typecast: 'bool')]
     private bool $public = false;
 
-    /**
-     * @Column(type="text")
-     */
+    #[Column(type: 'text')]
     private string $content;
 
-    /** @Embedded(target = "App\Core\Component\Blog\Domain\User\Commentator") */
+    #[Embedded(target: Commentator::class)]
     private Commentator $commentator;
 
-    /**
-     * @BelongsTo(target="App\Core\Component\Blog\Domain\Post",  nullable=false)
-     *
-     * @var \Cycle\ORM\Promise\Reference|Post
-     */
-    private $post = null;
+    #[BelongsTo(target: Post::class,  nullable: false)]
+    private Post $post;
     private int $post_id;
 
-    /**
-     * @Column(type="datetime")
-     */
+    #[Column(type: 'datetime')]
     private DateTimeImmutable $created_at;
 
-    /**
-     * @Column(type="datetime")
-     */
+    #[Column(type: 'datetime')]
     private DateTimeImmutable $updated_at;
 
-    /**
-     * @Column(type="datetime", nullable=true)
-     */
+    #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $published_at = null;
 
-    /**
-     * @Column(type="datetime", nullable=true)
-     */
+    #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $deleted_at = null;
 
     public function __construct(

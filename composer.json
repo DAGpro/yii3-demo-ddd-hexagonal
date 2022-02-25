@@ -20,8 +20,9 @@
         "ext-mbstring": "*",
         "ext-pdo_sqlite": "*",
         "cebe/markdown": "^1.2@dev",
-        "cycle/orm": "^1.4",
-        "cycle/proxy-factory": "^1.2",
+        "cycle/database": "^2.0",
+        "cycle/entity-behavior": "^1.0",
+        "cycle/orm": "^2.0",
         "doctrine/collections": "^1.6",
         "fakerphp/faker": "^1.14",
         "httpsoft/http-message": "^1.0.5",
@@ -31,7 +32,6 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/log": "^1.1",
-        "spiral/database": "^2.8",
         "symfony/console": "^5.3",
         "vlucas/phpdotenv": "^5.3",
         "yiisoft/access": "^1.0",
@@ -59,6 +59,7 @@
         "yiisoft/mailer-symfony": "^1.0",
         "yiisoft/rbac": "^3.0@dev",
         "yiisoft/rbac-php": "^3.0@dev",
+        "yiisoft/rbac-rules-container": "dev-master",
         "yiisoft/router": "^1.0",
         "yiisoft/router-fastroute": "^1.0",
         "yiisoft/security": "^1.0",
@@ -73,28 +74,29 @@
         "yiisoft/widget": "^1.0",
         "yiisoft/yii-bootstrap5": "^3.0@dev",
         "yiisoft/yii-console": "^1.0",
-        "yiisoft/yii-cycle": "^3.0@dev",
+        "yiisoft/yii-cycle": "2.0.x-dev",
         "yiisoft/yii-debug": "^3.0@dev",
         "yiisoft/yii-debug-api": "^3.0@dev",
+        "yiisoft/yii-dataview": "^3.0@dev",
         "yiisoft/yii-event": "^1.0",
         "yiisoft/yii-http": "^1.0",
         "yiisoft/yii-middleware": "dev-master",
-        "yiisoft/yii-runner-console": "dev-master",
-        "yiisoft/yii-runner-http": "dev-master",
+        "yiisoft/yii-runner-console": "^1.0",
+        "yiisoft/yii-runner-http": "^1.0",
         "yiisoft/yii-swagger": "^1.0",
         "yiisoft/yii-view": "^4.0"
     },
     "require-dev": {
-        "codeception/c3": "^2.6.0",
-        "codeception/codeception": "^4.1.22",
+        "codeception/c3": "^2.6",
+        "codeception/codeception": "^4.1",
         "codeception/module-asserts": "^2.0",
         "codeception/module-cli": "^2.0",
         "codeception/module-phpbrowser": "^2.0",
-        "phpunit/phpunit": "^9.4",
-        "roave/infection-static-analysis-plugin": "^1.5",
+        "phpunit/phpunit": "^9.5",
+        "roave/infection-static-analysis-plugin": "^1.16",
         "roave/security-advisories": "dev-master",
-        "spatie/phpunit-watcher": "^1.23.1",
-        "vimeo/psalm": "^4.2",
+        "spatie/phpunit-watcher": "^1.23",
+        "vimeo/psalm": "^4.18",
         "yiisoft/translator-extractor": "^1.0",
         "yiisoft/yii-debug-viewer": "^3.0@dev"
     },
@@ -188,7 +190,15 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "codeception/c3": true,
+            "infection/extension-installer": true,
+            "composer/package-versions-deprecated": true,
+            "yiisoft/config": true,
+            "composer/installers": true,
+            "oomphinc/composer-installers-extender": true
+        }
     },
     "repositories": [
         {

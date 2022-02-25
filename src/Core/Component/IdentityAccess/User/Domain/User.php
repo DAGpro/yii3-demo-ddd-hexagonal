@@ -4,47 +4,34 @@ declare(strict_types=1);
 
 namespace App\Core\Component\IdentityAccess\User\Domain;
 
+use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\Annotated\Annotation\Table;
 use Cycle\Annotated\Annotation\Table\Index;
+use Cycle\ORM\Entity\Behavior;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Yiisoft\Security\PasswordHasher;
 
-/**
- * @Entity(repository="App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository")
- * @Table(
- *     indexes={
- *         @Index(columns={"login"}, unique=true),
- *     }
- * )
- */
+#[Entity(repository: UserRepository::class)]
+#[Index(columns: ['login'], unique: true)]
+#[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
+#[Behavior\UpdatedAt(field: 'updated_at', column: 'updated_at')]
 class User
 {
-    /**
-     * @Column(type="primary")
-     */
+    #[Column(type: 'primary')]
     private ?int $id = null;
 
-    /**
-     * @Column(type="string(48)")
-     */
+    #[Column(type: 'string(48)')]
     private string $login;
 
-    /**
-     * @Column(type="string")
-     */
+    #[Column(type: 'string')]
     private string $passwordHash;
 
-    /**
-     * @Column(type="datetime")
-     */
+    #[Column(type: 'datetime')]
     private DateTimeImmutable $created_at;
 
-    /**
-     * @Column(type="datetime")
-     */
+    #[Column(type: 'datetime')]
     private DateTimeImmutable $updated_at;
 
     public function __construct(string $login, string $password)

@@ -70,6 +70,7 @@ final class LoginForm extends FormModel
                 $user = $this->userService->findByLogin($this->login);
 
                 if ($user === null || !$user->validatePassword($this->password)) {
+                    $this->getFormErrors()->addError('login', '');
                     $result->addError($this->translator->translate('validator.invalid.login.password'));
                 }
 

@@ -6,97 +6,69 @@ namespace App\Core\Component\Blog\Domain;
 
 use App\Core\Component\Blog\Domain\User\Author;
 use App\Core\Component\Blog\Domain\User\Commentator;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostTag;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\Scope\PublicScope;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\Embedded;
 use Cycle\Annotated\Annotation\Relation\HasMany;
 use Cycle\Annotated\Annotation\Relation\ManyToMany;
-use Cycle\Annotated\Annotation\Table;
 use Cycle\Annotated\Annotation\Table\Index;
-use Cycle\ORM\Relation\Pivoted\PivotedCollection;
+use Cycle\ORM\Collection\Pivoted\PivotedCollection;
+use Cycle\ORM\Entity\Behavior;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Yiisoft\Security\Random;
 
-/**
- * @Entity(
- *     repository="App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository",
- *     mapper="App\Core\Component\Blog\Infrastructure\Persistence\Post\PostMapper",
- *     constrain="App\Core\Component\Blog\Infrastructure\Persistence\Post\Scope\PublicAndNotDeletedConstrain",
- * )
- * @Table(
- *     indexes={
- *         @Index(columns={"public","published_at"}),
- *     }
- * )
- */
+#[Entity(
+    repository: PostRepository::class,
+    scope: PublicScope::class
+)]
+#[Index(columns: ['public', 'published_at'])]
+#[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
+#[Behavior\UpdatedAt(field: 'updated_at', column: 'updated_at')]
+#[Behavior\SoftDelete(field: 'deleted_at', column: 'deleted_at')]
 class Post
 {
-    /**
-     * @Column(type="primary")
-     */
+    #[Column(type: 'primary')]
     private ?int $id = null;
 
-    /**
-     * @Column(type="string(191)", default="")
-     */
+    #[Column(type: 'string(191)', default: '')]
     private string $title;
 
-    /**
-     * @Column(type="text")
-     */
+    #[Column(type: 'string(191)')]
     private string $content;
 
-    /**
-     * @Column(type="string(128)")
-     */
+    #[Column(type: 'string(128)')]
     private string $slug;
 
-    /** @Embedded(target = "App\Core\Component\Blog\Domain\User\Author") */
+    #[Embedded(target: Author::class)]
     private Author $author;
 
-    /**
-     * @HasMany(target="App\Core\Component\Blog\Domain\Comment")
-     *
-     * @var ArrayCollection|Comment[]
-     */
-    private $comments;
+    #[HasMany(target: Comment::class)]
+    private ArrayCollection $comments;
 
     /**
-     * @ManyToMany(
-     *     target="App\Core\Component\Blog\Domain\Tag",
-     *     though="App\Core\Component\Blog\Infrastructure\Persistence\Post\PostTag",
-     *     fkAction="CASCADE"
-     * )
-     *
-     * @var PivotedCollection|Tag[]
+     * @var PivotedCollection<array-key, Tag, PostTag>
      */
-    private $tags;
+    #[ManyToMany(target: Tag::class, though: PostTag::class, fkAction: 'CASCADE')]
+    private PivotedCollection $tags;
     private ?int $tag_id = null;
 
-    /**
-     * @Column(type="bool", default="false")
-     */
+    #[Column(type: 'bool', default: 'false', typecast: 'bool')]
     private bool $public = false;
 
-    /**
-     * @Column(type="datetime")
-     */
+    #[Column(type: 'datetime')]
     private DateTimeImmutable $created_at;
 
-    /**
-     * @Column(type="datetime")
-     */
+    #[Column(type: 'datetime')]
     private DateTimeImmutable $updated_at;
 
-    /**
-     * @Column(type="datetime", nullable=true)
-     */
+    #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $published_at = null;
 
-    /**
-     * @Column(type="datetime", nullable=true)
-     */
+    #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $deleted_at = null;
 
     public function __construct(string $title, string $content, Author $author)

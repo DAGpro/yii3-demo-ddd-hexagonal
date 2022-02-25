@@ -19,6 +19,7 @@ use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\User\Login\Cookie\CookieLoginMiddleware;
 use Yiisoft\Yii\Console\Application;
 use Yiisoft\Yii\Console\Command\Serve;
+use Yiisoft\Yii\Cycle\Schema\Conveyor\AttributedSchemaConveyor;
 use Yiisoft\Yii\View\CsrfViewInjection;
 
 return [
@@ -57,14 +58,34 @@ return [
     ],
 
     'yiisoft/forms' => [
-        'containerClass' => ['form-floating mb-3'],
-        'errorClass' => ['fw-bold fst-italic invalid-feedback'],
-        'hintClass' => ['form-text'],
-        'inputClass' => ['form-control'],
-        'invalidClass' => ['is-invalid'],
-        'labelClass' => ['floatingInput'],
-        'template' => ['{input}{label}{hint}{error}'],
-        'validClass' => ['is-valid'],
+        'field' => [
+            'ariaDescribedBy' => [true],
+            'containerClass' => ['form-floating mb-3'],
+            'errorClass' => ['fw-bold fst-italic invalid-feedback'],
+            'hintClass' => ['form-text'],
+            'inputClass' => ['form-control'],
+            'invalidClass' => ['is-invalid'],
+            'labelClass' => ['floatingInput'],
+            'template' => ['{input}{label}{hint}{error}'],
+            'validClass' => ['is-valid'],
+            'defaultValues' => [
+                [
+                    'submit' => [
+                        'definitions' => [
+                            'class()' => ['btn btn-primary btn-lg mt-3'],
+                        ],
+                        'containerClass' => 'd-grid gap-2 form-floating',
+                    ],
+                ],
+            ],
+        ],
+        'form' => [
+            'attributes' => [['enctype' => 'multipart/form-data']],
+        ],
+    ],
+
+    'yiisoft/rbac-rules-container' => [
+        'rules' => require __DIR__ . '/rbac-rules.php',
     ],
 
     'yiisoft/router-fastroute' => [
@@ -160,12 +181,11 @@ return [
                 'default' => ['connection' => 'sqlite'],
             ],
             'connections' => [
-                'sqlite' => [
-                    'driver' => \Spiral\Database\Driver\SQLite\SQLiteDriver::class,
-                    'connection' => 'sqlite:@runtime/database.db',
-                    'username' => '',
-                    'password' => '',
-                ],
+                'sqlite' => new \Cycle\Database\Config\SQLiteDriverConfig(
+                    connection: new \Cycle\Database\Config\SQLite\FileConnectionConfig(
+                        database: 'runtime/database.db'
+                    )
+                ),
             ],
         ],
 
@@ -196,8 +216,15 @@ return [
          * ]
          */
         'schema-providers' => [
-            // Uncomment next line to enable schema cache
+            // Uncomment next line to enable a Schema caching in the common cache
             // \Yiisoft\Yii\Cycle\Schema\Provider\SimpleCacheSchemaProvider::class => ['key' => 'cycle-orm-cache-key'],
+
+            // Store generated Schema in the file
+            \Yiisoft\Yii\Cycle\Schema\Provider\PhpFileSchemaProvider::class => [
+                'mode' => \Yiisoft\Yii\Cycle\Schema\Provider\PhpFileSchemaProvider::MODE_WRITE_ONLY,
+                'file' => 'runtime/schema.php',
+            ],
+
             \Yiisoft\Yii\Cycle\Schema\Provider\FromConveyorSchemaProvider::class => [
                 'generators' => [
                     Cycle\Schema\Generator\SyncTables::class, // sync table changes to database
@@ -210,8 +237,15 @@ return [
          * Annotated entity directories list.
          * {@see \Yiisoft\Aliases\Aliases} are also supported.
          */
-        'annotated-entity-paths' => [
+        'entity-paths' => [
             '@src',
+        ],
+        'conveyor' => AttributedSchemaConveyor::class,
+    ],
+    'yiisoft/yii-swagger' => [
+        'annotation-paths' => [
+            '@src/Controller',
+            '@src/User/Controller',
         ],
     ],
 ];

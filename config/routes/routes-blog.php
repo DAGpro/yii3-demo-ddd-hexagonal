@@ -134,12 +134,6 @@ return [
                 ->action(fn (SwaggerUi $swaggerUi) => $swaggerUi->withJsonUrl('/swagger/json-url')),
             Route::get('/json-url')
                 ->middleware(FormatDataResponseAsJson::class)
-                ->action(static function (SwaggerJson $swaggerJson) {
-                    return $swaggerJson
-                        // Uncomment cache for production environment
-                        // ->withCache(60)
-                        ->withAnnotationPaths('@src/Controller'); // Path to API controllers
-
-                }),
+                ->action(SwaggerJson::class),
         ),
 ];

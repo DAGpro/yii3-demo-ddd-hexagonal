@@ -14,14 +14,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
+use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
-use Yiisoft\Rbac\RolesStorageInterface;
 use Yiisoft\Yii\Console\ExitCode;
 
 final class CreateUserCommand extends Command
 {
     private Manager $manager;
-    private RolesStorageInterface $rolesStorage;
+    private ItemsStorageInterface $rolesStorage;
     private SignupUserService $signupUserService;
     private UserQueryServiceInterface $userQueryService;
 
@@ -29,7 +29,7 @@ final class CreateUserCommand extends Command
 
     public function __construct(
         Manager $manager,
-        RolesStorageInterface $rolesStorage,
+        ItemsStorageInterface $rolesStorage,
         SignupUserService $signupUserService,
         UserQueryServiceInterface $userQueryService
     ) {
@@ -63,7 +63,7 @@ final class CreateUserCommand extends Command
 
             if ($isAdmin) {
 
-                $role = $this->rolesStorage->getRoleByName('admin');
+                $role = $this->rolesStorage->getRole('admin');
                 $user = $this->userQueryService->findByLogin($login);
 
                 if ($user === null) {
@@ -74,7 +74,7 @@ final class CreateUserCommand extends Command
                     throw new Exception('Role admin is NULL');
                 }
 
-                $this->manager->assign($role, (string)$user->getId());
+                $this->manager->assign($role->getName(), (string)$user->getId());
             }
 
             $io->success('User created');

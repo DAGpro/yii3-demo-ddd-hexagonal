@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace App\Presentation\Frontend\Api\Component\IdentityAccess\User;
 
 use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
+use OpenApi\Annotations as OA;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;
 use Yiisoft\Router\CurrentRoute;
 
+/**
+ * @OA\Tag(
+ *     name="user",
+ *     description="User"
+ * )
+ */
 final class ApiUserController
 {
     private DataResponseFactoryInterface $responseFactory;
@@ -20,6 +26,13 @@ final class ApiUserController
         $this->responseFactory = $responseFactory;
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/user",
+     *     tags={"user"},
+     *     @OA\Response(response="200", description="Get users list")
+     * )
+     */
     public function index(UserQueryServiceInterface $userQueryService): ResponseInterface
     {
         $dataReader = $userQueryService->findAllPreloaded()
@@ -37,6 +50,19 @@ final class ApiUserController
         return $this->responseFactory->createResponse($items);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/user/{login}",
+     *     tags={"user"},
+     *     @OA\Parameter(
+     *     @OA\Schema(type="string"),
+     *     in="path",
+     *     name="login",
+     *     parameter="login"
+     *     ),
+     *     @OA\Response(response="200", description="Get user info")
+     * )
+     */
     public function profile(UserQueryServiceInterface $userQueryService, CurrentRoute $currentRoute): ResponseInterface
     {
         $login = $currentRoute->getArgument('login');
