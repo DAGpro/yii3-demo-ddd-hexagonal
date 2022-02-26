@@ -55,7 +55,7 @@ class RevokePermissionCommand extends Command
             }
 
             $permissionDTO = new PermissionDTO($permissionName);
-            $this->assigningService->revokePermission($permissionDTO, (string)$user->getId());
+            $this->assigningService->revokePermission($permissionDTO, $user->getId());
 
             $io->success('Permission was revoke to given user');
         } catch (AssignedItemException|IdentityException $t) {

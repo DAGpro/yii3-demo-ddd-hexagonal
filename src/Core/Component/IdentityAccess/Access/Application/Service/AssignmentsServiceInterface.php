@@ -8,21 +8,17 @@ interface AssignmentsServiceInterface
 {
     public function getUserIdsByRole(RoleDTO $roleDTO): array;
 
-    public function getRolesByUser(string $userId): array;
+    public function getRolesByUser(string|int $userId): array;
 
-    public function getPermissionsByUser(string $userId): array;
+    public function getPermissionsByUser(string|int $userId): array;
 
-    public function userHasPermission(string $userId, string $permissionName): bool;
+    public function userHasPermission(string|int $userId, string $permissionName): bool;
 
-    public function userHasRole(string $userId, string $roleName): bool;
+    public function userHasRole(string|int $userId, string $roleName): bool;
 
     public function isAssignedRoleToUsers(RoleDTO $roleDTO): bool;
 
     public function isAssignedPermissionToUsers(PermissionDTO $permissionDTO): bool;
-
-    public function userAssignmentExist(string $userId, string $roleName): bool;
-
-    public function assignmentExist(string $itemName): bool;
 
     public function getUserAssignments(User $user): UserAssignmentsDTO;
 

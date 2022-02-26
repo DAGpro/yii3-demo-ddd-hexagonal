@@ -77,7 +77,7 @@ class AssignRoleCommand extends Command
             }
 
             $role = new RoleDTO($roleName);
-            $this->assignAccessService->assignRole($role, (string)$user->getId());
+            $this->assignAccessService->assignRole($role, $user->getId());
 
             $io->success('Role was assigned to given user');
         } catch (ExistItemException|AssignedItemException|IdentityException $t) {

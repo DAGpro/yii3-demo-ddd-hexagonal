@@ -55,7 +55,7 @@ class RevokeRoleCommand extends Command
             }
 
             $role = new RoleDTO($roleName);
-            $this->assigningService->revokeRole($role, (string)$user->getId());
+            $this->assigningService->revokeRole($role, $user->getId());
 
             $io->success('Role was revoke to given user');
         } catch (AssignedItemException|IdentityException $t) {

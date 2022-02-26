@@ -28,7 +28,7 @@ interface AccessRightsServiceInterface
 
     public function setDefaultRoles(array $roles): AccessRightsServiceInterface;
 
-    public function getDefaultRoles(): array;
+    public function getDefaultRoleNames(): array;
 
-    public function getDefaultRoleInstances(): array;
+    public function getDefaultRoles(): array;
 }

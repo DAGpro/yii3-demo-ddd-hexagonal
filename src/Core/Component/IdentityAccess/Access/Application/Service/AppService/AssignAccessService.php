@@ -33,62 +33,62 @@ class AssignAccessService implements AssignAccessServiceInterface
     /**
      * @throws AssignedItemException
      */
-    public function assignRole(RoleDTO $roleDTO, string $userId): void
+    public function assignRole(RoleDTO $roleDTO, string|int $userId): void
     {
         if ($this->assignmentsService->userHasRole($userId, $roleDTO->getName())) {
             throw new AssignedItemException('The role has already been assigned to the user!');
         }
 
         $role = new Role($roleDTO->getName());
-        $this->manager->assign($role, $userId);
+        $this->manager->assign($role->getName(), $userId);
     }
 
     /**
      * @throws AssignedItemException
      */
-    public function assignPermission(PermissionDTO $permissionDTO, string $userId): void
+    public function assignPermission(PermissionDTO $permissionDTO, string|int $userId): void
     {
         if ($this->assignmentsService->userHasPermission($userId, $permissionDTO->getName())) {
             throw new AssignedItemException('The permission has already been assigned to the user!');
         }
 
         $permission = new Permission($permissionDTO->getName());
-        $this->manager->assign($permission, $userId);
+        $this->manager->assign($permission->getName(), $userId);
     }
 
     /**
      * @throws AssignedItemException
      */
-    public function revokeRole(RoleDTO $roleDTO, string $userId): void
+    public function revokeRole(RoleDTO $roleDTO, string|int $userId): void
     {
         if (!$this->assignmentsService->userHasRole($userId, $roleDTO->getName())) {
             throw new AssignedItemException('The role was not previously assigned to the user!');
         }
 
         $role = new Role($roleDTO->getName());
-        $this->manager->revoke($role, $userId);
+        $this->manager->revoke($role->getName(), $userId);
     }
 
     /**
      * @throws AssignedItemException
      */
-    public function revokePermission(PermissionDTO $permissionDTO, string $userId): void
+    public function revokePermission(PermissionDTO $permissionDTO, string|int $userId): void
     {
         if (!$this->assignmentsService->userHasPermission($userId, $permissionDTO->getName())) {
             throw new AssignedItemException('The permission was not previously assigned to the user!');
         }
 
         $permission = new Permission($permissionDTO->getName());
-        $this->manager->revoke($permission, $userId);
+        $this->manager->revoke($permission->getName(), $userId);
     }
 
-    public function revokeAll(string $userId): void
+    public function revokeAll(string|int $userId): void
     {
         $this->manager->revokeAll($userId);
     }
 
     public function clearAssignments(): void
     {
-        $this->storage->clearAssignments();
+        $this->storage->clear();
     }
 }

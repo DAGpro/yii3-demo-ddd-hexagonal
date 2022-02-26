@@ -7,17 +7,17 @@ namespace App\Core\Component\IdentityAccess\Access\Application\Service\AppServic
 use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
+use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
-use Yiisoft\Rbac\RolesStorageInterface;
 
 class AccessRightsService implements AccessRightsServiceInterface
 {
     private Manager $manager;
-    private RolesStorageInterface $storage;
+    private ItemsStorageInterface $storage;
 
     public function __construct(
         Manager $manager,
-        RolesStorageInterface $storage
+        ItemsStorageInterface $storage
     ) {
         $this->manager = $manager;
         $this->storage = $storage;
@@ -25,12 +25,12 @@ class AccessRightsService implements AccessRightsServiceInterface
 
     public function existRole(string $roleName): bool
     {
-        return $this->storage->getRoleByName($roleName) !== null;
+        return $this->storage->getRole($roleName) !== null;
     }
 
     public function getRoleByName(string $roleName): ?RoleDTO
     {
-        $role = $this->storage->getRoleByName($roleName);
+        $role = $this->storage->getRole($roleName);
         if ($role !== null) {
             $roleDTO = new RoleDTO($role->getName());
             $roleDTO->withChildRoles($this->getChildRoles($roleDTO));
@@ -65,7 +65,7 @@ class AccessRightsService implements AccessRightsServiceInterface
 
     public function getPermissionByName(string $permissionName): ?PermissionDTO
     {
-        $permission = $this->storage->getPermissionByName($permissionName);
+        $permission = $this->storage->getPermission($permissionName);
         return $permission === null ? null : new PermissionDTO($permission->getName());
     }
 
@@ -82,7 +82,7 @@ class AccessRightsService implements AccessRightsServiceInterface
     public function getChildRoles(RoleDTO $roleDTO): array
     {
         $roles = [];
-        foreach ($this->storage->getChildrenByName($roleDTO->getName()) as $role) {
+        foreach ($this->storage->getChildren($roleDTO->getName()) as $role) {
             if ($this->getRoleByName($role->getName())) {
                 if ($roleDTO->getName() === $role->getName()) {
                     continue;
@@ -97,7 +97,7 @@ class AccessRightsService implements AccessRightsServiceInterface
     public function getNestedRoles(RoleDTO $roleDTO): array
     {
         $roles = [];
-        $childRoles = $this->storage->getChildrenByName($roleDTO->getName());
+        $childRoles = $this->storage->getChildren($roleDTO->getName());
         foreach ($this->manager->getChildRoles($roleDTO->getName()) as $role) {
             if (array_key_exists($role->getName(), $childRoles) || $roleDTO->getName() === $role->getName()) {
                 continue;
@@ -111,7 +111,7 @@ class AccessRightsService implements AccessRightsServiceInterface
     public function getPermissionsByRole(RoleDTO $roleDTO): array
     {
         $permissions = [];
-        foreach ($this->storage->getChildrenByName($roleDTO->getName()) as $permission) {
+        foreach ($this->storage->getChildren($roleDTO->getName()) as $permission) {
             if ($this->getRoleByName($permission->getName())) {
                 continue;
             }
@@ -124,8 +124,8 @@ class AccessRightsService implements AccessRightsServiceInterface
     public function getNestedPermissionsByRole(RoleDTO $roleDTO): array
     {
         $permissions = [];
-        $childPermissions = $this->storage->getChildrenByName($roleDTO->getName());
-        foreach ($this->manager->getPermissionsByRole($roleDTO->getName()) as $permission) {
+        $childPermissions = $this->storage->getChildren($roleDTO->getName());
+        foreach ($this->manager->getPermissionsByRoleName($roleDTO->getName()) as $permission) {
             if (array_key_exists($permission->getName(), $childPermissions)) {
                 continue;
             }
@@ -142,18 +142,18 @@ class AccessRightsService implements AccessRightsServiceInterface
 
     public function setDefaultRoles(array $roles): self
     {
-        $this->manager->setDefaultRoles($roles);
+        $this->manager->setDefaultRoleNames($roles);
         return $this;
+    }
+
+    public function getDefaultRoleNames(): array
+    {
+        return $this->manager->getDefaultRoleNames();
     }
 
     public function getDefaultRoles(): array
     {
         return $this->manager->getDefaultRoles();
-    }
-
-    public function getDefaultRoleInstances(): array
-    {
-        return $this->manager->getDefaultRoleInstances();
     }
 
 }

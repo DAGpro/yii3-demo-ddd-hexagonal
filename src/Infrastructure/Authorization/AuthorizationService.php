@@ -17,12 +17,12 @@ class AuthorizationService
         $this->assignmentsService = $assignmentsService;
     }
 
-    public function userHasPermission(string $userId, string $permission): bool
+    public function userHasPermission(string|int $userId, string $permission): bool
     {
         return $this->assignmentsService->userHasPermission($userId, $permission);
     }
 
-    public function userHasRole(string $userId, string $roleName): bool
+    public function userHasRole(string|int $userId, string $roleName): bool
     {
         if ($this->assignmentsService->userHasRole($userId, $roleName)) {
             return true;
@@ -31,7 +31,7 @@ class AuthorizationService
         return $this->userHasAccessThroughChildRole($userId, $roleName);
     }
 
-    private function userHasAccessThroughChildRole(string $userId, string $roleName): bool
+    private function userHasAccessThroughChildRole(string|int $userId, string $roleName): bool
     {
         $userRoles = $this->assignmentsService->getRolesByUser($userId);
 

@@ -31,7 +31,7 @@ final class IdentityAccessService
     public function findAuthor(string $authorName): ?Author
     {
         $user = $this->userQueryService->findByLogin($authorName);
-        if ($user === null || !$this->authorizationService->userHasRole((string)$user->getId(), 'author')) {
+        if ($user === null || !$this->authorizationService->userHasRole($user->getId(), 'author')) {
             return null;
         }
 
@@ -42,7 +42,7 @@ final class IdentityAccessService
     {
         $user = $this->authenticationService->getUser();
 
-        if ($user === null || !$this->authorizationService->userHasRole((string)$user->getId(), 'author')) {
+        if ($user === null || !$this->authorizationService->userHasRole($user->getId(), 'author')) {
             return null;
         }
 

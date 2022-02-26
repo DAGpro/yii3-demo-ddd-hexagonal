@@ -12,21 +12,21 @@ use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\ExistItemException;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\NotExistItemException;
+use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\Role;
-use Yiisoft\Rbac\RolesStorageInterface;
 
 class AccessManagementService implements AccessManagementServiceInterface
 {
     private Manager $manager;
-    private RolesStorageInterface $storage;
+    private ItemsStorageInterface $storage;
     private AccessRightsServiceInterface $accessRightsService;
     private AssignmentsServiceInterface $assignmentsService;
 
     public function __construct(
         Manager $manager,
-        RolesStorageInterface $storage,
+        ItemsStorageInterface $storage,
         AccessRightsServiceInterface $accessRightsService,
         AssignmentsServiceInterface $assignmentsService
     ) {
@@ -61,7 +61,7 @@ class AccessManagementService implements AccessManagementServiceInterface
         }
 
         $role = new Role($roleDTO->getName());
-        $this->manager->removeRole($role);
+        $this->manager->removeRole($role->getName());
     }
 
     /**
@@ -89,7 +89,7 @@ class AccessManagementService implements AccessManagementServiceInterface
         }
 
         $permission = new Permission($permissionDTO->getName());
-        $this->manager->removePermission($permission);
+        $this->manager->removePermission($permission->getName());
     }
 
     /**
@@ -111,7 +111,7 @@ class AccessManagementService implements AccessManagementServiceInterface
 
         $parent = new Role($parentDTO->getName());
         $child = new Role($childDTO->getName());
-        $this->manager->addChild($parent, $child);
+        $this->manager->addChild($parent->getName(), $child->getName());
     }
 
     /**
@@ -133,7 +133,7 @@ class AccessManagementService implements AccessManagementServiceInterface
 
         $parent = new Role($parentDTO->getName());
         $child = new Permission($childDTO->getName());
-        $this->manager->addChild($parent, $child);
+        $this->manager->addChild($parent->getName(), $child->getName());
     }
 
     /**
@@ -150,7 +150,7 @@ class AccessManagementService implements AccessManagementServiceInterface
 
         $parent = new Role($parentDTO->getName());
         $child = new Role($childDTO->getName());
-        $this->manager->removeChild($parent, $child);
+        $this->manager->removeChild($parent->getName(), $child->getName());
     }
 
     /**
@@ -167,7 +167,7 @@ class AccessManagementService implements AccessManagementServiceInterface
 
         $parent = new Role($parentRoleDTO->getName());
         $child = new Permission($childPermissionDTO->getName());
-        $this->manager->removeChild($parent, $child);
+        $this->manager->removeChild($parent->getName(), $child->getName());
     }
 
     /**
@@ -178,21 +178,21 @@ class AccessManagementService implements AccessManagementServiceInterface
         $this->throwExceptionIfNotExistRole($parentDTO);
 
         $parent = new Role($parentDTO->getName());
-        $this->manager->removeChildren($parent);
+        $this->manager->removeChildren($parent->getName());
     }
 
     public function hasChildRole(RoleDTO $parentRoleDTO, RoleDTO $childRoleDTO): bool
     {
         $parentRole = new Role($parentRoleDTO->getName());
         $childRole = new Role($childRoleDTO->getName());
-        return $this->manager->hasChild($parentRole, $childRole);
+        return $this->manager->hasChild($parentRole->getName(), $childRole->getName());
     }
 
     public function hasChildPermission(RoleDTO $parentRoleDTO, PermissionDTO $childPermissionDTO): bool
     {
         $parentRole = new Role($parentRoleDTO->getName());
         $childPermission = new Permission($childPermissionDTO->getName());
-        return $this->manager->hasChild($parentRole, $childPermission);
+        return $this->manager->hasChild($parentRole->getName(), $childPermission->getName());
     }
 
     public function clearAccessRights(): void
@@ -204,14 +204,14 @@ class AccessManagementService implements AccessManagementServiceInterface
     {
         $parent = new Role($parentRoleDTO->getName());
         $child = new Role($childRoleDTO->getName());
-        return $this->manager->canAddChild($parent, $child);
+        return $this->manager->canAddChild($parent->getName(), $child->getName());
     }
 
     private function canAddChildPermission(RoleDTO $parentRoleDTO, PermissionDTO $childPermissionDTO): bool
     {
         $parent = new Role($parentRoleDTO->getName());
         $child = new Permission($childPermissionDTO->getName());
-        return $this->manager->canAddChild($parent, $child);
+        return $this->manager->canAddChild($parent->getName(), $child->getName());
     }
 
     /**

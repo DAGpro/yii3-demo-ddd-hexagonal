@@ -51,7 +51,7 @@ class AssignAllPermissionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        (string)$userId = $input->getArgument('userId');
+        $userId = $input->getArgument('userId');
 
         try {
             $user = $this->userService->getUser($userId);

@@ -77,7 +77,7 @@ class AssignPermissionCommand extends Command
             }
 
             $permission = new PermissionDTO($permissionName);
-            $this->assignAccessService->assignPermission($permission, (string)$user->getId());
+            $this->assignAccessService->assignPermission($permission, $user->getId());
 
             $io->success('Permission was assigned to given user');
         } catch (ExistItemException|AssignedItemException|IdentityException $t) {
