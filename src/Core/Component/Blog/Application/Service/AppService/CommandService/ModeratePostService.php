@@ -35,7 +35,8 @@ final class ModeratePostService implements ModeratePostServiceInterface
         if (($post = $this->postQueryService->getPost($postId)) === null) {
             throw new BlogNotFoundException('This post does not exist!');
         }
-        $post->isPublic() ?: $post->setPublic(true);
+
+        $post->publish();
 
         $this->repository->save([$post]);
     }
@@ -48,7 +49,8 @@ final class ModeratePostService implements ModeratePostServiceInterface
         if (($post = $this->postQueryService->getPost($postId)) === null) {
             throw new BlogNotFoundException('This post does not exist!');
         }
-        !$post->isPublic() ?: $post->setPublic(false);
+
+        $post->toDraft();
 
         $this->repository->save([$post]);
     }
@@ -62,7 +64,7 @@ final class ModeratePostService implements ModeratePostServiceInterface
             throw new BlogNotFoundException('This post does not exist!');
         }
 
-        $post->editPost($postModerateDTO->getTitle(), $postModerateDTO->getContent());
+        $post->edit($postModerateDTO->getTitle(), $postModerateDTO->getContent());
         $post->resetTags();
 
         $postTags = $postModerateDTO->getTags();
@@ -70,7 +72,12 @@ final class ModeratePostService implements ModeratePostServiceInterface
             $post->addTag($this->tagRepository->getOrCreate($tag));
         }
 
-        $postModerateDTO->isPublic() ? $post->setPublic(true) : $post->setPublic(false);
+        if ($postModerateDTO->isPublic()) {
+            !$post->isPublic() ?: $post->publish();
+        } else {
+            $post->toDraft();
+        }
+
 
         $this->repository->save([$post]);
     }

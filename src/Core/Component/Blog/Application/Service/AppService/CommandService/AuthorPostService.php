@@ -53,7 +53,7 @@ final class AuthorPostService implements AuthorPostServiceInterface
         if (($post = $this->postQueryService->getPostBySlug($postSlug)) === null) {
             throw new BlogNotFoundException('This post does not exist!');
         }
-        $post->editPost($postChangeDTO->getTitle(), $postChangeDTO->getContent());
+        $post->edit($postChangeDTO->getTitle(), $postChangeDTO->getContent());
         $post->resetTags();
 
         $postTags = $postChangeDTO->getTags();

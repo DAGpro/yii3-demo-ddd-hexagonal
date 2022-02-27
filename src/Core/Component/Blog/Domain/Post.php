@@ -8,7 +8,7 @@ use App\Core\Component\Blog\Domain\User\Author;
 use App\Core\Component\Blog\Domain\User\Commentator;
 use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
 use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostTag;
-use App\Core\Component\Blog\Infrastructure\Persistence\Post\Scope\PublicScope;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\Scope\PublicAndNotDeletedConstrain;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\Embedded;
@@ -23,7 +23,7 @@ use Yiisoft\Security\Random;
 
 #[Entity(
     repository: PostRepository::class,
-    scope: PublicScope::class
+    scope: PublicAndNotDeletedConstrain::class
 )]
 #[Index(columns: ['public', 'published_at'])]
 #[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
@@ -37,7 +37,7 @@ class Post
     #[Column(type: 'string(191)', default: '')]
     private string $title;
 
-    #[Column(type: 'string(191)')]
+    #[Column(type: 'text')]
     private string $content;
 
     #[Column(type: 'string(128)')]
@@ -88,10 +88,29 @@ class Post
         $this->resetSlug();
     }
 
-    public function editPost(string $title, string $content): void
-    {
+    public function edit(
+        string $title,
+        string $content,
+        ?Author $author = null
+    ): void {
         $this->title = $title;
         $this->content = $content;
+
+        if ($author !== null) {
+            $this->author = $author;
+        }
+    }
+
+    public function publish(): void
+    {
+        $this->public = true;
+        $this->published_at = new DateTimeImmutable();
+    }
+
+    public function toDraft(): void
+    {
+        $this->public = false;
+        $this->published_at = null;
     }
 
     public function isAuthor(Author $author) :bool
@@ -109,17 +128,17 @@ class Post
         return $this->author;
     }
 
+    public function createComment(string $comment, Commentator $commentator): Comment
+    {
+        return new Comment($comment, $this, $commentator);
+    }
+
     /**
      * @return Comment[]
      */
     public function getComments(): array
     {
         return $this->comments->toArray();
-    }
-
-    public function createComment(string $comment, Commentator $commentator): Comment
-    {
-        return new Comment($comment, $this, $commentator);
     }
 
     /** Getters Setters */
@@ -176,11 +195,6 @@ class Post
         return $this->public;
     }
 
-    public function setPublic(bool $public): void
-    {
-        $this->public = $public;
-    }
-
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->created_at;
@@ -196,14 +210,15 @@ class Post
         return $this->published_at;
     }
 
-    public function setPublishedAt(?DateTimeImmutable $published_at): void
-    {
-        $this->published_at = $published_at;
-    }
-
     public function getDeletedAt(): ?DateTimeImmutable
     {
         return $this->deleted_at;
+    }
+
+    //TODO fixture data
+    public function setPublishedAt(DateTimeImmutable $date): void
+    {
+        $this->updated_at = $date;
     }
 
 }

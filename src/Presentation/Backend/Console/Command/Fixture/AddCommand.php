@@ -163,7 +163,7 @@ final class AddCommand extends Command
             );
 
             $public = rand(0, 2) > 0;
-            $post->setPublic($public);
+            $public ? $post->publish() : $post->toDraft();
             if ($public) {
                 $post->setPublishedAt(new \DateTimeImmutable(date('r', rand(time(), strtotime('-2 years')))));
             }
