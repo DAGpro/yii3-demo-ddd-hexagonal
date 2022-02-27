@@ -52,7 +52,11 @@ class Post
     /**
      * @var PivotedCollection<array-key, Tag, PostTag>
      */
-    #[ManyToMany(target: Tag::class, though: PostTag::class, fkAction: 'CASCADE')]
+    #[ManyToMany(
+        target: Tag::class,
+        though: PostTag::class,
+        fkAction: 'CASCADE'
+    )]
     private PivotedCollection $tags;
     private ?int $tag_id = null;
 

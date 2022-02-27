@@ -5,40 +5,39 @@ declare(strict_types=1);
 namespace App\Core\Component\Blog\Infrastructure\Persistence\Post;
 
 use App\Core\Component\Blog\Domain\Port\PostRepositoryInterface;
+use Cycle\ORM\EntityManager;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
-use Cycle\ORM\Transaction;
-use Cycle\ORM\TransactionInterface;
-use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Driver\SQLite\SQLiteDriver;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Injection\FragmentInterface;
+use Cycle\Database\DatabaseInterface;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\SQLite\SQLiteDriver;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
 
 final class PostRepository extends Select\Repository implements PostRepositoryInterface
 {
-    private TransactionInterface $transaction;
+    private EntityManager $entityManager;
 
     public function __construct(Select $select, ORMInterface $orm)
     {
-        $this->transaction = new Transaction($orm);
+        $this->entityManager = new EntityManager($orm);
         parent::__construct($select);
     }
 
     public function save(array $posts): void
     {
         foreach ($posts as $entity) {
-            $this->transaction->persist($entity);
+            $this->entityManager->persist($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 
     public function delete(array $posts): void
     {
         foreach ($posts as $entity) {
-            $this->transaction->delete($entity);
+            $this->entityManager->delete($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 
     /**

@@ -7,13 +7,13 @@ namespace App\Core\Component\Blog\Domain\User;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Embeddable;
 
-/** @Embeddable */
+#[Embeddable]
 class Commentator
 {
-    /** @Column(type = "string", nullable = true) */
+    #[Column(type:'integer')]
     private int $commentatorId;
 
-    /** @Column(type = "string", nullable = true) */
+    #[Column(type: 'string(191)')]
     private string $commentatorName;
 
     public function __construct(int $id, string $name)

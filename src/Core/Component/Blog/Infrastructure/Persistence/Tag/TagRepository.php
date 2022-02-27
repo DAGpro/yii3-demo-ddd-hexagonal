@@ -7,24 +7,24 @@ namespace App\Core\Component\Blog\Infrastructure\Persistence\Tag;
 use App\Core\Component\Blog\Domain\Post;
 use App\Core\Component\Blog\Domain\Port\TagRepositoryInterface;
 use App\Core\Component\Blog\Domain\Tag;
+use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostRepository;
 use App\Core\Component\Blog\Infrastructure\Persistence\Post\PostTag;
+use Cycle\ORM\EntityManager;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
-use Cycle\ORM\Transaction;
-use Cycle\ORM\TransactionInterface;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Query\SelectQuery;
 use Yiisoft\Data\Reader\DataReaderInterface;
 
 final class TagRepository extends Repository implements TagRepositoryInterface
 {
-    private TransactionInterface $transaction;
+    private EntityManager $entityManager;
     private ORMInterface $orm;
 
     public function __construct(Select $select, ORMInterface $orm)
     {
         $this->orm = $orm;
-        $this->transaction = new Transaction($orm);
+        $this->entityManager = new EntityManager($orm);
         parent::__construct($select);
     }
 
@@ -147,16 +147,16 @@ final class TagRepository extends Repository implements TagRepositoryInterface
     public function save(array $tags): void
     {
         foreach ($tags as $entity) {
-            $this->transaction->persist($entity);
+            $this->entityManager->persist($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 
     public function delete(array $tags): void
     {
         foreach ($tags as $entity) {
-            $this->transaction->delete($entity);
+            $this->entityManager->delete($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 }

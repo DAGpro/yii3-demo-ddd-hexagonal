@@ -6,21 +6,20 @@ namespace App\Core\Component\IdentityAccess\User\Infrastructure\Persistence;
 
 use App\Core\Component\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\Core\Component\IdentityAccess\User\Domain\User;
+use Cycle\ORM\EntityManager;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
-use Cycle\ORM\Transaction;
-use Cycle\ORM\TransactionInterface;
 use Spiral\Database\Injection\Parameter;
 use Throwable;
 
 final class UserRepository extends Select\Repository implements UserRepositoryInterface
 {
-    private TransactionInterface $transaction;
+    private EntityManager $entityManager;
     private ORMInterface $orm;
 
     public function __construct(Select $select, ORMInterface $orm)
     {
-        $this->transaction = new Transaction($orm);
+        $this->entityManager = new EntityManager($orm);
         $this->orm = $orm;
         parent::__construct($select);
     }
@@ -59,17 +58,17 @@ final class UserRepository extends Select\Repository implements UserRepositoryIn
     public function save(array $users): void
     {
         foreach ($users as $entity) {
-            $this->transaction->persist($entity);
+            $this->entityManager->persist($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 
     public function delete(array $users): void
     {
         foreach ($users as $entity) {
-            $this->transaction->delete($entity);
+            $this->entityManager->delete($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 
     private function findBy(string $field, string $value): ?User

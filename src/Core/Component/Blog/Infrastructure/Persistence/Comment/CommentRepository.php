@@ -6,18 +6,18 @@ namespace  App\Core\Component\Blog\Infrastructure\Persistence\Comment;
 
 use App\Core\Component\Blog\Domain\Comment;
 use App\Core\Component\Blog\Domain\Port\CommentRepositoryInterface;
+use Cycle\ORM\EntityManager;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
-use Cycle\ORM\Transaction;
 
 final class CommentRepository extends Select\Repository implements CommentRepositoryInterface
 {
-    private Transaction $transaction;
+    private EntityManager $entityManager;
 
     public function __construct(Select $select, ORMInterface $orm)
     {
         parent::__construct($select);
-        $this->transaction = new Transaction($orm);
+        $this->entityManager = new EntityManager($orm);
     }
 
     public function getPublicComment(int $commentId): ?Comment
@@ -33,16 +33,16 @@ final class CommentRepository extends Select\Repository implements CommentReposi
     public function save(array $comments): void
     {
         foreach ($comments as $entity) {
-            $this->transaction->persist($entity);
+            $this->entityManager->persist($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 
     public function delete(array $comments): void
     {
         foreach ($comments as $entity) {
-            $this->transaction->delete($entity);
+            $this->entityManager->delete($entity);
         }
-        $this->transaction->run();
+        $this->entityManager->run();
     }
 }

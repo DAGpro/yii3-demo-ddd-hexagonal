@@ -6,7 +6,7 @@ namespace App\Core\Component\Blog\Domain\Port;
 
 use App\Core\Component\Blog\Domain\Tag;
 use Cycle\ORM\Select;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Query\SelectQuery;
 
 interface TagRepositoryInterface
 {
