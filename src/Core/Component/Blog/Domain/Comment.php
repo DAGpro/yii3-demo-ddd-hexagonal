@@ -65,6 +65,39 @@ class Comment
         $this->updated_at = new DateTimeImmutable();
     }
 
+    public function publish(): void
+    {
+        $this->public = true;
+        $this->published_at = new DateTimeImmutable();
+    }
+
+    public function toDraft(): void
+    {
+        $this->public = false;
+        $this->published_at = null;
+    }
+
+    public function change(
+        string $content,
+        ?Post $post = null,
+        ?Commentator $commentator = null
+    ): void {
+        $this->content = $content;
+
+        if ($post !== null) {
+            $this->post_id =  $post->getId();
+        }
+
+        if ($commentator !== null) {
+            $this->commentator = $commentator;
+        }
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
     public function isCommentator($commentator): bool
     {
         return $this->commentator->isEqual($commentator);
@@ -90,26 +123,6 @@ class Comment
         return $this->content;
     }
 
-    public function setContent(string $content): void
-    {
-        $this->content = $content;
-    }
-
-    public function isPublic(): bool
-    {
-        return $this->public;
-    }
-
-    public function setPublic(bool $public): void
-    {
-        $this->public = $public;
-    }
-
-    public function setPost(Post $post): void
-    {
-        $this->post = $post;
-    }
-
     public function getPost(): ?Post
     {
         return $this->post;
@@ -130,14 +143,15 @@ class Comment
         return $this->published_at;
     }
 
-    public function setPublishedAt(?DateTimeImmutable $published_at): void
-    {
-        $this->published_at = $published_at;
-    }
-
     public function getDeletedAt(): ?DateTimeImmutable
     {
         return $this->deleted_at;
+    }
+
+    //TODO fixture data
+    public function setPublishedAt(DateTimeImmutable $date): void
+    {
+        $this->updated_at = $date;
     }
 
 }
