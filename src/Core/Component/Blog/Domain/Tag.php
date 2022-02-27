@@ -41,6 +41,11 @@ class Tag
         $this->posts = new PivotedCollection();
     }
 
+    public function change(string $label): void
+    {
+        $this->label = $label;
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -49,11 +54,6 @@ class Tag
     public function getLabel(): string
     {
         return $this->label;
-    }
-
-    public function setLabel(string $label): void
-    {
-        $this->label = $label;
     }
 
     /**

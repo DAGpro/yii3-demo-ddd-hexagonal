@@ -25,7 +25,7 @@ final class TagService implements TagServiceInterface
         if (($tag = $this->repository->getTag($tagId)) === null) {
             throw new BlogNotFoundException('This tag does not exist!');
         }
-        $tag->setLabel($tagLabel);
+        $tag->change($tagLabel);
         $this->repository->save([$tag]);
     }
 
