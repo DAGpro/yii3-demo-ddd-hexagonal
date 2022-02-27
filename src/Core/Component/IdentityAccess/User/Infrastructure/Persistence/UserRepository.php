@@ -8,11 +8,12 @@ use App\Core\Component\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\Core\Component\IdentityAccess\User\Domain\User;
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\ORMInterface;
+use Cycle\Database\Injection\Parameter;
 use Cycle\ORM\Select;
-use Spiral\Database\Injection\Parameter;
+use Cycle\ORM\Select\Repository;
 use Throwable;
 
-final class UserRepository extends Select\Repository implements UserRepositoryInterface
+final class UserRepository extends Repository implements UserRepositoryInterface
 {
     private EntityManager $entityManager;
     private ORMInterface $orm;
@@ -31,7 +32,7 @@ final class UserRepository extends Select\Repository implements UserRepositoryIn
 
     public function findByLogin(string $login): ?User
     {
-        return $this->findBy('login', $login);
+        return $this->findOne(['login' => $login]);
     }
 
     public function getUsers(array $userIds): iterable
@@ -71,8 +72,4 @@ final class UserRepository extends Select\Repository implements UserRepositoryIn
         $this->entityManager->run();
     }
 
-    private function findBy(string $field, string $value): ?User
-    {
-        return $this->findOne([$field => $value]);
-    }
 }
