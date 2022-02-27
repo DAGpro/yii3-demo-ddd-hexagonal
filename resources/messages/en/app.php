@@ -110,6 +110,7 @@ return [
 
     'identityAccess.user' => 'User',
     'identityAccess.create.user' => 'Create user ',
+    'IdentityAccess.user.registered' => 'The user is registered, now you can log in!',
     'identityAccess.user.created.at' => 'Created at ',
     'identityAccess.users' => 'Users ',
     'identityAccess.remove.users' => 'Remove users ',

@@ -110,6 +110,7 @@ return [
 
     'identityAccess.user' => 'Пользователь',
     'identityAccess.create.user' => 'Создать пользователя',
+    'IdentityAccess.user.registered' => 'Пользователь зарегистрирован, теперь вы можете войти!',
     'identityAccess.user.created.at' => 'Создан в ',
     'identityAccess.users' => 'Пользователи',
     'identityAccess.remove.users' => 'Удалить пользователей',

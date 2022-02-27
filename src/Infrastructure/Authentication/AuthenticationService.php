@@ -35,8 +35,9 @@ final class AuthenticationService
             throw new AuthenticationException('Login or password incorrect!');
         }
 
-        $identity = $this->identityRepository->findByUserId($user->getId());
-        if ($identity === null || !$this->currentUser->login($identity)) {
+        $identity = $this->identityRepository->findOrCreate($user);
+
+        if (!$this->currentUser->login($identity)) {
             throw new AuthenticationException('Login failed, please try again!');
         }
 

@@ -4,19 +4,30 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authentication;
 
+use App\Core\Component\IdentityAccess\User\Domain\User;
 use Cycle\ORM\Select;
 use Throwable;
+use Cycle\ORM\EntityManager;
 use Yiisoft\Auth\IdentityRepositoryInterface;
-use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 
 final class IdentityRepository extends Select\Repository implements IdentityRepositoryInterface
 {
-    private EntityWriter $entityWriter;
+    private EntityManager $entityManager;
 
-    public function __construct(Select $select, EntityWriter $entityWriter)
+    public function __construct(Select $select, EntityManager $entityWriter)
     {
-        $this->entityWriter = $entityWriter;
+        $this->entityManager = $entityWriter;
         parent::__construct($select);
+    }
+
+    public function findOrCreate(User $user): Identity
+    {
+        $identity = $this->findByUserId($user->getId());
+        if ($identity === null) {
+            $this->save(new Identity($user));
+            $identity = $this->findByUserId($user->getId());
+        }
+        return $identity;
     }
 
     /**
@@ -39,6 +50,7 @@ final class IdentityRepository extends Select\Repository implements IdentityRepo
      */
     public function save(Identity $identity): void
     {
-        $this->entityWriter->write([$identity]);
+        $this->entityManager->persist($identity);
+        $this->entityManager->run();
     }
 }

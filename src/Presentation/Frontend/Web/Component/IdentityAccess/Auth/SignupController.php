@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth;
 
 use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
+use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\Infrastructure\Authentication\AuthenticationService;
-use App\Infrastructure\Authentication\AuthenticationException;
-use App\Infrastructure\Authentication\SignupUserService;
 use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form\SignupForm;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
@@ -30,14 +30,14 @@ final class SignupController
 
     public function signup(
         AuthenticationService $authenticationService,
-        SignupUserService $signupUserService,
+        UserServiceInterface $userService,
         UserQueryServiceInterface $userQueryService,
         ServerRequestInterface $request,
         TranslatorInterface $translator,
         ValidatorInterface $validator
     ): ResponseInterface {
         if (!$authenticationService->isGuest()) {
-            return $this->redirectToMain();
+            return $this->webService->redirect('site/index');
         }
 
         $body = $request->getParsedBody();
@@ -50,18 +50,16 @@ final class SignupController
             && $validator->validate($signupForm)->isValid()
         ) {
             try {
-                $signupUserService->signup($signupForm->getLogin(), $signupForm->getPassword());
-                return $this->redirectToMain();
-            } catch (AuthenticationException $exception) {
+                $userService->createUser($signupForm->getLogin(), $signupForm->getPassword());
+                return $this->webService->sessionFlashAndRedirect(
+                    $translator->translate('IdentityAccess.user.registered'),
+                    'site/index'
+                );
+            } catch (IdentityException $exception) {
                 $signupForm->getFormErrors()->addError('password', $exception->getMessage());
             }
         }
 
         return $this->viewRenderer->render('signup', ['formModel' => $signupForm]);
-    }
-
-    private function redirectToMain(): ResponseInterface
-    {
-        return $this->webService->redirect('site/index');
     }
 }
