@@ -85,7 +85,7 @@ final class CommentController
             && $validator->validate($form)->isValid()
         ) {
             try {
-                $commentService->addComment(
+                $commentService->add(
                     $post->getId(),
                     $form->getComment(),
                     $commentator
@@ -115,7 +115,7 @@ final class CommentController
     ): Response {
         $commentId = (int)$currentRoute->getArgument('comment_id');
 
-        $comment = $commentQueryService->getPublicComment($commentId);
+        $comment = $commentQueryService->getComment($commentId);
         if ($comment === null) {
             return $this->webService->notFound();
         }

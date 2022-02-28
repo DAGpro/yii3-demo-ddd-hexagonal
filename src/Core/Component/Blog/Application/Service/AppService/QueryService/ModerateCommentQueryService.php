@@ -1,20 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Core\Component\Blog\Application\Service\AppService\QueryService;
 
-use App\Core\Component\Blog\Application\Service\QueryService\CommentQueryServiceInterface;
+use App\Core\Component\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterface;
 use App\Core\Component\Blog\Domain\Comment;
 use App\Core\Component\Blog\Domain\Port\CommentRepositoryInterface;
-use Yiisoft\Data\Paginator\KeysetPaginator;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class CommentQueryService implements CommentQueryServiceInterface
+class ModerateCommentQueryService implements ModerateCommentQueryServiceInterface
 {
-    private const COMMENTS_FEED_PER_PAGE = 10;
 
     private CommentRepositoryInterface $repository;
 
@@ -23,23 +19,21 @@ final class CommentQueryService implements CommentQueryServiceInterface
         $this->repository = $repository;
     }
 
-    public function getFeedPaginator(): KeysetPaginator
+    public function findAllPreloaded(): ?DataReaderInterface
     {
-        $sort = $this->getSort()->withOrder(['id' => 'asc']);
-        $dataReader = $this->prepareDataReader(
+        $sort = $this->getSort()->withOrder(['published_at' => 'desc']);
+        return $this->prepareDataReader(
             $this->repository
                 ->select()
+                ->scope()
                 ->andWhere('deleted_at', '=', null),
             $sort
         );
-
-        return (new KeysetPaginator($dataReader))
-            ->withPageSize(self::COMMENTS_FEED_PER_PAGE);
     }
 
     public function getComment(int $commentId): ?Comment
     {
-        return $this->repository->getPublicComment($commentId);
+        return $this->repository->getComment($commentId);
     }
 
     private function prepareDataReader($query, Sort $sort): DataReaderInterface

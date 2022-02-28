@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\Blog;
 
-use App\Core\Component\Blog\Application\Service\CommandService\CommentServiceInterface;
-use App\Core\Component\Blog\Application\Service\QueryService\CommentQueryServiceInterface;
+use App\Core\Component\Blog\Application\Service\CommandService\ModerateCommentServiceInterface;
+use App\Core\Component\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterface;
 use App\Core\Component\Blog\Domain\Exception\BlogNotFoundException;
 use App\Presentation\Backend\Web\Component\Blog\Form\CommentForm;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
@@ -21,14 +21,14 @@ final class CommentController
 {
     private const COMMENT_PER_PAGE = 3;
 
-    private CommentQueryServiceInterface $commentQueryService;
-    private CommentServiceInterface $commentService;
+    private ModerateCommentQueryServiceInterface $commentQueryService;
+    private ModerateCommentServiceInterface $commentService;
     private ViewRenderer $view;
     private WebControllerService $webService;
 
     public function __construct(
-        CommentQueryServiceInterface $commentQueryService,
-        CommentServiceInterface $commentService,
+        ModerateCommentQueryServiceInterface $commentQueryService,
+        ModerateCommentServiceInterface $commentService,
         ViewRenderer $viewRenderer,
         WebControllerService $webService
     ) {

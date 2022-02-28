@@ -28,53 +28,10 @@ final class CommentService implements CommentServiceInterface
     }
 
     /**
-     * @throws BlogNotFoundException
-     */
-    public function draft(int $commentId): void
-    {
-        if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
-            throw new BlogNotFoundException('Comment does not exist!');
-        }
-
-        !$comment->isPublic() ?: $comment->setPublic(false);
-
-        $this->repository->save([$comment]);
-    }
-
-    /**
-     * @throws BlogNotFoundException
-     */
-    public function public(int $commentId): void
-    {
-        if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
-            throw new BlogNotFoundException('Comment does not exist!');
-        }
-
-        $comment->isPublic() ?: $comment->setPublic(true);
-
-        $this->repository->save([$comment]);
-    }
-
-    /**
-     * @throws BlogNotFoundException
-     */
-    public function moderate(int $commentId, string $commentText, bool $public): void
-    {
-        if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
-            throw new BlogNotFoundException('Comment does not exist!');
-        }
-
-        $comment->setContent($commentText);
-        $comment->setPublic($public);
-
-        $this->repository->save([$comment]);
-    }
-
-    /**
      * @TODO Frontend
      * @throws BlogNotFoundException
      */
-    public function addComment(
+    public function add(
         int $postId,
         string $commentText,
         Commentator $commentator
@@ -93,24 +50,13 @@ final class CommentService implements CommentServiceInterface
      */
     public function edit(int $commentId, string $commentText): void
     {
-        if (($comment = $this->commentQueryService->getPublicComment($commentId)) === null) {
-            throw new BlogNotFoundException('Comment does not exist!');
-        }
-
-        $comment->setContent($commentText);
-
-        $this->repository->save([$comment]);
-    }
-
-    /**
-     * @throws BlogNotFoundException
-     */
-    public function delete(int $commentId): void
-    {
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
             throw new BlogNotFoundException('Comment does not exist!');
         }
 
-        $this->repository->delete([$comment]);
+        $comment->change($commentText);
+
+        $this->repository->save([$comment]);
     }
+
 }

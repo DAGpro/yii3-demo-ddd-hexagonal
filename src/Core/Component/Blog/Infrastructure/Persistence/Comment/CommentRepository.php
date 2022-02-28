@@ -22,12 +22,12 @@ final class CommentRepository extends Select\Repository implements CommentReposi
 
     public function getPublicComment(int $commentId): ?Comment
     {
-        return $this->findOne(['id' => $commentId, 'public' => 1]);
+        return $this->findOne(['id' => $commentId]);
     }
 
     public function getComment(int $commentId): ?Comment
     {
-        return $this->findOne(['id' => $commentId]);
+        return $this->select()->scope()->where(['id' => $commentId])->fetchOne();
     }
 
     public function save(array $comments): void
