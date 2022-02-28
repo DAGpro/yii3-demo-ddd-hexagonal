@@ -30,12 +30,12 @@ use Yiisoft\Html\Html;
     ->id('form-author-post')
     ->begin() ?>
 
-<?= Field::widget()->config($form, 'title') ?>
-<?= Field::widget()->config($form, 'content')->textArea(['rows' => '9', 'style' => 'height: 300px;']) ?>
+<?= Field::widget()->text($form, 'title') ?>
+<?= Field::widget()->textArea($form, 'content')->attributes(['rows' => 9, 'style' => 'height: 300px;']) ?>
 
 <label for="addTag" class="form-label"><?=$translator->translate('blog.add.tag')?></label>
 <input type="text" class="form-control mb-3" id="addTag" placeholder="Add tag" value="">
-<p class="text-danger"><?=implode(', ', $form->getError('tags'))?></p>
+<p class="text-danger"><?=implode(', ', $form->getFormErrors()->getErrors('tags'))?></p>
 <?= Html::button(
     'Add',
     ['class' => 'btn btn-primary mb-3', 'id' => 'addTagButton']
@@ -50,12 +50,9 @@ use Yiisoft\Html\Html;
     <?php endforeach; ?>
 </div>
 
-<?= Field::widget()->submitButton(
-    [
-        'class' => 'btn btn-primary btn-lg mt-3',
-        'id' => 'author-post-button',
-        'value' => $translator->translate('button.submit'),
-    ],
-) ?>
+<?= Field::widget()
+->submitButton()
+->value($translator->translate('button.submit'))
+->attributes(['class' => 'btn btn-primary btn-lg mt-3', 'id' => 'author-post-button']) ?>
 
 <?=Form::end()?>

@@ -32,7 +32,7 @@ $this->setTitle($translator->translate('Signup'));
                         ->id('signupForm')
                         ->begin() ?>
 
-                        <?= Field::widget()->autofocus()->text($formModel, 'login') ?>
+                        <?= Field::widget()->text($formModel, 'login')->autofocus() ?>
                         <?= Field::widget()->password($formModel, 'password') ?>
                         <?= Field::widget()->password($formModel, 'passwordVerify') ?>
                         <?= Field::widget()

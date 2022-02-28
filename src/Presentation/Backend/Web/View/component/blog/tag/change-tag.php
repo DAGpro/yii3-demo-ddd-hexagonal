@@ -32,16 +32,19 @@ $this->setTitle($title);
                 ->id('form-moderate-tag')
                 ->begin() ?>
 
-            <?= Field::widget()->config($form, 'label') ?>
-            <?= Field::widget()->config($form, 'id')->text(['disabled' => '']) ?>
+            <?= Field::widget()->text($form, 'label') ?>
+            <?= Field::widget()->text($form, 'id')->attributes(['disabled' => 'disabled']) ?>
 
-            <?= Field::widget()->submitButton(
-                [
-                    'class' => 'btn btn-primary btn-lg mt-3',
-                    'id' => 'login-button',
-                    'value' => $translator->translate('button.submit'),
-                ],
-            ) ?>
+            <?= Field::widget()
+                ->submitButton()
+                ->value($translator->translate('button.submit'))
+                ->attributes(
+                    [
+                        'class' => 'btn btn-primary btn-lg mt-3',
+                        'id' => 'login-button'
+                    ]
+                )
+            ?>
 
             <?= Form::end()?>
         </div>

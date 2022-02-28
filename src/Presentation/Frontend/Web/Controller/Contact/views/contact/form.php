@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use Yiisoft\Form\Widget\Field;
 use Yiisoft\Form\Widget\Form;
-use Yiisoft\Form\Widget\ResetButton;
-use Yiisoft\Form\Widget\SubmitButton;
 use Yiisoft\Html\Html;
 use Yiisoft\View\WebView;
 
@@ -39,7 +37,7 @@ $this->setTitle($translator->translate('menu.contact'));
                     <?= Field::widget()->text($form, 'name') ?>
                     <?= Field::widget()->email($form, 'email') ?>
                     <?= Field::widget()->text($form, 'subject') ?>
-                    <?= Field::widget()->attributes(['style' => 'height: 100px'])->textArea($form, 'body') ?>
+                    <?= Field::widget()->textArea($form, 'body')->attributes(['style' => 'height: 100px']) ?>
                     <?= Field::widget()
                         ->containerClass('mb-3')
                         ->file($form, 'attachFiles', ['multiple()' => [true]])

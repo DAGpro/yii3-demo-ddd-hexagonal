@@ -30,16 +30,19 @@ $this->setTitle($translator->translate('blog.moderate.comment') . $form->getComm
         ->id('form-moderate-comment')
         ->begin() ?>
 
-    <?= Field::widget()->config($form, 'content')->textArea(['rows' => '9', 'class' => 'h-100']) ?>
-    <?= Field::widget()->config($form, 'public')->inputClass('form-check-input')->checkbox() ?>
-    <?= Field::widget()->config($form, 'comment_id')->text(['disabled' => 'disabled']) ?>
+    <?= Field::widget()->textArea($form, 'content')->attributes(['rows' => '9', 'style' => 'height: 250px;']) ?>
+    <?= Field::widget()->checkbox($form, 'public')->inputClass('form-check-input') ?>
+    <?= Field::widget()->text($form, 'comment_id')->attributes(['disabled' => 'disabled']) ?>
 
-    <?= Field::widget()->submitButton(
-        [
-            'class' => 'btn btn-primary btn-lg mt-3',
-            'id' => 'login-button',
-            'value' => $translator->translate('button.submit'),
-        ],
-    ) ?>
+    <?= Field::widget()
+        ->submitButton()
+        ->value($translator->translate('button.submit'))
+        ->attributes(
+                [
+                    'class' => 'btn btn-primary btn-lg mt-3',
+                    'id' => 'login-button',
+                ]
+        )
+    ?>
     <?=Form::end()?>
 </div>

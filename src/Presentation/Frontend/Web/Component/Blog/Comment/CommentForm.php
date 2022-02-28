@@ -34,7 +34,7 @@ final class CommentForm extends FormModel
         return [
             'comment' => [
                 Required::rule(),
-                HasLength::rule()->min(3)->max(255),
+                HasLength::rule()->min(3)->max(191),
             ],
         ];
     }

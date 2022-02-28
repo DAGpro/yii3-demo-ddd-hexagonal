@@ -32,14 +32,15 @@ $this->setTitle($translator->translate('blog.moderate.post'));
         ->id('form-moderate-post')
         ->begin() ?>
 
-    <?= Field::widget()->config($form, 'title') ?>
-    <?= Field::widget()->config($form, 'content')->textArea(['rows' => '9', 'style' => 'height: 300px;']) ?>
-    <?= Field::widget()->config($form, 'public')->inputClass('form-check-input')->checkbox() ?>
+    <?= Field::widget()->text($form, 'title') ?>
+    <?= Field::widget()->textArea($form, 'content')->attributes(['rows' => '9', 'style' => 'height: 300px;']) ?>
+    <?= Field::widget()->checkbox($form, 'public') ?>
+
 
     <div class="form-floating mb-3">
         <input type="text" class="form-control" name="addTag" id="addTag" placeholder="Add tag" value="">
         <label for="addTag" class="floatingInput"><?=$translator->translate('blog.add.tag')?></label>
-        <p class="alert-danger"><?=implode(', ', $form->getError('tag'))?></p>
+        <p class="alert-danger"><?=implode(', ', $form->getFormErrors()->getErrors('tag'))?></p>
         <?= Html::button(
             $translator->translate('blog.add.tag'),
             ['class' => 'btn btn-primary mb-3', 'id' => 'addTagButton']
@@ -55,13 +56,16 @@ $this->setTitle($translator->translate('blog.moderate.post'));
         <?php endforeach; ?>
     </div>
 
-    <?= Field::widget()->submitButton(
-        [
-            'class' => 'btn btn-primary btn-lg mt-3',
-            'id' => 'login-button',
-            'value' => $translator->translate('button.submit'),
-        ],
-    ) ?>
+    <?= Field::widget()
+        ->submitButton()
+        ->value($translator->translate('button.submit'))
+        ->attributes(
+            [
+                'class' => 'btn btn-primary btn-lg mt-3',
+                'id' => 'login-button'
+            ]
+        )
+    ?>
 
     <?=Form::end()?>
 </div>

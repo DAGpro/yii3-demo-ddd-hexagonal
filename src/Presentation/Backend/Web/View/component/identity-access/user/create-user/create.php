@@ -35,16 +35,19 @@ use Yiisoft\Html\Html;
                         ->id('signupForm')
                         ->begin() ?>
 
-                    <?= Field::widget()->config($form, 'login')->text(['autofocus' => true]) ?>
-                    <?= Field::widget()->config($form, 'password')->password() ?>
-                    <?= Field::widget()->config($form, 'passwordVerify')->password() ?>
-                    <?= Field::widget()->containerClass('d-grid gap-2 form-floating')->submitButton(
-                        [
-                            'class' => 'btn btn-primary btn-lg mt-3',
-                            'id' => 'register-button',
-                            'value' => $translator->translate('button.submit'),
-                        ]
-                    ) ?>
+                    <?= Field::widget()->text($form, 'login')->attributes(['autofocus' => true]) ?>
+                    <?= Field::widget()->password($form, 'password') ?>
+                    <?= Field::widget()->password($form, 'passwordVerify') ?>
+                    <?= Field::widget()
+                        ->submitButton()
+                        ->value($translator->translate('button.submit'))
+                        ->attributes(
+                            [
+                                'class' => 'btn btn-primary btn-lg mt-3',
+                                'id' => 'register-button',
+                            ]
+                        )
+                    ?>
 
                     <?= Form::end() ?>
                 </div>

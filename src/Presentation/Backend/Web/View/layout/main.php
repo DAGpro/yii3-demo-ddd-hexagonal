@@ -129,15 +129,8 @@ $this->beginPage();
                             ->begin()
                         . Field::widget()
                             ->containerClass('mb-1')
-                            ->submitButton(
-                                [
-                                    'class' => 'btn btn-primary',
-                                    'value' => $translator->translate(
-                                        'menu.logout',
-                                        ['login' => Html::encode($user->getLogin())],
-                                    ),
-                                ],
-                            )
+                            ->submitButton([], ['class' => 'btn btn-primary'])
+                            ->value($translator->translate('menu.logout', ['login' => Html::encode($user->getLogin())]))
                         . Form::end()
                     ],
             ) ?>

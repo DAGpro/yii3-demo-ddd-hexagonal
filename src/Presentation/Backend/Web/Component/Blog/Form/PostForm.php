@@ -10,7 +10,7 @@ use Yiisoft\Form\FormModel;
 use Yiisoft\Validator\Rule\Each;
 use Yiisoft\Validator\Rule\HasLength;
 use Yiisoft\Validator\Rule\Required;
-use Yiisoft\Validator\Rules;
+use Yiisoft\Validator\RuleSet;
 
 final class PostForm extends FormModel
 {
@@ -55,7 +55,7 @@ final class PostForm extends FormModel
 
     public function getRules(): array
     {
-        $rules = new Rules();
+        $rules = new RuleSet();
         $rules->add(Required::rule());
         return [
             'title' => [

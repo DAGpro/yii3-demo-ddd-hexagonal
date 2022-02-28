@@ -62,7 +62,7 @@ if ($item->getTags()) {
 }
 if ($commentator !== null){
     echo <<<FORM
-        <form id="draftPost" method="POST" action="{$url->generate('blog/comment/add', ['slug' => $item->getSlug()])}" enctype="multipart/form-data">
+        <form id="commentAdd" method="POST" action="{$url->generate('blog/comment/add', ['slug' => $item->getSlug()])}" enctype="multipart/form-data">
             <input type="hidden" name="_csrf" value="{$csrf}">
             <input name="post_id" type="hidden" value="{$item->getId()}">
 

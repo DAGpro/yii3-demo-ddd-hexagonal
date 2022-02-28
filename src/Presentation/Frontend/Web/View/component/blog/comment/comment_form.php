@@ -59,14 +59,16 @@ echo "<h1 class='mb-3'>{$this->getTitle()}</h1>";
     ->id('form-comment')
     ->begin() ?>
 
-<?= Field::widget()->config($form, 'comment')->textArea(['rows' => '6']) ?>
+<?= Field::widget()->textArea($form, 'comment')->attributes(['rows' => '6']) ?>
 
-<?= Field::widget()->submitButton(
-    [
-        'class' => 'btn btn-primary btn-lg mt-3',
-        'id' => 'comment-button',
-        'value' => $translator->translate('button.submit'),
-    ],
-) ?>
+<?= Field::widget()
+    ->submitButton($translator->translate('button.submit'))
+    ->attributes(
+        [
+            'class' => 'btn btn-primary btn-lg mt-3',
+            'id' => 'comment-button',
+        ]
+    )
+?>
 
 <?=Form::end()?>

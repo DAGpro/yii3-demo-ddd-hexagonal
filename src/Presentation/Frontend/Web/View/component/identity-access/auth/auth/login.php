@@ -34,7 +34,7 @@ $error = $error ?? null;
                         ->id('loginForm')
                         ->begin() ?>
 
-                        <?= Field::widget()->autofocus()->text($formModel, 'login') ?>
+                        <?= Field::widget()->text($formModel, 'login')->autofocus() ?>
                         <?= Field::widget()->password($formModel, 'password') ?>
                         <?= Field::widget()
                             ->checkbox($formModel, 'rememberMe')
@@ -42,13 +42,6 @@ $error = $error ?? null;
                             ->inputClass('form-check-input')
                             ->labelClass('form-check-label')
                         ?>
-                        <?= Field::widget()->containerClass('d-grid gap-2 form-floating')->submitButton(
-                            [
-                                'class' => 'btn btn-primary btn-lg mt-3',
-                                'id' => 'login-button',
-                                'value' => $translator->translate('button.submit'),
-                            ]
-                        ) ?>
                         <?= Field::widget()
                             ->id('login-button')
                             ->name('login-button')
