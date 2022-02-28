@@ -14,9 +14,9 @@ use App\Core\Component\Blog\Infrastructure\Persistence\Tag\TagRepository;
 use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\Core\Component\IdentityAccess\User\Domain\User;
 use App\Core\Component\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
-use App\Infrastructure\Authentication\SignupUserService;
 use Faker\Factory;
 use Faker\Generator;
 use Symfony\Component\Console\Command\Command;
@@ -43,18 +43,18 @@ final class AddCommand extends Command
     private AccessRightsServiceInterface $accessRightsService;
 
     private const DEFAULT_COUNT = 10;
-    private SignupUserService $signupUserService;
+    private UserServiceInterface $userService;
 
     public function __construct(
         CycleDependencyProxy $promise,
         AccessRightsServiceInterface $accessRightsService,
         AssignAccessServiceInterface $assignAccessService,
-        SignupUserService $signupUserService,
+        UserServiceInterface $userService,
     ) {
         $this->promise = $promise;
         $this->assignAccessService = $assignAccessService;
         $this->accessRightsService = $accessRightsService;
-        $this->signupUserService = $signupUserService;
+        $this->userService = $userService;
         parent::__construct();
     }
 
@@ -102,7 +102,7 @@ final class AddCommand extends Command
         for ($i = 0; $i < $count; ++$i) {
             $login = $this->faker->firstName . rand(0, 9999);
 
-            $this->signupUserService->signup($login, $login);
+            $this->userService->createUser($login, $login);
         }
         /**
          * @var $userRepository UserRepository
@@ -118,7 +118,7 @@ final class AddCommand extends Command
         /** @var User $user */
         foreach ($usersKeys as $key) {
             $user = $this->users[$key];
-            $this->assignAccessService->assignRole(new RoleDTO('author'), (string)$user->getId());
+            $this->assignAccessService->assignRole(new RoleDTO('author'), $user->getId());
             $this->authors[] = new Author($user->getId(), $user->getLogin());
         }
     }
