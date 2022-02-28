@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\User;
 
+use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
+use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
 use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
-use App\Infrastructure\Authentication\SignupUserService;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,28 +16,26 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
-use Yiisoft\Rbac\ItemsStorageInterface;
-use Yiisoft\Rbac\Manager;
 use Yiisoft\Yii\Console\ExitCode;
 
 final class CreateUserCommand extends Command
 {
-    private Manager $manager;
-    private ItemsStorageInterface $rolesStorage;
-    private SignupUserService $signupUserService;
+    private AssignAccessServiceInterface $assignAccessService;
+    private AccessRightsServiceInterface $accessRightsService;
+    private UserServiceInterface $userService;
     private UserQueryServiceInterface $userQueryService;
 
     protected static $defaultName = 'user/create';
 
     public function __construct(
-        Manager $manager,
-        ItemsStorageInterface $rolesStorage,
-        SignupUserService $signupUserService,
+        AssignAccessServiceInterface $assignAccessService,
+        AccessRightsServiceInterface $rolesStorage,
+        UserServiceInterface $userService,
         UserQueryServiceInterface $userQueryService
     ) {
-        $this->manager = $manager;
-        $this->rolesStorage = $rolesStorage;
-        $this->signupUserService = $signupUserService;
+        $this->assignAccessService = $assignAccessService;
+        $this->accessRightsService = $rolesStorage;
+        $this->userService = $userService;
         $this->userQueryService = $userQueryService;
         parent::__construct();
     }
@@ -59,11 +59,11 @@ final class CreateUserCommand extends Command
         $isAdmin = (bool)$input->getArgument('isAdmin');
 
         try {
-            $this->signupUserService->signup($login, $password);
+            $this->userService->createUser($login, $password);
 
             if ($isAdmin) {
 
-                $role = $this->rolesStorage->getRole('admin');
+                $role = $this->accessRightsService->getRoleByName('admin');
                 $user = $this->userQueryService->findByLogin($login);
 
                 if ($user === null) {
@@ -74,7 +74,7 @@ final class CreateUserCommand extends Command
                     throw new Exception('Role admin is NULL');
                 }
 
-                $this->manager->assign($role->getName(), (string)$user->getId());
+                $this->assignAccessService->assignRole($role, (string)$user->getId());
             }
 
             $io->success('User created');
