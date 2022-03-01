@@ -74,7 +74,7 @@ echo Carousel::widget()
                 </div>
                 <h4 class="card-title text-muted mt-2 mb-1"><?= $translator->translate('view-site.access.rights.list') ?></h4>
                 <div>
-                    <code><?= "{$binPath} access/list &lt;role&gt;" ?></code>
+                    <code><?= "{$binPath} access/list" ?></code>
                 </div>
                 <h4 class="card-title text-muted mt-2 mb-1"><?= $translator->translate('view-site.user.assignments') ?></h4>
                 <div>
@@ -82,7 +82,7 @@ echo Carousel::widget()
                 </div>
                 <h4 class="card-title text-muted mt-2 mb-1"><?= $translator->translate('view-site.view.role') ?></h4>
                 <div>
-                    <code><?= "{$binPath} access/viewRole" ?></code>
+                    <code><?= "{$binPath} access/viewRole &lt;role&gt;" ?></code>
                 </div>
                 <h4 class="card-title text-muted mt-2 mb-1"><?= $translator->translate('view-site.access.rights.management') ?></h4>
                 <div>
