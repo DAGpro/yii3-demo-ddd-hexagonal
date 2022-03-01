@@ -33,21 +33,6 @@ $this->setTitle('Edit Comment');
 
 echo "<h1 class='mb-3'>{$this->getTitle()}</h1>";
 
-//$commentText = $commentText ?? $comment->getContent();
-
-//echo <<<FORM
-//<form id="draftPost" method="POST" action="{$url->generate(...$action)}" enctype="multipart/form-data">
-//    <input type="hidden" name="_csrf" value="{$csrf}">
-//    <input name="comment_id" type="hidden" value="{$comment->getId()}">
-//
-//    <div class="form-group mb-3">
-//        <label class="form-label" for="comment">Change Comment</label>
-//        <textarea minlength="3" required class="form-control" name="comment" type="text" rows="5">{$commentText}</textarea>
-//    </div>
-//
-//    <button type="submit" class="btn btn-primary">Submit</button>
-//</form>
-//FORM;
 ?>
 
 
