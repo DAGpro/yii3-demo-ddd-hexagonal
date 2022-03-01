@@ -54,14 +54,16 @@ final class ContactMailer
         $attachFiles = $request->getUploadedFiles();
         foreach ($attachFiles as $attachFile) {
             foreach ($attachFile as $file) {
-                if ($file->getError() === UPLOAD_ERR_OK) {
-                    $message = $message->withAttached(
-                        File::fromContent(
-                            (string)$file->getStream(),
-                            $file->getClientFilename(),
-                            $file->getClientMediaType()
-                        ),
-                    );
+                foreach ($file as $uploadFile) {
+                    if ($uploadFile->getError() === UPLOAD_ERR_OK) {
+                        $message = $message->withAttached(
+                            File::fromContent(
+                                (string)$uploadFile->getStream(),
+                                $uploadFile->getClientFilename(),
+                                $uploadFile->getClientMediaType()
+                            ),
+                        );
+                    }
                 }
             }
         }
