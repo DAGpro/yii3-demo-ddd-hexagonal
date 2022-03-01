@@ -73,7 +73,7 @@ final class ModeratePostService implements ModeratePostServiceInterface
         }
 
         if ($postModerateDTO->isPublic()) {
-            !$post->isPublic() ?: $post->publish();
+            $post->isPublic() ?: $post->publish();
         } else {
             $post->toDraft();
         }

@@ -61,7 +61,7 @@ class ModerateCommentService implements ModerateCommentServiceInterface
         $comment->change($commentText);
 
         if ($public) {
-            !$comment->isPublic() ?: $comment->publish();
+            $comment->isPublic() ?: $comment->publish();
         } else {
             $comment->toDraft();
         }
