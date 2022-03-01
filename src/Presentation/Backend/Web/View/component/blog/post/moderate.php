@@ -34,7 +34,11 @@ $this->setTitle($translator->translate('blog.moderate.post'));
 
     <?= Field::widget()->text($form, 'title') ?>
     <?= Field::widget()->textArea($form, 'content')->attributes(['rows' => '9', 'style' => 'height: 300px;']) ?>
-    <?= Field::widget()->checkbox($form, 'public') ?>
+    <?= Field::widget()->checkbox($form, 'public')
+        ->value(true)
+        ->attributes(['class' => 'form-check-input'])
+        ->containerAttributes(['class' => 'form-check'])
+    ?>
 
 
     <div class="form-floating mb-3">

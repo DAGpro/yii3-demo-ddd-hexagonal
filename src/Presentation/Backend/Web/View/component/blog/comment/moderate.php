@@ -31,7 +31,11 @@ $this->setTitle($translator->translate('blog.moderate.comment') . $form->getComm
         ->begin() ?>
 
     <?= Field::widget()->textArea($form, 'content')->attributes(['rows' => '9', 'style' => 'height: 250px;']) ?>
-    <?= Field::widget()->checkbox($form, 'public')->inputClass('form-check-input') ?>
+    <?= Field::widget()->checkbox($form, 'public')
+        ->value(true)
+        ->attributes(['class' => 'form-check-input'])
+        ->containerAttributes(['class' => 'form-check'])
+    ?>
     <?= Field::widget()->text($form, 'comment_id')->attributes(['disabled' => 'disabled']) ?>
 
     <?= Field::widget()
