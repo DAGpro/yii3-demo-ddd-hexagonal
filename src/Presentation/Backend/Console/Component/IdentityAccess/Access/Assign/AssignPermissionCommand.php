@@ -71,7 +71,7 @@ class AssignPermissionCommand extends Command
                 $this->accessManagementService->addPermission($permission);
             }
 
-            $user = $this->userQueryService->getUser($userId);
+            $user = $this->userQueryService->getUser((int)$userId);
             if ($user === null) {
                 throw new IdentityException('User is not found!');
             }

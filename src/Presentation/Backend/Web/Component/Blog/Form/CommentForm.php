@@ -12,19 +12,19 @@ use Yiisoft\Validator\Rule\Required;
 
 final class CommentForm extends FormModel
 {
-    private string $comment_id;
+    private ?int $comment_id;
     private string $content;
     private bool $public;
 
     public function __construct(?Comment $comment)
     {
-        $this->comment_id = $comment ? (string)$comment->getId() : '';
+        $this->comment_id = $comment ? $comment->getId() : null;
         $this->content = $comment ? $comment->getContent() : '';
         $this->public = $comment && $comment->isPublic();
         parent::__construct();
     }
 
-    public function getCommentId(): string
+    public function getCommentId(): ?int
     {
         return $this->comment_id;
     }

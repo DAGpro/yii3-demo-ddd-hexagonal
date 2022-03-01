@@ -54,7 +54,7 @@ class AssignAllPermissionsCommand extends Command
         $userId = $input->getArgument('userId');
 
         try {
-            $user = $this->userService->getUser($userId);
+            $user = $this->userService->getUser((int)$userId);
             if ($user === null) {
                 throw new IdentityException('User is not found!');
             }

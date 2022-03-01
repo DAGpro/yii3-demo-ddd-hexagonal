@@ -49,7 +49,7 @@ class RevokePermissionCommand extends Command
         $userId = $input->getArgument('userId');
 
         try {
-            $user = $this->userQueryService->getUser($userId);
+            $user = $this->userQueryService->getUser((int)$userId);
             if ($user === null) {
                 throw new IdentityException('User is not found!');
             }

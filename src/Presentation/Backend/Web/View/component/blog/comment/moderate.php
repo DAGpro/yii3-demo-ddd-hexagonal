@@ -36,7 +36,7 @@ $this->setTitle($translator->translate('blog.moderate.comment') . $form->getComm
         ->attributes(['class' => 'form-check-input'])
         ->containerAttributes(['class' => 'form-check'])
     ?>
-    <?= Field::widget()->text($form, 'comment_id')->attributes(['disabled' => 'disabled']) ?>
+    <?= Field::widget()->number($form, 'comment_id')->attributes(['disabled' => 'disabled']) ?>
 
     <?= Field::widget()
         ->submitButton()
