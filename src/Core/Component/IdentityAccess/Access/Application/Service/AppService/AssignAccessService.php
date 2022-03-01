@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Core\Component\IdentityAccess\Access\Application\Service\AppService;
 
+use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\AssignedItemException;
+use App\Core\Component\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Permission;
@@ -19,15 +21,18 @@ class AssignAccessService implements AssignAccessServiceInterface
     private Manager $manager;
     private AssignmentsStorageInterface $storage;
     private AssignmentsServiceInterface $assignmentsService;
+    private AccessRightsServiceInterface $accessRightsService;
 
     public function __construct(
         Manager $manager,
+        AccessRightsServiceInterface $accessRightsService,
         AssignmentsStorageInterface $storage,
         AssignmentsServiceInterface $assignmentsService
     ) {
         $this->manager = $manager;
         $this->storage = $storage;
         $this->assignmentsService = $assignmentsService;
+        $this->accessRightsService = $accessRightsService;
     }
 
     /**
@@ -35,6 +40,10 @@ class AssignAccessService implements AssignAccessServiceInterface
      */
     public function assignRole(RoleDTO $roleDTO, string|int $userId): void
     {
+        if (!$this->accessRightsService->existRole($roleDTO->getName())) {
+            throw new NotExistItemException('This role does not exist!');
+        }
+
         if ($this->assignmentsService->userHasRole($userId, $roleDTO->getName())) {
             throw new AssignedItemException('The role has already been assigned to the user!');
         }
@@ -48,6 +57,10 @@ class AssignAccessService implements AssignAccessServiceInterface
      */
     public function assignPermission(PermissionDTO $permissionDTO, string|int $userId): void
     {
+        if (!$this->accessRightsService->existPermission($permissionDTO->getName())) {
+            throw new NotExistItemException('This permission does not exist!');
+        }
+
         if ($this->assignmentsService->userHasPermission($userId, $permissionDTO->getName())) {
             throw new AssignedItemException('The permission has already been assigned to the user!');
         }
