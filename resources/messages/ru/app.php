@@ -157,7 +157,7 @@ return [
     'blog.draft' => 'Черновик',
     'blog.draft.post' => 'Черновик поста',
     'blog.public.post' => 'Опубликовать пост',
-    'blog.published.post' => 'Пост опубликован ',
+    'blog.published.post' => 'Пост опубликован {date}',
     'blog.not.published.post' => 'Пост не опубликован ',
     'blog.delete.post' => 'Удалить пост',
     'blog.moderate.post' => 'Модерировать пост',

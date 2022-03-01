@@ -157,7 +157,7 @@ return [
     'blog.draft' => 'Draft',
     'blog.draft.post' => 'Draft post',
     'blog.public.post' => 'Public post',
-    'blog.published.post' => 'Published Post',
+    'blog.published.post' => 'Published Post {date}',
     'blog.not.published.post' => 'Not published Post ',
     'blog.delete.post' => 'Delete post',
     'blog.moderate.post' => 'Moderate post',

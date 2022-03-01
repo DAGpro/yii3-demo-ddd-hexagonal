@@ -46,7 +46,7 @@ $this->setTitle($translator->translate('blog.view.post'). ' : Id №' . $post->g
                 <span class="text-muted">
                     <?= $post->isPublic() === false
                         ? $translator->translate('blog.draft.post')
-                        : $translator->translate('blog.published.post')
+                        : $translator->translate('blog.published.post', ['date' => $post->getPublishedAt()->format('d.m.Y')])
                     ?>
                 </span>
             </p>

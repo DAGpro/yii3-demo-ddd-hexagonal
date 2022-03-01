@@ -29,7 +29,7 @@ if (!empty($errors)) {
     <div>
         <span class="text-muted"><?= $item->getPublishedAt() === null
                 ? 'not published'
-                : $item->getPublishedAt()->format('H:i:s d.m.Y') ?> by</span>
+                : $translator->translate('blog.published.post', ['date' => $item->getPublishedAt()->format('H:i:s d.m.Y')]) ?> by</span>
         <?php
         echo Html::a(
             $item->getAuthor()->getName(),
