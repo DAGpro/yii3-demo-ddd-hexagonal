@@ -244,8 +244,8 @@ return [
     ],
     'yiisoft/yii-swagger' => [
         'annotation-paths' => [
-            '@src/Controller',
-            '@src/User/Controller',
+            '@src/Presentation/Frontend/Api',
+            '@src/Presentation/Backend/Api',
         ],
     ],
 ];
