@@ -66,7 +66,7 @@ class AssignmentsService implements AssignmentsServiceInterface
 
     public function userHasRole(string|int $userId, string $roleName): bool
     {
-        return $this->assignmentsStorage->get($roleName, $userId) !== null;
+        return $this->assignmentsStorage->get($roleName, (string)$userId) !== null;
     }
 
     public function isAssignedRoleToUsers(RoleDTO $roleDTO): bool
@@ -86,7 +86,7 @@ class AssignmentsService implements AssignmentsServiceInterface
     {
         $rolesDTO = $this->getRolesByUser($user->getId());
         //getByUserId method is used instead of getPermissionsByUser, so as not to load inherited permissions
-        $userAssignments = $this->assignmentsStorage->getByUserId($user->getId());
+        $userAssignments = $this->assignmentsStorage->getByUserId((string)$user->getId());
         if(empty($rolesDTO) && empty($userAssignments)) {
             return new UserAssignmentsDTO($user);
         }

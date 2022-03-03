@@ -19,7 +19,7 @@ class UserAssignmentsDTO
 
     public function getId(): string
     {
-        return $this->user->getId();
+        return (string)$this->user->getId();
     }
 
     public function getLogin(): string
