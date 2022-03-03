@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
-use App\Presentation\Frontend\Web\Component\Blog\Archive\ArchiveController;
-use App\Presentation\Frontend\Web\Component\Blog\Author\AuthorPostController;
-use App\Presentation\Frontend\Web\Component\Blog\BlogController;
-use App\Presentation\Frontend\Web\Component\Blog\Comment\CommentController;
-use App\Presentation\Frontend\Web\Component\Blog\Post\PostController;
-use App\Presentation\Frontend\Web\Component\Blog\Tag\TagController;
+use App\Blog\Presentation\Frontend\Web\Archive\ArchiveController;
+use App\Blog\Presentation\Frontend\Web\Author\AuthorPostController;
+use App\Blog\Presentation\Frontend\Web\BlogController;
+use App\Blog\Presentation\Frontend\Web\Comment\CommentController;
+use App\Blog\Presentation\Frontend\Web\Post\PostController;
+use App\Blog\Presentation\Frontend\Web\Tag\TagController;
 use App\Presentation\Infrastructure\Web\Middleware\AccessPermissionChecker;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Auth\Middleware\Authentication;

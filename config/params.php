@@ -54,6 +54,8 @@ return [
             '@views' => '@src/Presentation/Frontend/Web/View',
             '@backendLayout' => '@src/Presentation/Backend/Web/View/layout',
             '@backendView' => '@src/Presentation/Backend/Web/View',
+            '@blogView' => '@src/Blog/Presentation/Frontend/View',
+            '@blogBackendView' => '@src/Blog/Presentation/Backend/View',
         ],
     ],
 

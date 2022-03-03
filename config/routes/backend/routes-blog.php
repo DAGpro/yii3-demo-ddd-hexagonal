@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Backend\Web\Component\Blog\CommentController;
-use App\Presentation\Backend\Web\Component\Blog\PostController;
-use App\Presentation\Backend\Web\Component\Blog\TagController;
+use App\Blog\Presentation\Backend\Web\CommentController;
+use App\Blog\Presentation\Backend\Web\PostController;
+use App\Blog\Presentation\Backend\Web\TagController;
 use App\Presentation\Infrastructure\Web\Middleware\AccessPermissionChecker;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Http\Method;
