@@ -12,14 +12,10 @@ use App\Presentation\Frontend\Web\Component\Blog\Tag\TagController;
 use App\Presentation\Infrastructure\Web\Middleware\AccessPermissionChecker;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Auth\Middleware\Authentication;
-use Yiisoft\DataResponse\Middleware\FormatDataResponseAsHtml;
-use Yiisoft\DataResponse\Middleware\FormatDataResponseAsJson;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
-use Yiisoft\Swagger\Middleware\SwaggerJson;
-use Yiisoft\Swagger\Middleware\SwaggerUi;
 use Yiisoft\Yii\Middleware\HttpCache;
 
 return [
@@ -123,17 +119,5 @@ return [
                 ->name('blog/comment/delete')
                 ->middleware(Authentication::class)
                 ->action([CommentController::class, 'delete']),
-        ),
-
-    // Swagger routes
-    Group::create('/swagger')
-        ->routes(
-            Route::get('')
-                ->name('swagger/index')
-                ->middleware(FormatDataResponseAsHtml::class)
-                ->action(fn (SwaggerUi $swaggerUi) => $swaggerUi->withJsonUrl('/swagger/json-url')),
-            Route::get('/json-url')
-                ->middleware(FormatDataResponseAsJson::class)
-                ->action(SwaggerJson::class),
         ),
 ];
