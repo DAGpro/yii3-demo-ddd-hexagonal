@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Form\Widget\Field $field
  * @var \Yiisoft\Translator\Translator $translator
- * @var \App\Core\Component\Blog\Domain\Post $post
+ * @var \App\Blog\Domain\Post $post
  * @var \App\Presentation\Backend\Web\Component\Blog\Form\PostForm $form
  * @var string $csrf
  * @var array $action

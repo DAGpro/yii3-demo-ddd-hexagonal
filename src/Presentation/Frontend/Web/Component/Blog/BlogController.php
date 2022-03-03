@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\Blog;
 
-use App\Core\Component\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
-use App\Core\Component\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
-use App\Core\Component\Blog\Application\Service\QueryService\TagQueryServiceInterface;
-use App\Core\Component\Blog\Infrastructure\Services\IdentityAccessService;
+use App\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
+use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
+use App\Blog\Application\Service\QueryService\TagQueryServiceInterface;
+use App\Blog\Infrastructure\Services\IdentityAccessService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Router\CurrentRoute;

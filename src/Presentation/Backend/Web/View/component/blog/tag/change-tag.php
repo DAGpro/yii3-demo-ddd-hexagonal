@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @var string $csrf
  * @var array $action
  * @var string $title
- * @var \App\Core\Component\Blog\Domain\Tag $tag
+ * @var \App\Blog\Domain\Tag $tag
  * @var array $error
  */
 

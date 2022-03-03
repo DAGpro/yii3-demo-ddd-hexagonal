@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @var bool $canPublicPost
  */
 
-use App\Core\Component\Blog\Domain\Comment;
+use App\Blog\Domain\Comment;
 use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 

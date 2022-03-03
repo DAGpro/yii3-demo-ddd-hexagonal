@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\Blog;
 
-use App\Core\Component\Blog\Application\Service\CommandService\ModerateCommentServiceInterface;
-use App\Core\Component\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterface;
-use App\Core\Component\Blog\Domain\Exception\BlogNotFoundException;
+use App\Blog\Application\Service\CommandService\ModerateCommentServiceInterface;
+use App\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterface;
+use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Presentation\Backend\Web\Component\Blog\Form\CommentForm;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;

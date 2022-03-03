@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 /**
- * @var \App\Core\Component\Blog\Domain\Post $item
+ * @var \App\Blog\Domain\Post $item
  * @var \Yiisoft\Translator\TranslatorInterface $translator
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  * @var bool $canEdit
- * @var \App\Core\Component\Blog\Domain\User\Commentator $commentator
+ * @var \App\Blog\Domain\User\Commentator $commentator
  * @var string $csrf
  * @var string $slug
  */

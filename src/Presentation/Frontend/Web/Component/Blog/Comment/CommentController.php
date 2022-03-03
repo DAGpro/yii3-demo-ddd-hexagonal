@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\Blog\Comment;
 
-use App\Core\Component\Blog\Application\Service\AppService\QueryService\ReadPostQueryService;
-use App\Core\Component\Blog\Application\Service\CommandService\CommentServiceInterface;
-use App\Core\Component\Blog\Application\Service\QueryService\CommentQueryServiceInterface;
-use App\Core\Component\Blog\Domain\Exception\BlogNotFoundException;
-use App\Core\Component\Blog\Infrastructure\Services\IdentityAccessService;
+use App\Blog\Application\Service\AppService\QueryService\ReadPostQueryService;
+use App\Blog\Application\Service\CommandService\CommentServiceInterface;
+use App\Blog\Application\Service\QueryService\CommentQueryServiceInterface;
+use App\Blog\Domain\Exception\BlogNotFoundException;
+use App\Blog\Infrastructure\Services\IdentityAccessService;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;

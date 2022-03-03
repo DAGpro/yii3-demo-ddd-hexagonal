@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\Blog;
 
-use App\Core\Component\Blog\Application\Service\CommandService\ModeratePostServiceInterface;
-use App\Core\Component\Blog\Application\Service\CommandService\PostModerateDTO;
-use App\Core\Component\Blog\Application\Service\QueryService\ModeratePostQueryServiceInterface;
-use App\Core\Component\Blog\Domain\Exception\BlogNotFoundException;
+use App\Blog\Application\Service\CommandService\ModeratePostServiceInterface;
+use App\Blog\Application\Service\CommandService\PostModerateDTO;
+use App\Blog\Application\Service\QueryService\ModeratePostQueryServiceInterface;
+use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Presentation\Backend\Web\Component\Blog\Form\PostForm;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\Blog\Comment;
 
-use App\Core\Component\Blog\Domain\Comment;
+use App\Blog\Domain\Comment;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Validator\Rule\HasLength;
 use Yiisoft\Validator\Rule\Required;

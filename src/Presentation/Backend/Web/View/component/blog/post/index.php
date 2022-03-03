@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @var string $csrf
  */
 
-use App\Core\Component\Blog\Domain\Post;
+use App\Blog\Domain\Post;
 use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 

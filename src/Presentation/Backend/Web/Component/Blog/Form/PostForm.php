@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\Blog\Form;
 
-use App\Core\Component\Blog\Domain\Post;
-use App\Core\Component\Blog\Domain\Tag;
+use App\Blog\Domain\Post;
+use App\Blog\Domain\Tag;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Validator\Rule\Each;
 use Yiisoft\Validator\Rule\HasLength;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @var \Yiisoft\View\WebView $this
  */
 
-use App\Core\Component\Blog\Domain\Tag;
+use App\Blog\Domain\Tag;
 use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 

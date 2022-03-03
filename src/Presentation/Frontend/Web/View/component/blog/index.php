@@ -9,10 +9,10 @@ declare(strict_types=1);
  * @var \Yiisoft\Translator\TranslatorInterface $translator
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
- * @var \App\Core\Component\Blog\Domain\User\Author|null $author
+ * @var \App\Blog\Domain\User\Author|null $author
  */
 
-use App\Core\Component\Blog\Domain\Post;
+use App\Blog\Domain\Post;
 use App\Presentation\Frontend\Web\View\Widget\PostCard;
 use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;

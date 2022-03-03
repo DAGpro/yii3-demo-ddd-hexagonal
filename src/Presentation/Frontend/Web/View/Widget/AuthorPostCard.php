@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\View\Widget;
 
-use App\Core\Component\Blog\Domain\Post;
+use App\Blog\Domain\Post;
 use Yiisoft\Html\Html;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Yii\Bootstrap5\Widget;

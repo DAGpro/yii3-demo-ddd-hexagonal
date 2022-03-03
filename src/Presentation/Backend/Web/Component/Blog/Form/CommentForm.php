@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\Blog\Form;
 
-use App\Core\Component\Blog\Domain\Comment;
+use App\Blog\Domain\Comment;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Validator\Rule\Boolean;
 use Yiisoft\Validator\Rule\Number;

@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * @var \App\Core\Component\Blog\Domain\Post $post
+ * @var \App\Blog\Domain\Post $post
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Translator\TranslatorInterface $translator
  * @var \Yiisoft\View\WebView $this
- * @var \App\Core\Component\Blog\Domain\User\Author $author
+ * @var \App\Blog\Domain\User\Author $author
  * @var bool $canAddComment
  * @var string $csrf
  * @var string $slug

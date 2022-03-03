@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @var \App\Core\Component\Blog\Domain\Tag $tag
+ * @var \App\Blog\Domain\Tag $tag
  * @var \Yiisoft\View\WebView $this
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Translator\Translator $translator

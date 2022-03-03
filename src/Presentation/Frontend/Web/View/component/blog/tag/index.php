@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @var \Yiisoft\Data\Paginator\OffsetPaginator $paginator;
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \App\Core\Component\Blog\Domain\Tag $item
+ * @var \App\Blog\Domain\Tag $item
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  */
@@ -23,7 +23,7 @@ $pagination = OffsetPagination::widget()
                               ));
 echo Html::tag('h1', Html::encode($item->getLabel()));
 echo Html::openTag('ul');
-/** @var \App\Core\Component\Blog\Domain\Post $post */
+/** @var \App\Blog\Domain\Post $post */
 foreach ($paginator->read() as $post) {
     echo Html::openTag('li', ['class' => 'text-muted']);
     echo Html::a(Html::encode($post->getTitle()), $url->generate('blog/post', ['slug' => $post->getSlug()]));

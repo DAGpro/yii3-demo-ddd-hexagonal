@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 
-use App\Core\Component\Blog\Domain\Comment;
-use App\Core\Component\Blog\Domain\Port\CommentRepositoryInterface;
-use App\Core\Component\Blog\Domain\Port\PostRepositoryInterface;
-use App\Core\Component\Blog\Domain\Port\TagRepositoryInterface;
-use App\Core\Component\Blog\Domain\Post;
-use App\Core\Component\Blog\Domain\Tag;
+use App\Blog\Domain\Comment;
+use App\Blog\Domain\Port\CommentRepositoryInterface;
+use App\Blog\Domain\Port\PostRepositoryInterface;
+use App\Blog\Domain\Port\TagRepositoryInterface;
+use App\Blog\Domain\Post;
+use App\Blog\Domain\Tag;
 use App\Core\Component\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\Core\Component\IdentityAccess\User\Domain\User;
 use App\Infrastructure\Authentication\Identity;

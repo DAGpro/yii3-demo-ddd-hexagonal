@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Core\Component\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
+use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
 use App\Presentation\Frontend\Web\Component\Blog\Archive\ArchiveController;
 use App\Presentation\Frontend\Web\Component\Blog\Author\AuthorPostController;
 use App\Presentation\Frontend\Web\Component\Blog\BlogController;

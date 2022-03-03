@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @var Field $field
  * @var \App\Presentation\Backend\Web\Component\Blog\Form\CommentForm $form
  * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \App\Core\Component\Blog\Domain\Comment $comment
+ * @var \App\Blog\Domain\Comment $comment
  * @var string $csrf
  * @var array $action
  * @var string $title

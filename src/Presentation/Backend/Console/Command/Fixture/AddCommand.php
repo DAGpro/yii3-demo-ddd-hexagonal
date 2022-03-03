@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Command\Fixture;
 
-use App\Core\Component\Blog\Domain\Comment;
-use App\Core\Component\Blog\Domain\Port\PostRepositoryInterface;
-use App\Core\Component\Blog\Domain\Post;
-use App\Core\Component\Blog\Domain\Tag;
-use App\Core\Component\Blog\Domain\User\Author;
-use App\Core\Component\Blog\Domain\User\Commentator;
-use App\Core\Component\Blog\Infrastructure\Persistence\Tag\TagRepository;
+use App\Blog\Domain\Comment;
+use App\Blog\Domain\Port\PostRepositoryInterface;
+use App\Blog\Domain\Post;
+use App\Blog\Domain\Tag;
+use App\Blog\Domain\User\Author;
+use App\Blog\Domain\User\Commentator;
+use App\Blog\Infrastructure\Persistence\Tag\TagRepository;
 use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;

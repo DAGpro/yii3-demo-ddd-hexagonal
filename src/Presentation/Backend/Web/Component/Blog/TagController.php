@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\Blog;
 
-use App\Core\Component\Blog\Application\Service\CommandService\TagServiceInterface;
-use App\Core\Component\Blog\Application\Service\QueryService\TagQueryServiceInterface;
-use App\Core\Component\Blog\Domain\Exception\BlogNotFoundException;
+use App\Blog\Application\Service\CommandService\TagServiceInterface;
+use App\Blog\Application\Service\QueryService\TagQueryServiceInterface;
+use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Presentation\Backend\Web\Component\Blog\Form\TagForm;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;

@@ -15,7 +15,7 @@ use Yiisoft\Yii\Bootstrap5\Alert;
  * @var AssetManager $assetManager
  * @var Field $field
  * @var \Yiisoft\Translator\Translator $translator
- * @var \App\Core\Component\Blog\Domain\Comment $comment
+ * @var \App\Blog\Domain\Comment $comment
  * @var WebView $this
  * @var \App\Presentation\Frontend\Web\Component\Blog\Comment\CommentForm $form
  * @var array $action

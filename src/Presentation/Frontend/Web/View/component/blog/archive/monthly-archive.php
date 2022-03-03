@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @var \Yiisoft\View\WebView $this
  */
 
-use App\Core\Component\Blog\Domain\Post;
+use App\Blog\Domain\Post;
 use App\Presentation\Frontend\Web\View\Widget\PostCard;
 use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;

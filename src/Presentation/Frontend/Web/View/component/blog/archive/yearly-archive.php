@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 /**
  * @var int $year
- * @var \App\Core\Component\Blog\Domain\Post[]|\Yiisoft\Data\Reader\DataReaderInterface $items
+ * @var \App\Blog\Domain\Post[]|\Yiisoft\Data\Reader\DataReaderInterface $items
  * @var \Yiisoft\Translator\TranslatorInterface $translator
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\View\WebView $this
  */
 
-use App\Core\Component\Blog\Domain\Post;
+use App\Blog\Domain\Post;
 use Yiisoft\Html\Html;
 
 $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year]));
