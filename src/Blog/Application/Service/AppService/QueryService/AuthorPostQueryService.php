@@ -10,7 +10,7 @@ use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use Cycle\ORM\Select;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Query\SelectQuery;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;

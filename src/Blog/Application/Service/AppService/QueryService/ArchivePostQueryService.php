@@ -7,7 +7,7 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 use App\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use Cycle\ORM\Select;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Query\SelectQuery;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
