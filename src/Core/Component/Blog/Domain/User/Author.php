@@ -16,18 +16,18 @@ class Author
     #[Column(type: 'string(191)')]
     private string $authorName;
 
-    public function __construct(?int $id, ?string $name)
+    public function __construct(int $id, string $name)
     {
         $this->authorId = $id;
         $this->authorName = $name;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->authorId;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->authorName;
     }
