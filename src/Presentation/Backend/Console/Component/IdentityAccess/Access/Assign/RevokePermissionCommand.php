@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\Access\Assign;
 
-use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO;
-use App\Core\Component\IdentityAccess\Access\Domain\Exception\AssignedItemException;
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
+use App\IdentityAccess\Access\Application\Service\PermissionDTO;
+use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

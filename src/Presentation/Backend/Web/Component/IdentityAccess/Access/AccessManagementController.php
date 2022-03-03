@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\IdentityAccess\Access;
 
-use App\Core\Component\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO;
-use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
-use App\Core\Component\IdentityAccess\Access\Domain\Exception\AssignedItemException;
-use App\Core\Component\IdentityAccess\Access\Domain\Exception\ExistItemException;
-use App\Core\Component\IdentityAccess\Access\Domain\Exception\NotExistItemException;
+use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
+use App\IdentityAccess\Access\Application\Service\PermissionDTO;
+use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
+use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
+use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;

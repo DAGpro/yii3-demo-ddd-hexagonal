@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authorization;
 
-use App\Core\Component\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
+use App\IdentityAccess\Access\Application\Service\RoleDTO;
 
 class AuthorizationService
 {

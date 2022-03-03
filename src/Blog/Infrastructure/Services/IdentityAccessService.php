@@ -8,7 +8,7 @@ use App\Blog\Domain\Comment;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Authorization\AuthorizationService;
 

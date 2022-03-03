@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\User;
 
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
-use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Application\Service\UserServiceInterface;
+use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

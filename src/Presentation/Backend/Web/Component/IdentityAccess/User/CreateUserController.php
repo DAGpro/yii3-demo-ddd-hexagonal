@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\IdentityAccess\User;
 
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
-use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Application\Service\UserServiceInterface;
+use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use App\Presentation\Backend\Web\Component\IdentityAccess\User\Forms\CreateUserForm;
 use Psr\Http\Message\ResponseInterface;

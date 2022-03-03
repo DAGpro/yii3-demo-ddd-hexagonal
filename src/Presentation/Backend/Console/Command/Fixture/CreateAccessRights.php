@@ -2,10 +2,10 @@
 
 namespace App\Presentation\Backend\Console\Command\Fixture;
 
-use App\Core\Component\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO;
-use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
+use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
+use App\IdentityAccess\Access\Application\Service\PermissionDTO;
+use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

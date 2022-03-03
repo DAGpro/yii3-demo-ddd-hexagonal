@@ -41,7 +41,7 @@ use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
                 </thead>
                 <tbody>
                 <?php
-                /** @var  \App\Core\Component\IdentityAccess\User\Domain\User $user */
+                /** @var  \App\IdentityAccess\User\Domain\User $user */
                 foreach ($paginator->read() as $user) {
                     echo <<<REMOVEUSER
                     <tr>

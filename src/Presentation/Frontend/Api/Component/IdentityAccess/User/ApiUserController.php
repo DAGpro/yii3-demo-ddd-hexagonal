@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Api\Component\IdentityAccess\User;
 
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use OpenApi\Annotations as OA;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Data\Reader\Sort;
@@ -67,7 +67,7 @@ final class ApiUserController
     {
         $login = $currentRoute->getArgument('login');
 
-        /** @var \App\Core\Component\IdentityAccess\User\Domain\User $user */
+        /** @var \App\IdentityAccess\User\Domain\User $user */
         $user = $userQueryService->findByLogin($login);
         if ($user === null) {
             return $this->responseFactory->createResponse('Page not found', 404);

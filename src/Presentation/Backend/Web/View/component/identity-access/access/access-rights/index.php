@@ -44,7 +44,7 @@ declare(strict_types=1);
             </thead>
             <tbody>
             <?php
-            /** @var \App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO $role */
+            /** @var \App\IdentityAccess\Access\Application\Service\RoleDTO $role */
             foreach ($roles as $role) {
                 echo <<<ROLE
                     <tr>

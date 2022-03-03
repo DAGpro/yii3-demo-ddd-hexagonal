@@ -33,7 +33,7 @@ declare(strict_types=1);
                 </thead>
                 <tbody>
                 <?php
-                /** @var \App\Core\Component\IdentityAccess\Access\Application\Service\UserAssignmentsDTO $user */
+                /** @var \App\IdentityAccess\Access\Application\Service\UserAssignmentsDTO $user */
                 foreach ($users as $user) {
                     echo <<<REVOKEASSIGNMENTSUSER
                     <tr>

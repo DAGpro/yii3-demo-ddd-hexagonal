@@ -21,7 +21,7 @@ use Yiisoft\Form\Widget\Field;
  * @var string $content
  *
  * @see \App\ApplicationViewInjection
- * @var \App\Core\Component\IdentityAccess\User\Domain\User|null $user
+ * @var \App\IdentityAccess\User\Domain\User|null $user
  * @var string $csrf
  * @var string $brandLabel
  * @var bool $canAddPost

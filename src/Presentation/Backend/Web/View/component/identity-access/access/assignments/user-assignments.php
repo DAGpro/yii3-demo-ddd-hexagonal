@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Form\Widget\Field $field
  * @var \Yiisoft\Translator\Translator $translator
- * @var \App\Core\Component\IdentityAccess\Access\Application\Service\UserAssignmentsDTO $user
+ * @var \App\IdentityAccess\Access\Application\Service\UserAssignmentsDTO $user
  * @var string|null $currentUrl
  * @var string $csrf
  * @var array $roles

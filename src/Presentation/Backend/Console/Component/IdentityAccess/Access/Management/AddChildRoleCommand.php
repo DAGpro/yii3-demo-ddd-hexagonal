@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\Access\Management;
 
-use App\Core\Component\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
-use App\Core\Component\IdentityAccess\Access\Domain\Exception\ExistItemException;
-use App\Core\Component\IdentityAccess\Access\Domain\Exception\NotExistItemException;
+use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
+use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
+use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

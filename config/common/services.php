@@ -24,18 +24,18 @@ use App\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterfa
 use App\Blog\Application\Service\QueryService\ModeratePostQueryServiceInterface;
 use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
 use App\Blog\Application\Service\QueryService\TagQueryServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AppService\AccessManagementService;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AppService\AccessRightsService;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AppService\AssignAccessService;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AppService\AssignmentsService;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
-use App\Core\Component\IdentityAccess\User\Application\Service\AppService\UserQueryService;
-use App\Core\Component\IdentityAccess\User\Application\Service\AppService\UserService;
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
+use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
+use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
+use App\IdentityAccess\Access\Application\Service\AppService\AccessManagementService;
+use App\IdentityAccess\Access\Application\Service\AppService\AccessRightsService;
+use App\IdentityAccess\Access\Application\Service\AppService\AssignAccessService;
+use App\IdentityAccess\Access\Application\Service\AppService\AssignmentsService;
+use App\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
+use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
+use App\IdentityAccess\User\Application\Service\AppService\UserQueryService;
+use App\IdentityAccess\User\Application\Service\AppService\UserService;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 
 return [
     UserQueryServiceInterface::class => UserQueryService::class,

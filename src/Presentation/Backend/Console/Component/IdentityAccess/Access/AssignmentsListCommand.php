@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\Access;
 
-use App\Core\Component\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\UserAssignmentsDTO;
+use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
+use App\IdentityAccess\Access\Application\Service\UserAssignmentsDTO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;

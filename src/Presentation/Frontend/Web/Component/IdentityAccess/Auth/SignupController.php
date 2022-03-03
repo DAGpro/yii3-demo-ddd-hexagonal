@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Frontend\Web\Component\IdentityAccess\Auth;
 
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Core\Component\IdentityAccess\User\Application\Service\UserServiceInterface;
-use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Application\Service\UserServiceInterface;
+use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\Form\SignupForm;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;

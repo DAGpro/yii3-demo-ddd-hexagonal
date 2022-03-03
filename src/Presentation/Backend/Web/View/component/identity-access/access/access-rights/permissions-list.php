@@ -28,7 +28,7 @@ declare(strict_types=1);
                 </thead>
                 <tbody>
                 <?php
-                /** @var \App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO $permission */
+                /** @var \App\IdentityAccess\Access\Application\Service\PermissionDTO $permission */
                 foreach ($permissions as $permission) {
                     echo <<<PERMISSION
                     <tr>

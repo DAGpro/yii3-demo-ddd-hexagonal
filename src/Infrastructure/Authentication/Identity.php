@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authentication;
 
-use App\Core\Component\IdentityAccess\User\Domain\User;
+use App\IdentityAccess\User\Domain\User;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;

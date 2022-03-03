@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @var \Yiisoft\Router\UrlGeneratorInterface $url
  * @var \Yiisoft\Form\Widget\Field $field
  * @var \Yiisoft\Translator\Translator $translator
- * @var \App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO $role
+ * @var \App\IdentityAccess\Access\Application\Service\RoleDTO $role
  * @var string|null $currentUrl
  * @var string $title
  * @var string $csrf
@@ -43,7 +43,7 @@ declare(strict_types=1);
                     </thead>
                     <tbody>
                     <?php
-                    /** @var \App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO $role */
+                    /** @var \App\IdentityAccess\Access\Application\Service\RoleDTO $role */
                     foreach ($role->getChildRoles() as $childRole) {
                         echo <<<REMOVECHILDROLE
                             <tr>
@@ -94,7 +94,7 @@ declare(strict_types=1);
                     </thead>
                     <tbody>
                     <?php
-                    /** @var \App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO $childPermission */
+                    /** @var \App\IdentityAccess\Access\Application\Service\PermissionDTO $childPermission */
                     foreach ($role->getChildPermissions() as $childPermission) {
                         echo <<<REMOVECHILDPERMISSION
                         <tr>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Web\Component\IdentityAccess\User\Forms;
 
-use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use Yiisoft\Form\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;

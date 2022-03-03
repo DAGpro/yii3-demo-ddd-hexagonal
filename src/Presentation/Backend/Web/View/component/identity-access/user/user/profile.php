@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @var \App\Core\Component\IdentityAccess\User\Domain\User $item
+ * @var \App\IdentityAccess\User\Domain\User $item
  * @var \Yiisoft\Form\Widget\Field $field
  * @var \Yiisoft\Translator\Translator $translator
  * @var \Yiisoft\Router\UrlGeneratorInterface $url

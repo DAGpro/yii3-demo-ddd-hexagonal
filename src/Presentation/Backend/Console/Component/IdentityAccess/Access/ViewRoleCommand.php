@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Backend\Console\Component\IdentityAccess\Access;
 
-use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
-use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
+use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
