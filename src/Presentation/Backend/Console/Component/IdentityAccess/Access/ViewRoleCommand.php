@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
-class ViewRoleCommand extends Command
+final class ViewRoleCommand extends Command
 {
     protected static $defaultName = 'access/viewRole';
 

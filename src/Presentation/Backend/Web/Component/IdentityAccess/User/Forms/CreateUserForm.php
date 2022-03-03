@@ -10,7 +10,7 @@ use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
 
-class CreateUserForm extends FormModel
+final class CreateUserForm extends FormModel
 {
     private string $login = '';
     private string $password = '';

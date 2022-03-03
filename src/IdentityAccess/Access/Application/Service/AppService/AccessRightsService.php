@@ -10,7 +10,7 @@ use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
 
-class AccessRightsService implements AccessRightsServiceInterface
+final class AccessRightsService implements AccessRightsServiceInterface
 {
     private Manager $manager;
     private ItemsStorageInterface $storage;

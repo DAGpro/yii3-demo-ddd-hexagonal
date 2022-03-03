@@ -9,7 +9,7 @@ use App\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterfa
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 
-class ModerateCommentService implements ModerateCommentServiceInterface
+final class ModerateCommentService implements ModerateCommentServiceInterface
 {
 
     private CommentRepositoryInterface $repository;

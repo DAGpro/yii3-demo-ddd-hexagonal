@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presentation\Backend\Console\Command\Fixture;
 
 use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;

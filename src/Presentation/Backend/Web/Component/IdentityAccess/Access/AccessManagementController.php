@@ -14,7 +14,7 @@ use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class AccessManagementController
+final class AccessManagementController
 {
     private WebControllerService $webService;
     private AccessManagementServiceInterface $accessManagementService;

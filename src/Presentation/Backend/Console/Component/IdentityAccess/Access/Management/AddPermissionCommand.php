@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
-class AddPermissionCommand extends Command
+final class AddPermissionCommand extends Command
 {
     protected static $defaultName = 'access/addPermission';
 

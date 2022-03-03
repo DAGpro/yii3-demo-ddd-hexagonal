@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\Access\Application\Service;
 
-class RoleDTO
+final class RoleDTO
 {
     private string $name;
     private ?string $description;

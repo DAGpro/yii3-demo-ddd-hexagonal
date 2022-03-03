@@ -11,7 +11,7 @@ use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-class ModerateCommentQueryService implements ModerateCommentQueryServiceInterface
+final class ModerateCommentQueryService implements ModerateCommentQueryServiceInterface
 {
 
     private CommentRepositoryInterface $repository;

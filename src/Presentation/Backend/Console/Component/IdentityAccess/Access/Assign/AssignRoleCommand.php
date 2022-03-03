@@ -21,7 +21,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
-class AssignRoleCommand extends Command
+final class AssignRoleCommand extends Command
 {
     protected static $defaultName = 'assign/assignRole';
 

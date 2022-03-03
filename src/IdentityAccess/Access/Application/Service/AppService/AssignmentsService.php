@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\IdentityAccess\Access\Application\Service\AppService;
 
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
@@ -13,7 +15,7 @@ use App\IdentityAccess\User\Domain\User;
 use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\Manager;
 
-class AssignmentsService implements AssignmentsServiceInterface
+final class AssignmentsService implements AssignmentsServiceInterface
 {
 
     private AssignmentsStorageInterface $assignmentsStorage;

@@ -7,7 +7,7 @@ namespace App\Infrastructure\Authorization;
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 
-class AuthorizationService
+final class AuthorizationService
 {
     private AssignmentsServiceInterface $assignmentsService;
 

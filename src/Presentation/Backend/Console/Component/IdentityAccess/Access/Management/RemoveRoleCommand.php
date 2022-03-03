@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
-class RemoveRoleCommand extends Command
+final class RemoveRoleCommand extends Command
 {
     protected static $defaultName = 'access/removeRole';
 

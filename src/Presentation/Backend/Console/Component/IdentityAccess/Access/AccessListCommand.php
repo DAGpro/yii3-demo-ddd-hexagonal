@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
-class AccessListCommand extends Command
+final class AccessListCommand extends Command
 {
     protected static $defaultName = 'access/list';
 

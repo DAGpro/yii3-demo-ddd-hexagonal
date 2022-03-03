@@ -16,7 +16,7 @@ use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\Role;
 
-class AssignAccessService implements AssignAccessServiceInterface
+final class AssignAccessService implements AssignAccessServiceInterface
 {
     private Manager $manager;
     private AssignmentsStorageInterface $storage;

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\IdentityAccess\Access\Application\Service;
 
 use App\IdentityAccess\User\Domain\User;
 
-class UserAssignmentsDTO
+final class UserAssignmentsDTO
 {
     private User $user;
     private array $roles;

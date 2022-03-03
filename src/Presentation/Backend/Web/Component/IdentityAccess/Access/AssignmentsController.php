@@ -13,7 +13,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Yii\View\ViewRenderer;
 
-class AssignmentsController
+final class AssignmentsController
 {
     private ViewRenderer $viewRenderer;
     private WebControllerService $webService;

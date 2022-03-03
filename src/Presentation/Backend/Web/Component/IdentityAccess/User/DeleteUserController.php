@@ -12,7 +12,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Http\Method;
 
-class DeleteUserController
+final class DeleteUserController
 {
     private WebControllerService $webService;
     private UserServiceInterface $userService;

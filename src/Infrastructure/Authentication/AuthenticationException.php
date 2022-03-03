@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Authentication;
 
-class AuthenticationException extends \Exception
+final class AuthenticationException extends \Exception
 {
 }

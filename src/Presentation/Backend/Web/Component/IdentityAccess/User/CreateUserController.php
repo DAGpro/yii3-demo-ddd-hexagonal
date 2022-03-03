@@ -17,7 +17,7 @@ use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Yii\View\ViewRenderer;
 
-class CreateUserController
+final class CreateUserController
 {
     private ViewRenderer $viewRenderer;
     private WebControllerService $webService;

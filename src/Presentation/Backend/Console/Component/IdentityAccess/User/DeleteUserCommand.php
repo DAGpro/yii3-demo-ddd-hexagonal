@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
-class DeleteUserCommand extends Command
+final class DeleteUserCommand extends Command
 {
     protected static $defaultName = 'user/delete';
 

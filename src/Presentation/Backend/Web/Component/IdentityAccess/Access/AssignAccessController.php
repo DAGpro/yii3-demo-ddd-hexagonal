@@ -13,7 +13,7 @@ use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class AssignAccessController
+final class AssignAccessController
 {
     private WebControllerService $webService;
     private AssignAccessServiceInterface $assignAccessService;

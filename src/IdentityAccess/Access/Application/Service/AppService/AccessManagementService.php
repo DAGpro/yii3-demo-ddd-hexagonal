@@ -17,7 +17,7 @@ use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\Role;
 
-class AccessManagementService implements AccessManagementServiceInterface
+final class AccessManagementService implements AccessManagementServiceInterface
 {
     private Manager $manager;
     private ItemsStorageInterface $storage;

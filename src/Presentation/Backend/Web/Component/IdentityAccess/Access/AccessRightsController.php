@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Yii\View\ViewRenderer;
 
-class AccessRightsController
+final class AccessRightsController
 {
     private ViewRenderer $viewRenderer;
     private WebControllerService $webService;
