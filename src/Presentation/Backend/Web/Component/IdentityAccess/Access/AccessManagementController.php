@@ -9,7 +9,6 @@ use App\Core\Component\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\ExistItemException;
-use App\Core\Component\IdentityAccess\Access\Domain\Exception\FailedException;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use App\Presentation\Infrastructure\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
@@ -80,7 +79,7 @@ class AccessManagementController
                 'Role successfully removed!',
                 'backend/access'
             );
-        } catch (NotExistItemException|FailedException $t) {
+        } catch (NotExistItemException|AssignedItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access',

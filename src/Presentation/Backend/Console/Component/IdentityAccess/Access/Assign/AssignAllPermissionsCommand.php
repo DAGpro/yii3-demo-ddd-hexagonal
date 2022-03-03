@@ -8,6 +8,7 @@ use App\Core\Component\IdentityAccess\Access\Application\Service\AccessRightsSer
 use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\AssignedItemException;
+use App\Core\Component\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
 use Symfony\Component\Console\Command\Command;
@@ -70,7 +71,7 @@ class AssignAllPermissionsCommand extends Command
             }
 
             $io->success('All Permissions was assigned to given user');
-        } catch (AssignedItemException|IdentityException $t) {
+        } catch (AssignedItemException|IdentityException|NotExistItemException $t) {
             $io->error($t->getMessage());
             return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }

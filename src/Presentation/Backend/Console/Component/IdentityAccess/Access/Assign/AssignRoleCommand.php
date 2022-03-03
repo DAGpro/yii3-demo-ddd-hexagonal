@@ -10,6 +10,7 @@ use App\Core\Component\IdentityAccess\Access\Application\Service\AssignAccessSer
 use App\Core\Component\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\Core\Component\IdentityAccess\Access\Domain\Exception\ExistItemException;
+use App\Core\Component\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use App\Core\Component\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Core\Component\IdentityAccess\User\Domain\Exception\IdentityException;
 use Symfony\Component\Console\Command\Command;
@@ -80,7 +81,7 @@ class AssignRoleCommand extends Command
             $this->assignAccessService->assignRole($role, $user->getId());
 
             $io->success('Role was assigned to given user');
-        } catch (ExistItemException|AssignedItemException|IdentityException $t) {
+        } catch (ExistItemException|NotExistItemException|AssignedItemException|IdentityException $t) {
             $io->error($t->getMessage());
             return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }

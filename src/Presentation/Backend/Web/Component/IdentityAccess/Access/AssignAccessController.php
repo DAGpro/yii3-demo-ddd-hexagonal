@@ -82,7 +82,7 @@ class AssignAccessController
                 'backend/access/user-assignments',
                 ['user_id' => $userId]
             );
-        } catch (NotExistItemException|AssignedItemException $t) {
+        } catch (AssignedItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access/user-assignments',
@@ -148,7 +148,7 @@ class AssignAccessController
                 'backend/access/user-assignments',
                 ['user_id' => $userId]
             );
-        } catch (NotExistItemException|AssignedItemException $t) {
+        } catch (AssignedItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access/user-assignments',
