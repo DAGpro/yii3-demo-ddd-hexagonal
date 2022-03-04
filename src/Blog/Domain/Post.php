@@ -218,7 +218,7 @@ class Post
     //TODO fixture data
     public function setPublishedAt(DateTimeImmutable $date): void
     {
-        $this->updated_at = $date;
+        $this->published_at = $date;
     }
 
 }
