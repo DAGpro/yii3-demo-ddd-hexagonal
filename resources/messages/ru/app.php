@@ -30,6 +30,7 @@ return [
     'view-site.caption.slide3' => '<h5>Нам нужна обратная связь!</h5><p>Оствляйте её в Telegram или Slack, которые можно найти в README.</p>',
     'view-site.add.random.content' => 'Добавить рандомный контент',
     'view-site.add.demo.access.rights' => 'Добавить демо права доступа',
+    'view-site.add.admin.backend' => 'Добавьте пользователю права администратора для доступа к Бэкенду',
     'view-site.assignments.list' => 'Список назначений',
     'view-site.user.assignments' => 'Назначения пользователя',
     'view-site.access.rights.list' => 'Список прав доступа',

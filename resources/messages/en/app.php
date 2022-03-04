@@ -37,6 +37,7 @@ return [
     'view-site.other' => 'Other',
     'view-site.add.random.content' => 'Add random content',
     'view-site.add.demo.access.rights' => 'Add demo access rights',
+    'view-site.add.admin.backend' => 'Add admin rights to the user to access the Backend',
     'view-site.assignments.list' => 'Assignments list',
     'view-site.user.assignments' => 'User Assignments',
     'view-site.access.rights.list' => 'Access rights list',

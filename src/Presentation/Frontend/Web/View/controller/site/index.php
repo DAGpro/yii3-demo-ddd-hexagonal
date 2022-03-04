@@ -56,6 +56,10 @@ echo Carousel::widget()
                 <div>
                     <code><?= "{$binPath} fixture/add [count = 10]" ?></code>
                 </div>
+                <h4 class="card-title text-muted mt-2 mb-1"><?= $translator->translate('view-site.add.admin.backend') ?></h4>
+                <div>
+                    <code><?= "{$binPath} assign/addRole &lt;userId&gt; admin" ?></code>
+                </div>
             </div>
             <div class="tab-pane fade" id="nav-migration" role="tabpanel" aria-labelledby="nav-profile-tab">
                 <h4 class="card-title text-muted mt-2 mb-1"><?= $translator->translate('view-site.migrations') ?></h4>
