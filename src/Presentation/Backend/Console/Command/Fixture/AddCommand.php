@@ -17,6 +17,7 @@ use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
+use Cycle\Database\DatabaseManager;
 use Faker\Factory;
 use Faker\Generator;
 use Symfony\Component\Console\Command\Command;
@@ -44,17 +45,20 @@ final class AddCommand extends Command
 
     private const DEFAULT_COUNT = 10;
     private UserServiceInterface $userService;
+    private DatabaseManager $databaseManager;
 
     public function __construct(
         CycleDependencyProxy $promise,
         AccessRightsServiceInterface $accessRightsService,
         AssignAccessServiceInterface $assignAccessService,
         UserServiceInterface $userService,
+        DatabaseManager $databaseManager,
     ) {
         $this->promise = $promise;
         $this->assignAccessService = $assignAccessService;
         $this->accessRightsService = $accessRightsService;
         $this->userService = $userService;
+        $this->databaseManager = $databaseManager;
         parent::__construct();
     }
 
@@ -78,18 +82,23 @@ final class AddCommand extends Command
         }
         $this->faker = Factory::create();
 
+        $db = $this->databaseManager->database();
+
         try {
             if (!$this->accessRightsService->existRole('author')) {
                 $io->error('Add access rights before creating fixtures!');
                 return ExitCode::OK;
             }
 
+            $db->begin();
             $this->addUsers($count);
             $this->addAccessRightsToUsers((int)round($count / 3));
             $this->addTags($count);
             $this->addPosts($count);
+            $db->commit();
 
         } catch (\Throwable $t) {
+            $db->rollback();
             $io->error($t->getMessage());
             return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }
@@ -198,7 +207,7 @@ final class AddCommand extends Command
 
                 $comment = $post->createComment($this->faker->realText(random_int(100, 500)), clone $commentator);
                 $commentPublic = rand(0, 3) > 0;
-                $comment->setPublic($commentPublic);
+                $commentPublic ? $comment->publish() : $comment->toDraft();
                 if ($commentPublic) {
                     $comment->setPublishedAt(new \DateTimeImmutable(date('r', rand(time(), strtotime('-1 years')))));
                 }
