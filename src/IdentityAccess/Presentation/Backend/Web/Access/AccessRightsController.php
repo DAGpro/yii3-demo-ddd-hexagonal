@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Backend\Web\Access;
 
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Yii\View\ViewRenderer;

@@ -10,7 +10,7 @@ use App\Blog\Application\Service\CommandService\PostCreateDTO;
 use App\Blog\Application\Service\QueryService\AuthorPostQueryServiceInterface;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Infrastructure\Services\IdentityAccessService;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Data\Paginator\OffsetPaginator;

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 use App\Blog\Domain\Post;
 use App\Blog\Presentation\Frontend\View\Widget\PostCard;
-use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
+use App\Infrastructure\Presentation\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 
 $monthName = DateTime::createFromFormat('!m', (string) $month)->format('F');

@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Backend\Web\Component\IdentityAccess\Access\AccessManagementController;
-use App\Presentation\Backend\Web\Component\IdentityAccess\Access\AccessRightsController;
-use App\Presentation\Backend\Web\Component\IdentityAccess\Access\AssignAccessController;
-use App\Presentation\Backend\Web\Component\IdentityAccess\Access\AssignmentsController;
-use App\Presentation\Infrastructure\Web\Middleware\AccessRoleChecker;
+use App\IdentityAccess\Presentation\Backend\Web\Access\AccessManagementController;
+use App\IdentityAccess\Presentation\Backend\Web\Access\AccessRightsController;
+use App\IdentityAccess\Presentation\Backend\Web\Access\AssignAccessController;
+use App\IdentityAccess\Presentation\Backend\Web\Access\AssignmentsController;
+use App\Infrastructure\Presentation\Web\Middleware\AccessRoleChecker;
 use Yiisoft\Auth\Middleware\Authentication;
-use Yiisoft\Http\Method;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
 

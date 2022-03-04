@@ -9,7 +9,7 @@ use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\Infrastructure\Authentication\AuthenticationService;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Http\Method;

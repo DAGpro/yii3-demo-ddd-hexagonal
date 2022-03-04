@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @var \Yiisoft\View\WebView $this
  */
 
-use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
+use App\Infrastructure\Presentation\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 
 $this->setTitle($item->getLabel());

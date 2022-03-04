@@ -13,7 +13,7 @@ declare(strict_types=1);
  */
 
 use App\Blog\Domain\Comment;
-use App\Presentation\Infrastructure\Web\Widget\OffsetPagination;
+use App\Infrastructure\Presentation\Web\Widget\OffsetPagination;
 use Yiisoft\Html\Html;
 
 $this->setTitle($translator->translate('backend.title.comments'));

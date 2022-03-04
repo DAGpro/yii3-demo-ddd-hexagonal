@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Infrastructure\Web\Middleware\LocaleMiddleware;
-use App\Presentation\Infrastructure\Web\ViewInjection\CommonViewInjection;
-use App\Presentation\Infrastructure\Web\ViewInjection\LayoutViewInjection;
-use App\Presentation\Infrastructure\Web\ViewInjection\LinkTagsViewInjection;
-use App\Presentation\Infrastructure\Web\ViewInjection\MetaTagsViewInjection;
+use App\Infrastructure\Presentation\Web\Middleware\LocaleMiddleware;
+use App\Infrastructure\Presentation\Web\ViewInjection\CommonViewInjection;
+use App\Infrastructure\Presentation\Web\ViewInjection\LayoutViewInjection;
+use App\Infrastructure\Presentation\Web\ViewInjection\LinkTagsViewInjection;
+use App\Infrastructure\Presentation\Web\ViewInjection\MetaTagsViewInjection;
 use Yiisoft\Assets\AssetManager;
 use Yiisoft\Cookies\CookieMiddleware;
 use Yiisoft\Definitions\Reference;
@@ -50,10 +50,10 @@ return [
             '@runtime' => '@root/runtime',
             '@src' => '@root/src',
             '@vendor' => '@root/vendor',
-            '@layout' => '@src/Presentation/Frontend/Web/View/layout',
-            '@views' => '@src/Presentation/Frontend/Web/View',
-            '@backendLayout' => '@src/Presentation/Backend/Web/View/layout',
-            '@backendView' => '@src/Presentation/Backend/Web/View',
+            '@layout' => '@src/Site/Presentation/Frontend/View/layout',
+            '@view' => '@src/Site/Presentation/Frontend/View',
+            '@backendLayout' => '@src/Site/Presentation/Backend/View/layout',
+            '@backendView' => '@src/Site/Presentation/Backend/View',
             '@blogView' => '@src/Blog/Presentation/Frontend/View',
             '@blogBackendView' => '@src/Blog/Presentation/Backend/View',
             '@identityView' => '@src/IdentityAccess/Presentation/Frontend/View',
@@ -108,7 +108,7 @@ return [
     ],
 
     'yiisoft/view' => [
-        'basePath' => '@views',
+        'basePath' => '@view',
         'parameters' => [
             'assetManager' => Reference::to(AssetManager::class),
             'urlGenerator' => Reference::to(UrlGeneratorInterface::class),
@@ -122,8 +122,8 @@ return [
     ],
 
     'yiisoft/yii-view' => [
-        'viewPath' => '@views',
-        'layout' => '@views/layout/main',
+        'viewPath' => '@view',
+        'layout' => '@view/layout/main',
         'injections' => [
             Reference::to(CommonViewInjection::class),
             Reference::to(CsrfViewInjection::class),
@@ -165,10 +165,10 @@ return [
             'access/viewRole' => \App\IdentityAccess\Presentation\Backend\Console\Access\ViewRoleCommand::class,
             'access/userAssignments' => \App\IdentityAccess\Presentation\Backend\Console\Access\UserAssignmentsCommand::class,
 
-            'fixture/add' => \App\Presentation\Backend\Console\Command\Fixture\AddCommand::class,
-            'fixture/addAccess' => \App\Presentation\Backend\Console\Command\Fixture\CreateAccessRights::class,
-            'router/list' => \App\Presentation\Backend\Console\Command\Router\ListCommand::class,
-            'translator/translate' => \App\Presentation\Backend\Console\Command\Translation\TranslateCommand::class,
+            'fixture/add' => \App\Site\Presentation\Backend\Console\Fixture\AddCommand::class,
+            'fixture/addAccess' => \App\Site\Presentation\Backend\Console\Fixture\CreateAccessRights::class,
+            'router/list' => \App\Site\Presentation\Backend\Console\Router\ListCommand::class,
+            'translator/translate' => \App\Site\Presentation\Backend\Console\Translation\TranslateCommand::class,
         ],
     ],
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Backend\Web\User;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Data\Reader\Sort;

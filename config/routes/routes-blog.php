@@ -9,7 +9,7 @@ use App\Blog\Presentation\Frontend\Web\BlogController;
 use App\Blog\Presentation\Frontend\Web\Comment\CommentController;
 use App\Blog\Presentation\Frontend\Web\Post\PostController;
 use App\Blog\Presentation\Frontend\Web\Tag\TagController;
-use App\Presentation\Infrastructure\Web\Middleware\AccessPermissionChecker;
+use App\Infrastructure\Presentation\Web\Middleware\AccessPermissionChecker;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Http\Method;

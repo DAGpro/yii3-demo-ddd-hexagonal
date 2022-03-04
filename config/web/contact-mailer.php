@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Frontend\Web\Controller\Contact\ContactMailer;
+use App\Site\Presentation\Frontend\Web\Contact\ContactMailer;
 
 /** @var array $params */
 

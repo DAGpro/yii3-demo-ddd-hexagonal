@@ -8,7 +8,7 @@ use App\IdentityAccess\Presentation\Frontend\Web\Auth\Form\LoginForm;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Infrastructure\Authentication\AuthenticationException;
 use App\Infrastructure\Authentication\AuthenticationService;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Http\Method;

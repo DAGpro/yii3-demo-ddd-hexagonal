@@ -9,7 +9,7 @@ use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Backend\Web\Controller\SiteController;
-use App\Presentation\Infrastructure\Web\Middleware\AccessPermissionChecker;
+use App\Infrastructure\Presentation\Web\Middleware\AccessPermissionChecker;
+use App\Site\Presentation\Backend\Web\SiteController;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;

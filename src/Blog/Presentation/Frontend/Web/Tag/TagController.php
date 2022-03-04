@@ -6,7 +6,7 @@ namespace App\Blog\Presentation\Frontend\Web\Tag;
 
 use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
 use App\Blog\Application\Service\QueryService\TagQueryServiceInterface;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Router\CurrentRoute;

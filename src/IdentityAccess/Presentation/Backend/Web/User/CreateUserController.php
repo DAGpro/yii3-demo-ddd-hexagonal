@@ -8,7 +8,7 @@ use App\IdentityAccess\Presentation\Backend\Web\User\Forms\CreateUserForm;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;

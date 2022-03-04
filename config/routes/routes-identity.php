@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Frontend\Api\Component\IdentityAccess\User\ApiUserController;
-use App\Presentation\Frontend\Api\Controller\Actions\ApiInfo;
-use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\AuthController;
-use App\Presentation\Frontend\Web\Component\IdentityAccess\Auth\SignupController;
-use App\Presentation\Frontend\Web\Component\IdentityAccess\User\CabinetController;
-use App\Presentation\Frontend\Web\Component\IdentityAccess\User\UserController;
-use App\Presentation\Infrastructure\Api\Middleware\ApiDataWrapper;
+use App\IdentityAccess\Presentation\Frontend\Api\User\ApiUserController;
+use App\IdentityAccess\Presentation\Frontend\Web\Auth\AuthController;
+use App\IdentityAccess\Presentation\Frontend\Web\Auth\SignupController;
+use App\IdentityAccess\Presentation\Frontend\Web\User\CabinetController;
+use App\IdentityAccess\Presentation\Frontend\Web\User\UserController;
+use App\Infrastructure\Presentation\Api\Middleware\ApiDataWrapper;
+use App\Site\Presentation\Frontend\Api\Controller\Actions\ApiInfo;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsJson;

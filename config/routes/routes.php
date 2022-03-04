@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Frontend\Web\Controller\SiteController;
-use App\Presentation\Frontend\Web\Controller\Contact\ContactController;
+use App\Site\Presentation\Frontend\Web\Contact\ContactController;
+use App\Site\Presentation\Frontend\Web\SiteController;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsHtml;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsJson;
 use Yiisoft\Http\Method;

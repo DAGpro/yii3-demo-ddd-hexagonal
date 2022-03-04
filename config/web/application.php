@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Infrastructure\Web\Handler\NotFoundHandler;
-use App\Presentation\Infrastructure\Web\Middleware\LocaleMiddleware;
+use App\Infrastructure\Presentation\Web\Handler\NotFoundHandler;
+use App\Infrastructure\Presentation\Web\Middleware\LocaleMiddleware;
 use Yiisoft\Definitions\DynamicReference;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Injector\Injector;

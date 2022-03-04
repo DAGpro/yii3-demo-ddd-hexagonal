@@ -8,7 +8,7 @@ use App\Blog\Application\Service\CommandService\ModerateCommentServiceInterface;
 use App\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterface;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Presentation\Backend\Web\Form\CommentForm;
-use App\Presentation\Infrastructure\Web\Service\WebControllerService;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Data\Paginator\OffsetPaginator;
