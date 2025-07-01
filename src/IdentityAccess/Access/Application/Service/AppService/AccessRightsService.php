@@ -10,24 +10,21 @@ use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
 
-final class AccessRightsService implements AccessRightsServiceInterface
+final readonly class AccessRightsService implements AccessRightsServiceInterface
 {
-    private Manager $manager;
-    private ItemsStorageInterface $storage;
-
     public function __construct(
-        Manager $manager,
-        ItemsStorageInterface $storage
+        private Manager $manager,
+        private ItemsStorageInterface $storage,
     ) {
-        $this->manager = $manager;
-        $this->storage = $storage;
     }
 
+    #[\Override]
     public function existRole(string $roleName): bool
     {
         return $this->storage->getRole($roleName) !== null;
     }
 
+    #[\Override]
     public function getRoleByName(string $roleName): ?RoleDTO
     {
         $role = $this->storage->getRole($roleName);
@@ -43,6 +40,7 @@ final class AccessRightsService implements AccessRightsServiceInterface
         return null;
     }
 
+    #[\Override]
     public function getRoles(): array
     {
         $roles = [];
@@ -58,17 +56,20 @@ final class AccessRightsService implements AccessRightsServiceInterface
         return $roles;
     }
 
+    #[\Override]
     public function existPermission(string $permissionName): bool
     {
         return $this->getPermissionByName($permissionName) !== null;
     }
 
+    #[\Override]
     public function getPermissionByName(string $permissionName): ?PermissionDTO
     {
         $permission = $this->storage->getPermission($permissionName);
         return $permission === null ? null : new PermissionDTO($permission->getName());
     }
 
+    #[\Override]
     public function getPermissions(): array
     {
         $permissionDTO = [];
@@ -79,6 +80,7 @@ final class AccessRightsService implements AccessRightsServiceInterface
         return $permissionDTO;
     }
 
+    #[\Override]
     public function getChildRoles(RoleDTO $roleDTO): array
     {
         $roles = [];
@@ -94,6 +96,7 @@ final class AccessRightsService implements AccessRightsServiceInterface
         return $roles;
     }
 
+    #[\Override]
     public function getNestedRoles(RoleDTO $roleDTO): array
     {
         $roles = [];
@@ -108,6 +111,7 @@ final class AccessRightsService implements AccessRightsServiceInterface
         return $roles;
     }
 
+    #[\Override]
     public function getPermissionsByRole(RoleDTO $roleDTO): array
     {
         $permissions = [];
@@ -121,6 +125,7 @@ final class AccessRightsService implements AccessRightsServiceInterface
         return $permissions;
     }
 
+    #[\Override]
     public function getNestedPermissionsByRole(RoleDTO $roleDTO): array
     {
         $permissions = [];
@@ -135,22 +140,26 @@ final class AccessRightsService implements AccessRightsServiceInterface
         return $permissions;
     }
 
+    #[\Override]
     public function hasChildren(RoleDTO $parentDTO): bool
     {
         return $this->storage->hasChildren($parentDTO->getName());
     }
 
+    #[\Override]
     public function setDefaultRoles(array $roles): self
     {
         $this->manager->setDefaultRoleNames($roles);
         return $this;
     }
 
+    #[\Override]
     public function getDefaultRoleNames(): array
     {
         return $this->manager->getDefaultRoleNames();
     }
 
+    #[\Override]
     public function getDefaultRoles(): array
     {
         return $this->manager->getDefaultRoles();

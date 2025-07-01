@@ -10,27 +10,25 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class TagController
+final readonly class TagController
 {
-    private const POSTS_PER_PAGE = 5;
+    private const int POSTS_PER_PAGE = 5;
 
     private ViewRenderer $view;
-    private WebControllerService $webService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webControllerService
+        private WebControllerService $webService,
     ) {
         $this->view = $viewRenderer->withViewPath('@blogView/tag');
-        $this->webService = $webControllerService;
     }
 
     public function index(
         CurrentRoute $currentRoute,
         TagQueryServiceInterface $tagQueryService,
-        ReadPostQueryServiceInterface $postQueryService
+        ReadPostQueryServiceInterface $postQueryService,
     ): Response {
         $label = $currentRoute->getArgument('label', '');
         $pageNum = (int)$currentRoute->getArgument('page', '1');
@@ -39,7 +37,7 @@ final class TagController
             return $this->webService->notFound();
         }
 
-        $paginator = (new OffsetPaginator($postQueryService->findByTag($tag)))
+        $paginator = new OffsetPaginator($postQueryService->findByTag($tag))
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 

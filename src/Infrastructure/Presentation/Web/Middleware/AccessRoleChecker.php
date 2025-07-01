@@ -15,21 +15,13 @@ use Yiisoft\Http\Status;
 
 final class AccessRoleChecker implements MiddlewareInterface
 {
-    private ResponseFactoryInterface $responseFactory;
-    private AuthenticationService $authenticationService;
-    private AuthorizationService $authorizationService;
     private ?string $role = null;
 
-    public function __construct(
-        ResponseFactoryInterface $responseFactory,
-        AuthenticationService $authenticationService,
-        AuthorizationService $authorizationService,
-    ) {
-        $this->responseFactory = $responseFactory;
-        $this->authenticationService = $authenticationService;
-        $this->authorizationService = $authorizationService;
+    public function __construct(private ResponseFactoryInterface $responseFactory, private AuthenticationService $authenticationService, private AuthorizationService $authorizationService)
+    {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $user = $this->authenticationService->getUser();

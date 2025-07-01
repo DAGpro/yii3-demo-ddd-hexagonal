@@ -9,23 +9,18 @@ use App\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterfa
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 
-final class ModerateCommentService implements ModerateCommentServiceInterface
+final readonly class ModerateCommentService implements ModerateCommentServiceInterface
 {
-
-    private CommentRepositoryInterface $repository;
-    private ModerateCommentQueryServiceInterface $commentQueryService;
-
     public function __construct(
-        CommentRepositoryInterface $repository,
-        ModerateCommentQueryServiceInterface $commentQueryService
+        private CommentRepositoryInterface $repository,
+        private ModerateCommentQueryServiceInterface $commentQueryService,
     ) {
-        $this->repository = $repository;
-        $this->commentQueryService = $commentQueryService;
     }
 
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function draft(int $commentId): void
     {
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
@@ -40,6 +35,7 @@ final class ModerateCommentService implements ModerateCommentServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function public(int $commentId): void
     {
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
@@ -54,6 +50,7 @@ final class ModerateCommentService implements ModerateCommentServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function moderate(int $commentId, string $commentText, bool $public): void
     {
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
@@ -74,6 +71,7 @@ final class ModerateCommentService implements ModerateCommentServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function delete(int $commentId): void
     {
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {

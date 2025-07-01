@@ -3,30 +3,36 @@
 declare(strict_types=1);
 
 use Yiisoft\Config\Config;
+use Yiisoft\Csrf\CsrfTokenMiddleware;
 use Yiisoft\DataResponse\Middleware\FormatDataResponse;
-use Yiisoft\Csrf\CsrfMiddleware;
+use Yiisoft\Router\FastRoute\UrlGenerator;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\RouteCollection;
 use Yiisoft\Router\RouteCollectionInterface;
 use Yiisoft\Router\RouteCollectorInterface;
-use Yiisoft\Yii\Debug\Viewer\Middleware\ToolbarMiddleware;
+use Yiisoft\Router\UrlGeneratorInterface;
 
 /** @var Config $config */
 
 return [
     RouteCollectionInterface::class => static function (RouteCollectorInterface $collector) use ($config) {
         $collector
-            ->middleware(CsrfMiddleware::class)
+            ->middleware(CsrfTokenMiddleware::class)
             ->middleware(FormatDataResponse::class)
-            ->addGroup(
+            ->addRoute(
                 Group::create('/{_language}')
-                    ->routes(...$config->get('routes'))
+                    ->routes(...$config->get('app-routes')),
             );
-
-        if (!str_starts_with(getenv('YII_ENV') ?: '', 'prod')) {
-            $collector->middleware(ToolbarMiddleware::class);
-        }
 
         return new RouteCollection($collector);
     },
+    UrlGeneratorInterface::class => [
+        'class' => UrlGenerator::class,
+        'setEncodeRaw()' => [$params['yiisoft/router-fastroute']['encodeRaw']],
+        'setDefaultArgument()' => ['_language', 'en'],
+        'reset' => function () {
+            $this->defaultArguments = ['_language', 'en'];
+        },
+    ],
+
 ];

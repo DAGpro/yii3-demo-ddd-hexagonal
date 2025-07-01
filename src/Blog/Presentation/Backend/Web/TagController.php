@@ -12,29 +12,22 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class TagController
+final readonly class TagController
 {
-    private const POSTS_PER_PAGE = 3;
-
-    private TagQueryServiceInterface $tagQueryService;
-    private TagServiceInterface $tagService;
+    private const int POSTS_PER_PAGE = 3;
     private ViewRenderer $view;
-    private WebControllerService $webService;
 
     public function __construct(
-        TagQueryServiceInterface $tagQueryService,
-        TagServiceInterface $tagService,
+        private TagQueryServiceInterface $tagQueryService,
+        private TagServiceInterface $tagService,
         ViewRenderer $viewRenderer,
-        WebControllerService $webService
+        private WebControllerService $webService,
     ) {
-        $this->tagQueryService = $tagQueryService;
-        $this->tagService = $tagService;
-        $this->webService = $webService;
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@blogBackendView');
         $this->view = $viewRenderer->withControllerName('tag');
@@ -46,7 +39,7 @@ final class TagController
 
         $dataReader = $this->tagQueryService->findAllPreloaded();
 
-        $paginator = (new OffsetPaginator($dataReader))
+        $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 
@@ -60,7 +53,7 @@ final class TagController
     public function changeTag(
         Request $request,
         CurrentRoute $currentRoute,
-        ValidatorInterface $validator
+        FormHydrator $formHydrator,
     ): ResponseInterface {
         $tagId = (int)$currentRoute->getArgument('tag_id');
 
@@ -70,8 +63,7 @@ final class TagController
 
         $form = new TagForm($tag);
         if (($request->getMethod() === Method::POST)
-            && $form->load($request->getParsedBody())
-            && $validator->validate($form)->isValid()
+            && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             $this->tagService->changeTag($tag->getId(), $form->getLabel());
 
@@ -83,8 +75,8 @@ final class TagController
             [
                 'title' => 'Change tag label',
                 'action' => ['backend/tag/change', ['tag_id' => $tagId]],
-                'form' => $form
-            ]
+                'form' => $form,
+            ],
         );
     }
 
@@ -104,13 +96,13 @@ final class TagController
 
         try {
             $this->tagService->delete((int)$tagId);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 
         return $this->webService->sessionFlashAndRedirect(
             'Tag successfully deleted!',
-            'backend/tag'
+            'backend/tag',
         );
     }
 }

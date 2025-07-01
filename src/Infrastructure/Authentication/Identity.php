@@ -19,22 +19,21 @@ class Identity implements CookieLoginIdentityInterface
 
     #[Column(type: 'string(32)')]
     private string $authKey;
-
-    #[BelongsTo(target: User::class, nullable: false, load: 'eager')]
-    private User $user;
     private ?int $user_id = null;
 
-    public function __construct(User $user)
+    public function __construct(#[BelongsTo(target: User::class, nullable: false, load: 'eager')]
+    private readonly User $user)
     {
-        $this->user = $user;
         $this->regenerateCookieLoginKey();
     }
 
+    #[\Override]
     public function getId(): ?string
     {
         return (string)$this->id;
     }
 
+    #[\Override]
     public function getCookieLoginKey(): string
     {
         return $this->authKey;
@@ -45,6 +44,7 @@ class Identity implements CookieLoginIdentityInterface
         return $this->user;
     }
 
+    #[\Override]
     public function validateCookieLoginKey(string $key): bool
     {
         return $this->authKey === $key;

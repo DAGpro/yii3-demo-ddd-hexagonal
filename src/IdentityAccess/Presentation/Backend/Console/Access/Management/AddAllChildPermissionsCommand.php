@@ -9,6 +9,7 @@ use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,30 +17,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'access:addAllChildPermissions',
+    'Add all child permissions for a role in access control rights',
+    help: 'This command adds a all child permissions to a role in access control rights',
+)]
 final class AddAllChildPermissionsCommand extends Command
 {
-    protected static $defaultName = 'access/addAllChildPermissions';
-
-    private AccessManagementServiceInterface $accessManagementService;
-    private AccessRightsServiceInterface $accessRightsService;
-
     public function __construct(
-        AccessRightsServiceInterface $accessRightsService,
-        AccessManagementServiceInterface $managementService
+        private readonly AccessRightsServiceInterface $accessRightsService,
+        private readonly AccessManagementServiceInterface $accessManagementService,
     ) {
-        $this->accessManagementService = $managementService;
         parent::__construct();
-        $this->accessRightsService = $accessRightsService;
     }
 
+    #[\Override]
     public function configure(): void
     {
-        $this
-            ->setDescription('Add all child permissions for a role in access control rights')
-            ->setHelp('This command adds a all child permissions to a role in access control rights')
-            ->addArgument('parentRole', InputArgument::REQUIRED, 'RBAC parent role');
+        $this->addArgument('parentRole', InputArgument::REQUIRED, 'RBAC parent role');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -61,8 +59,8 @@ final class AddAllChildPermissionsCommand extends Command
             $io->success(
                 sprintf(
                     'All Child permissions added to parent role `%s`!',
-                    $parentRoleDTO->getName()
-                )
+                    $parentRoleDTO->getName(),
+                ),
             );
         } catch (NotExistItemException|ExistItemException $t) {
             $io->error($t->getMessage());

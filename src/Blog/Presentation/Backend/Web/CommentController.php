@@ -12,29 +12,22 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class CommentController
+final readonly class CommentController
 {
-    private const COMMENT_PER_PAGE = 3;
-
-    private ModerateCommentQueryServiceInterface $commentQueryService;
-    private ModerateCommentServiceInterface $commentService;
+    private const int COMMENT_PER_PAGE = 3;
     private ViewRenderer $view;
-    private WebControllerService $webService;
 
     public function __construct(
-        ModerateCommentQueryServiceInterface $commentQueryService,
-        ModerateCommentServiceInterface $commentService,
+        private ModerateCommentQueryServiceInterface $commentQueryService,
+        private ModerateCommentServiceInterface $commentService,
         ViewRenderer $viewRenderer,
-        WebControllerService $webService
+        private WebControllerService $webService,
     ) {
-        $this->commentQueryService = $commentQueryService;
-        $this->commentService = $commentService;
-        $this->webService = $webService;
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@blogBackendView');
         $this->view = $viewRenderer->withControllerName('comment');
@@ -46,7 +39,7 @@ final class CommentController
 
         $dataReader = $this->commentQueryService->findAllPreloaded();
 
-        $paginator = (new OffsetPaginator($dataReader))
+        $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::COMMENT_PER_PAGE)
             ->withCurrentPage($pageNum);
 
@@ -54,7 +47,7 @@ final class CommentController
             'index',
             [
                 'paginator' => $paginator,
-            ]
+            ],
         );
     }
 
@@ -69,7 +62,7 @@ final class CommentController
             'view',
             [
                 'comment' => $comment,
-            ]
+            ],
         );
     }
 
@@ -83,20 +76,20 @@ final class CommentController
                 'The comment_id parameter is required in the post request!',
                 'backend/comment',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         try {
             $this->commentService->draft((int)$commentId);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 
         return $this->webService->sessionFlashAndRedirect(
             'Comment moved to draft!',
             'backend/comment/view',
-            ['comment_id' => $commentId]
+            ['comment_id' => $commentId],
         );
     }
 
@@ -110,27 +103,27 @@ final class CommentController
                 'The comment_id parameter is required in the post request!',
                 'backend/comment',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         try {
             $this->commentService->public((int)$commentId);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 
         return $this->webService->sessionFlashAndRedirect(
             'Comment published!',
             'backend/comment/view',
-            ['comment_id' => $commentId]
+            ['comment_id' => $commentId],
         );
     }
 
     public function moderateComment(
         Request $request,
         CurrentRoute $currentRoute,
-        ValidatorInterface $validator
+        FormHydrator $formHydrator,
     ): ResponseInterface {
         $commentId = (int)$currentRoute->getArgument('comment_id');
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
@@ -139,17 +132,16 @@ final class CommentController
 
         $form = new CommentForm($comment);
         if (($request->getMethod() === Method::POST)
-            && $form->load($request->getParsedBody())
-            && $validator->validate($form)->isValid()
+            && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             try {
                 $this->commentService->moderate((int)$form->getCommentId(), $form->getContent(), $form->getPublic());
-            } catch (BlogNotFoundException $exception) {
+            } catch (BlogNotFoundException) {
                 return $this->webService->notFound();
             }
 
             return $this->webService->redirect('backend/comment/view', [
-                'comment_id' => $commentId
+                'comment_id' => $commentId,
             ]);
         }
 
@@ -158,7 +150,7 @@ final class CommentController
             [
                 'action' => ['backend/comment/moderate', ['comment_id' => $comment->getId()]],
                 'form' => $form,
-            ]
+            ],
         );
     }
 
@@ -172,19 +164,19 @@ final class CommentController
                 'The comment_id parameter is required in the post request!',
                 'backend/comment',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         try {
             $this->commentService->delete((int)$commentId);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 
         return $this->webService->sessionFlashAndRedirect(
             'Comment successfully deleted!',
-            'backend/comment'
+            'backend/comment',
         );
     }
 }

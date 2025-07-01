@@ -11,11 +11,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final class UserController
 {
-    private const PAGINATION_INDEX = 5;
+    private const int PAGINATION_INDEX = 5;
 
     public function __construct(private ViewRenderer $viewRenderer)
     {
@@ -25,7 +25,7 @@ final class UserController
     public function index(
         UserQueryServiceInterface $userQueryService,
         ServerRequestInterface $request,
-        CurrentRoute $currentRoute
+        CurrentRoute $currentRoute,
     ): Response {
         $page = (int)$currentRoute->getArgument('page', '1');
         $sortOrderString = $request->getQueryParams();
@@ -34,26 +34,25 @@ final class UserController
             ->findAllPreloaded()
             ->withSort(
                 Sort::only(['id', 'login'])
-                ->withOrderString($sortOrderString['sort'] ?? '')
+                    ->withOrderString($sortOrderString['sort'] ?? ''),
             );
 
-        $paginator = (new OffsetPaginator($dataReader))
+        $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::PAGINATION_INDEX);
 
         return $this->viewRenderer->render(
             'index',
             [
-                'page' => $page,
+                'currentRoute' => $currentRoute,
                 'paginator' => $paginator,
-                'sortOrder' => $sortOrderString['sort'] ?? '',
-            ]
+            ],
         );
     }
 
     public function profile(
         CurrentRoute $currentRoute,
         UserQueryServiceInterface $userQueryService,
-        ResponseFactoryInterface $responseFactory
+        ResponseFactoryInterface $responseFactory,
     ): Response {
         $login = $currentRoute->getArgument('login');
         $item = $userQueryService->findByLogin($login);

@@ -4,32 +4,31 @@ declare(strict_types=1);
 
 namespace App\Site\Presentation\Backend\Console\Translation;
 
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Translator\TranslatorInterface;
 
+#[AsCommand(name: 'translator:translate', description: 'Translates a message')]
 final class TranslateCommand extends Command
 {
-    protected static $defaultName = 'translator/translate';
-    protected static $defaultDescription = 'Translates a message';
-
-    private TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(private readonly TranslatorInterface $translator)
     {
-        $this->translator = $translator;
         parent::__construct();
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this->addArgument('message', InputArgument::REQUIRED, 'Message that will be translated.');
         $this->addArgument('locale', InputArgument::OPTIONAL, 'Translation locale.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    #[\Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $message = $input->getArgument('message');
         $locale = $input->getArgument('locale');

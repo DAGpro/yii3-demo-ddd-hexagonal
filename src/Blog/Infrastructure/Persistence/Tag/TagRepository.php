@@ -4,46 +4,49 @@ declare(strict_types=1);
 
 namespace App\Blog\Infrastructure\Persistence\Tag;
 
-use App\Blog\Domain\Post;
 use App\Blog\Domain\Port\TagRepositoryInterface;
+use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Infrastructure\Persistence\Post\PostRepository;
 use App\Blog\Infrastructure\Persistence\Post\PostTag;
-use Cycle\ORM\EntityManager;
+use Cycle\Database\Query\SelectQuery;
+use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
-use Cycle\Database\Query\SelectQuery;
 use Yiisoft\Data\Reader\DataReaderInterface;
 
 final class TagRepository extends Repository implements TagRepositoryInterface
 {
-    private EntityManager $entityManager;
-    private ORMInterface $orm;
-
-    public function __construct(Select $select, ORMInterface $orm)
-    {
-        $this->orm = $orm;
-        $this->entityManager = new EntityManager($orm);
+    public function __construct(
+        protected Select $select,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ORMInterface $orm,
+    ) {
         parent::__construct($select);
     }
 
+    #[\Override]
     public function getOrCreate(string $label): Tag
     {
         $tag = $this->findByLabel($label);
         return $tag ?? new Tag($label);
     }
 
+    #[\Override]
     public function findByLabel(string $label): ?Tag
     {
-        return $this->select()
+        return $this
+            ->select()
             ->where(['label' => $label])
             ->fetchOne();
     }
 
+    #[\Override]
     public function getTag(int $tagId): ?Tag
     {
-        return $this->select()
+        return $this
+            ->select()
             ->where(['id' => $tagId])
             ->fetchOne();
     }
@@ -53,6 +56,7 @@ final class TagRepository extends Repository implements TagRepositoryInterface
      *
      * @return DataReaderInterface Collection of Array('label' => 'Tag Label', 'count' => '8')
      */
+    #[\Override]
     public function getTagMentions(int $limit = 0): SelectQuery
     {
         /** @var Repository $postTagRepo */
@@ -144,6 +148,7 @@ final class TagRepository extends Repository implements TagRepositoryInterface
         return $case3;
     }
 
+    #[\Override]
     public function save(array $tags): void
     {
         foreach ($tags as $entity) {
@@ -152,6 +157,7 @@ final class TagRepository extends Repository implements TagRepositoryInterface
         $this->entityManager->run();
     }
 
+    #[\Override]
     public function delete(array $tags): void
     {
         foreach ($tags as $entity) {

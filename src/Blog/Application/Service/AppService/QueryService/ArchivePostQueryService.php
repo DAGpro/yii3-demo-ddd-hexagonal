@@ -6,21 +6,21 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 
 use App\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
 use App\Blog\Domain\Port\PostRepositoryInterface;
-use Cycle\ORM\Select;
 use Cycle\Database\Query\SelectQuery;
+use Cycle\ORM\Select;
+use DateTimeImmutable;
+use Override;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class ArchivePostQueryService implements ArchivePostQueryServiceInterface
+final readonly class ArchivePostQueryService implements ArchivePostQueryServiceInterface
 {
-    private PostRepositoryInterface $repository;
-
-    public function __construct(PostRepositoryInterface $postRepository)
+    public function __construct(private PostRepositoryInterface $repository)
     {
-        $this->repository = $postRepository;
     }
 
+    #[Override]
     public function getFullArchive(?int $limit = null): DataReaderInterface
     {
         $sort = Sort::only(['year', 'month', 'count'])->withOrder(['year' => 'desc', 'month' => 'desc']);
@@ -36,7 +36,7 @@ final class ArchivePostQueryService implements ArchivePostQueryServiceInterface
             ])
             ->groupBy('year, month');
 
-        $dataReader = (new EntityReader($query))->withSort($sort);
+        $dataReader = new EntityReader($query)->withSort($sort);
 
         if ($limit !== null) {
             return $dataReader->withLimit($limit);
@@ -45,9 +45,10 @@ final class ArchivePostQueryService implements ArchivePostQueryServiceInterface
         return $dataReader;
     }
 
+    #[Override]
     public function getMonthlyArchive(int $year, int $month): DataReaderInterface
     {
-        $begin = (new \DateTimeImmutable())->setDate($year, $month, 1)->setTime(0, 0, 0);
+        $begin = new DateTimeImmutable()->setDate($year, $month, 1)->setTime(0, 0, 0);
         $end = $begin->setDate($year, $month + 1, 1)->setTime(0, 0, -1);
 
         $query = $this
@@ -58,9 +59,10 @@ final class ArchivePostQueryService implements ArchivePostQueryServiceInterface
         return $this->prepareDataReader($query);
     }
 
+    #[Override]
     public function getYearlyArchive(int $year): DataReaderInterface
     {
-        $begin = (new \DateTimeImmutable())->setDate($year, 1, 1)->setTime(0, 0, 0);
+        $begin = new DateTimeImmutable()->setDate($year, 1, 1)->setTime(0, 0, 0);
         $end = $begin->setDate($year + 1, 1, 1)->setTime(0, 0, -1);
 
         $query = $this
@@ -79,12 +81,12 @@ final class ArchivePostQueryService implements ArchivePostQueryServiceInterface
      *
      * @return EntityReader
      */
-    private function prepareDataReader($query): EntityReader
+    private function prepareDataReader(Select $query): EntityReader
     {
-        return (new EntityReader($query))
+        return new EntityReader($query)
             ->withSort(
                 Sort::only(['published_at'])
-                ->withOrder(['published_at' => 'desc'])
+                    ->withOrder(['published_at' => 'desc']),
             );
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Frontend\Api\User;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use OpenApi\Annotations as OA;
+use App\IdentityAccess\User\Domain\User;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;
@@ -17,13 +17,12 @@ use Yiisoft\Router\CurrentRoute;
  *     description="User"
  * )
  */
-final class ApiUserController
+final readonly class ApiUserController
 {
-    private DataResponseFactoryInterface $responseFactory;
 
-    public function __construct(DataResponseFactoryInterface $responseFactory)
-    {
-        $this->responseFactory = $responseFactory;
+    public function __construct(
+        private DataResponseFactoryInterface $responseFactory,
+    ) {
     }
 
     /**
@@ -35,10 +34,11 @@ final class ApiUserController
      */
     public function index(UserQueryServiceInterface $userQueryService): ResponseInterface
     {
-        $dataReader = $userQueryService->findAllPreloaded()
+        $dataReader = $userQueryService
+            ->findAllPreloaded()
             ->withSort(
                 Sort::only(['login'])
-                    ->withOrderString('login')
+                    ->withOrderString('login'),
             );
         $users = $dataReader->read();
 
@@ -67,14 +67,14 @@ final class ApiUserController
     {
         $login = $currentRoute->getArgument('login');
 
-        /** @var \App\IdentityAccess\User\Domain\User $user */
+        /** @var User $user */
         $user = $userQueryService->findByLogin($login);
         if ($user === null) {
             return $this->responseFactory->createResponse('Page not found', 404);
         }
 
         return $this->responseFactory->createResponse(
-            ['login' => $user->getLogin(), 'created_at' => $user->getCreatedAt()->format('H:i:s d.m.Y')]
+            ['login' => $user->getLogin(), 'created_at' => $user->getCreatedAt()->format('H:i:s d.m.Y')],
         );
     }
 }

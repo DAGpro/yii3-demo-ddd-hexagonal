@@ -16,28 +16,21 @@ use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\Role;
 
-final class AssignAccessService implements AssignAccessServiceInterface
+final readonly class AssignAccessService implements AssignAccessServiceInterface
 {
-    private Manager $manager;
-    private AssignmentsStorageInterface $storage;
-    private AssignmentsServiceInterface $assignmentsService;
-    private AccessRightsServiceInterface $accessRightsService;
-
     public function __construct(
-        Manager $manager,
-        AccessRightsServiceInterface $accessRightsService,
-        AssignmentsStorageInterface $storage,
-        AssignmentsServiceInterface $assignmentsService
+        private Manager $manager,
+        private AccessRightsServiceInterface $accessRightsService,
+        private AssignmentsStorageInterface $storage,
+        private AssignmentsServiceInterface $assignmentsService,
     ) {
-        $this->manager = $manager;
-        $this->storage = $storage;
-        $this->assignmentsService = $assignmentsService;
-        $this->accessRightsService = $accessRightsService;
     }
 
     /**
      * @throws AssignedItemException
+     * @throws NotExistItemException
      */
+    #[\Override]
     public function assignRole(RoleDTO $roleDTO, string|int $userId): void
     {
         if (!$this->accessRightsService->existRole($roleDTO->getName())) {
@@ -54,7 +47,9 @@ final class AssignAccessService implements AssignAccessServiceInterface
 
     /**
      * @throws AssignedItemException
+     * @throws NotExistItemException
      */
+    #[\Override]
     public function assignPermission(PermissionDTO $permissionDTO, string|int $userId): void
     {
         if (!$this->accessRightsService->existPermission($permissionDTO->getName())) {
@@ -72,6 +67,7 @@ final class AssignAccessService implements AssignAccessServiceInterface
     /**
      * @throws AssignedItemException
      */
+    #[\Override]
     public function revokeRole(RoleDTO $roleDTO, string|int $userId): void
     {
         if (!$this->assignmentsService->userHasRole($userId, $roleDTO->getName())) {
@@ -85,6 +81,7 @@ final class AssignAccessService implements AssignAccessServiceInterface
     /**
      * @throws AssignedItemException
      */
+    #[\Override]
     public function revokePermission(PermissionDTO $permissionDTO, string|int $userId): void
     {
         if (!$this->assignmentsService->userHasPermission($userId, $permissionDTO->getName())) {
@@ -95,11 +92,13 @@ final class AssignAccessService implements AssignAccessServiceInterface
         $this->manager->revoke($permission->getName(), $userId);
     }
 
+    #[\Override]
     public function revokeAll(string|int $userId): void
     {
         $this->manager->revokeAll($userId);
     }
 
+    #[\Override]
     public function clearAssignments(): void
     {
         $this->storage->clear();

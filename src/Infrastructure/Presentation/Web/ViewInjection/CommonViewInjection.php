@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace App\Infrastructure\Presentation\Web\ViewInjection;
 
 use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Yii\View\CommonParametersInjectionInterface;
+use Yiisoft\Yii\View\Renderer\CommonParametersInjectionInterface;
 
-final class CommonViewInjection implements CommonParametersInjectionInterface
+final readonly class CommonViewInjection implements CommonParametersInjectionInterface
 {
-    private UrlGeneratorInterface $url;
-
-    public function __construct(UrlGeneratorInterface $url)
+    public function __construct(private UrlGeneratorInterface $url)
     {
-        $this->url = $url;
     }
 
+    #[\Override]
     public function getCommonParameters(): array
     {
         return [

@@ -9,25 +9,23 @@ use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
-use Cycle\ORM\Select;
 use Cycle\Database\Query\SelectQuery;
+use Cycle\ORM\Select;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class AuthorPostQueryService implements AuthorPostQueryServiceInterface
+final readonly class AuthorPostQueryService implements AuthorPostQueryServiceInterface
 {
-    private PostRepositoryInterface $repository;
-
-    public function __construct(PostRepositoryInterface $postRepository)
+    public function __construct(private PostRepositoryInterface $repository)
     {
-        $this->repository = $postRepository;
     }
 
     /**
      * @param Author $author
      * @return DataReaderInterface
      */
+    #[\Override]
     public function getAuthorPosts(Author $author): DataReaderInterface
     {
         $query = $this->repository
@@ -35,7 +33,7 @@ final class AuthorPostQueryService implements AuthorPostQueryServiceInterface
             ->scope(null)
             ->load(['tags'])
             ->where(['author_id' => $author->getId()])
-            ->andWhere('deleted_at' , '=', null);
+            ->andWhere('deleted_at', '=', null);
 
         return $this->prepareDataReader($query);
     }
@@ -45,6 +43,7 @@ final class AuthorPostQueryService implements AuthorPostQueryServiceInterface
      * @return Post
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function getPostBySlug(string $slug): ?Post
     {
         return $this->repository
@@ -52,9 +51,8 @@ final class AuthorPostQueryService implements AuthorPostQueryServiceInterface
             ->scope(null)
             ->load(['tags'])
             ->andWhere('slug', '=', $slug)
-            ->andWhere('deleted_at' , '=', null)
+            ->andWhere('deleted_at', '=', null)
             ->fetchOne();
-
     }
 
     /**
@@ -64,13 +62,12 @@ final class AuthorPostQueryService implements AuthorPostQueryServiceInterface
      *
      * @return EntityReader
      */
-    private function prepareDataReader($query): EntityReader
+    private function prepareDataReader(Select $query): EntityReader
     {
-        return (new EntityReader($query))
+        return new EntityReader($query)
             ->withSort(
                 Sort::only(['published_at'])
-                    ->withOrder(['published_at' => 'desc'])
+                    ->withOrder(['published_at' => 'desc']),
             );
     }
-
 }

@@ -9,6 +9,7 @@ use Cycle\ORM\Select\QueryBuilder;
 
 final class PublicScope implements ConstrainInterface
 {
+    #[\Override]
     public function apply(QueryBuilder $query): void
     {
         // public only

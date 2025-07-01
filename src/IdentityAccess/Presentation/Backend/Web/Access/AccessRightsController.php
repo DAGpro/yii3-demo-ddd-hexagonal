@@ -8,21 +8,17 @@ use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class AccessRightsController
+final readonly class AccessRightsController
 {
     private ViewRenderer $viewRenderer;
-    private WebControllerService $webService;
-    private AccessRightsServiceInterface $accessRightsService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webService,
-        AccessRightsServiceInterface $accessRightsService
+        private WebControllerService $webService,
+        private AccessRightsServiceInterface $accessRightsService
     ) {
-        $this->webService = $webService;
-        $this->accessRightsService = $accessRightsService;
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@identityBackendView/access');
         $this->viewRenderer = $viewRenderer->withControllerName('access-rights');

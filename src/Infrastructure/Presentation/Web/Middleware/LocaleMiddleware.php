@@ -20,15 +20,8 @@ use Yiisoft\Translator\TranslatorInterface;
 
 final class LocaleMiddleware implements MiddlewareInterface
 {
-    private const DEFAULT_LOCALE = 'en';
-    private const DEFAULT_LOCALE_NAME = '_language';
-
-    private TranslatorInterface $translator;
-    private UrlGeneratorInterface $urlGenerator;
-    private SessionInterface $session;
-    private ResponseFactoryInterface $responseFactory;
-    private LoggerInterface $logger;
-    private array $locales;
+    private const string DEFAULT_LOCALE = 'en';
+    private const string DEFAULT_LOCALE_NAME = '_language';
     private bool $enableSaveLocale = true;
     private bool $enableDetectLocale = false;
     private string $defaultLocale = self::DEFAULT_LOCALE;
@@ -37,22 +30,17 @@ final class LocaleMiddleware implements MiddlewareInterface
     private ?DateInterval $cookieDuration;
 
     public function __construct(
-        TranslatorInterface $translator,
-        UrlGeneratorInterface $urlGenerator,
-        SessionInterface $session,
-        LoggerInterface $logger,
-        ResponseFactoryInterface $responseFactory,
-        array $locales = []
+        private TranslatorInterface $translator,
+        private UrlGeneratorInterface $urlGenerator,
+        private SessionInterface $session,
+        private LoggerInterface $logger,
+        private ResponseFactoryInterface $responseFactory,
+        private array $locales = []
     ) {
-        $this->translator = $translator;
-        $this->urlGenerator = $urlGenerator;
-        $this->session = $session;
-        $this->logger = $logger;
-        $this->responseFactory = $responseFactory;
-        $this->locales = $locales;
         $this->cookieDuration = new DateInterval('P30D');
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->locales === []) {
@@ -166,10 +154,10 @@ final class LocaleMiddleware implements MiddlewareInterface
 
     private function parseLocale(string $locale): array
     {
-        if (strpos($locale, '-') !== false) {
+        if (str_contains($locale, '-')) {
             return explode('-', $locale, 2);
         }
-        if (isset($this->locales[$locale]) && strpos($this->locales[$locale], '-') !== false) {
+        if (isset($this->locales[$locale]) && str_contains($this->locales[$locale], '-')) {
             return explode('-', $this->locales[$locale], 2);
         }
         return [$locale, null];

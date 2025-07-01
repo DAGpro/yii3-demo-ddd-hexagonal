@@ -3,24 +3,35 @@
 declare(strict_types=1);
 
 /**
- * @var \App\Blog\Domain\Post $item
- * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\View\WebView $this
+ * @var Post $item
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
  * @var bool $canEdit
- * @var \App\Blog\Domain\User\Commentator $commentator
+ * @var Commentator $commentator
  * @var string $csrf
  * @var string $slug
  */
 
+use App\Blog\Domain\Post;
+use App\Blog\Domain\Tag;
+use App\Blog\Domain\User\Commentator;
+use Yiisoft\Bootstrap5\Alert;
 use Yiisoft\Html\Html;
-use Yiisoft\Yii\Bootstrap5\Alert;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Div;
+use Yiisoft\Html\Tag\P;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
 
 $this->setTitle($item->getTitle());
 
 if (!empty($errors)) {
     foreach ($errors as $field => $error) {
-        echo Alert::widget()->options(['class' => 'alert-danger'])->body(Html::encode($field . ':' . $error));
+        echo Alert::widget()
+            ->addAttributes(['class' => 'alert-danger'])
+            ->body(Html::encode($field . ':' . $error));
     }
 }
 
@@ -29,19 +40,21 @@ if (!empty($errors)) {
     <div>
         <span class="text-muted"><?= $item->getPublishedAt() === null
                 ? 'not published'
-                : $translator->translate('blog.published.post', ['date' => $item->getPublishedAt()->format('H:i:s d.m.Y')]) ?> by</span>
+                : $translator->translate('blog.published.post',
+                    ['date' => $item->getPublishedAt()->format('H:i:s d.m.Y')],
+                ) ?> by</span>
         <?php
-        echo Html::a(
-            $item->getAuthor()->getName(),
-            $url->generate('user/profile', ['login' => $item->getAuthor()->getName()]),
-            ['class' => 'mr-3']
-        );
+        echo A::tag()
+            ->class('mr-3')
+            ->content($item->getAuthor()->getName())
+            ->url($url->generate('user/profile', ['login' => $item->getAuthor()->getName()]))
+            ->render();
         if ($canEdit) {
-            echo Html::a(
-                'Edit',
-                $url->generate('blog/author/post/edit', ['slug' => $slug]),
-                ['class' => 'btn btn-outline-secondary btn-sm ms-2']
-            );
+            A::tag()
+                ->class('btn btn-outline-secondary btn-sm ms-2')
+                ->content('Edit')
+                ->url($url->generate('blog/author/post/edit', ['slug' => $slug]))
+                ->render();
         }
         ?>
     </div>
@@ -50,20 +63,33 @@ if (!empty($errors)) {
 echo Html::tag('article', $item->getContent(), ['class' => 'text-justify']);
 
 if ($item->getTags()) {
-    echo Html::openTag('div', ['class' => 'mt-3 mb-3']);
-    foreach ($item->getTags() as $tag) {
-        echo Html::a(
-            Html::encode($tag->getLabel()),
-            $url->generate('blog/tag', ['label' => $tag->getLabel()]),
-            ['class' => 'btn btn-outline-secondary btn-sm mb-1 me-2']
-        );
-    }
-    echo Html::closeTag('div');
+    echo Div::tag()
+        ->class('mt-3 mb-3')
+        ->content(
+            implode(
+                '',
+                array_map(
+                    static fn(Tag $tag)
+                        => A::tag()
+                        ->class('btn btn-outline-secondary btn-sm mb-1 me-2')
+                        ->content(Html::encode($tag->getLabel()))
+                        ->url($url->generate('blog/tag', ['label' => $tag->getLabel()]))
+                        ->encode(false)
+                        ->render(),
+                    $item->getTags(),
+                ),
+            ),
+        )
+        ->encode(false)
+        ->render();
 }
-if ($commentator !== null){
+if ($commentator !== null) {
     echo <<<FORM
-        <form id="commentAdd" method="POST" action="{$url->generate('blog/comment/add', ['slug' => $item->getSlug()])}" enctype="multipart/form-data">
-            <input type="hidden" name="_csrf" value="{$csrf}">
+        <form id="commentAdd" method="POST"
+            action="{$url->generate('blog/comment/add', ['slug' => $item->getSlug()])}"
+             enctype="multipart/form-data"
+        >
+            <input type="hidden" name="_csrf" value="$csrf">
             <input name="post_id" type="hidden" value="{$item->getId()}">
 
             <div class="form-group mb-3">
@@ -73,11 +99,11 @@ if ($commentator !== null){
 
             <button type="submit" class="btn btn-primary">{$translator->translate('button.submit')}</button>
         </form>
-    FORM;
+        FORM;
 }
 
-echo Html::tag('h2', $translator->translate('blog.comments'), ['class' => 'mt-4 text-muted']);
-echo Html::openTag('div', ['class' => 'mt-3']);
+echo Div::tag()->class('mt-4 text-muted')->content($translator->translate('blog.comments'))->render();
+echo Div::tag()->class('mt-3')->open();
 
 if ($item->getComments()) {
     foreach ($item->getComments() as $comment) {
@@ -85,36 +111,40 @@ if ($item->getComments()) {
         <div class="media mt-4 shadow p-3 rounded">
             <div class="media-body">
                 <div>
-                    <?= Html::a(
-                        $comment->getCommentator()->getName(),
-                        $url->generate('user/profile', ['login' => $comment->getCommentator()->getName()])
-                    ) ?>
+                    <?= A::tag()->content($comment->getCommentator()->getName())
+                        ->url($url->generate('user/profile', ['login' => $comment->getCommentator()->getName()]))
+                        ->render()
+                    ?>
                     <span class="text-muted">
-                        <i><?=$translator->translate('blog.created.at')?></i> <?= $comment->getCreatedAt()->format('H:i d.m.Y') ?>
+                        <i><?= $translator->translate('blog.created.at') ?></i>
+                        <?= $comment->getCreatedAt()->format('H:i d.m.Y') ?>
                     </span>
-                    <?php if ($comment->isPublic()) { ?>
+                    <?php
+                    if ($comment->isPublic()) { ?>
                         <span class="text-muted">
-                            <i><?=$translator->translate('blog.updated.at')?></i> <?= $comment->getUpdatedAt()->format('H:i d.m.Y') ?>
+                            <i><?= $translator->translate('blog.updated.at') ?></i>
+                            <?= $comment->getUpdatedAt()->format('H:i d.m.Y') ?>
                         </span>
-                    <?php } ?>
+                    <?php
+                    } ?>
                     <span>
                         <?= $commentator !== null && $commentator->isEqual($comment->getCommentator())
-                            ? Html::a(
-                                'Edit',
-                                $url->generate('blog/comment/edit', ['comment_id' => $comment->getId()]),
-                                ['class' => 'border border-info rounded px-2 text-muted']
-                            ) : ''
+                            ? A::tag()->content('Edit')
+                                ->url($url->generate('blog/comment/edit', ['comment_id' => $comment->getId()]))
+                                ->addAttributes(['class' => 'border border-info rounded px-2 text-muted'])
+                                ->render()
+                            : ''
                         ?>
                 </span>
                 </div>
                 <div class="mt-1 text-justify">
-                    <?= Html::encode($comment->getContent()) ?>
+                    <?= P::tag()->content(Html::encode($comment->getContent()))->render() ?>
                 </div>
             </div>
         </div>
         <?php
     }
 } else {
-    echo Html::p('No comments', ['class' => 'lead']);
+    echo P::tag()->class('lead')->content('No comments')->render();
 }
-echo Html::closeTag('div');
+echo Div::tag()->close();

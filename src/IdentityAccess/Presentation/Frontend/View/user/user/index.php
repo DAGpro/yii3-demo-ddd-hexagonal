@@ -3,83 +3,170 @@
 declare(strict_types=1);
 
 /**
- * @var \Yiisoft\Data\Paginator\OffsetPaginator $paginator;
- * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var int $page
- * @var string $sortOrder
- * @var \Yiisoft\View\WebView $this
- * @var int $currentPage
+ * @var OffsetPaginator $paginator ;
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ * @var int $currentRoute
  */
 
+use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Input;
+use Yiisoft\Html\Tag\Input\Checkbox;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
+use Yiisoft\Yii\DataView\Column\Base\DataContext;
+use Yiisoft\Yii\DataView\Column\CheckboxColumn;
+use Yiisoft\Yii\DataView\Column\DataColumn;
+use Yiisoft\Yii\DataView\Column\SerialColumn;
+use Yiisoft\Yii\DataView\Filter\Widget\TextInputFilter;
 use Yiisoft\Yii\DataView\GridView;
+use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
+use Yiisoft\Yii\DataView\YiiRouter\UrlCreator;
+use Yiisoft\Yii\DataView\YiiRouter\UrlParameterProvider;
 
 $this->setTitle($translator->translate('menu.users'));
 ?>
 
 <div class="container">
     <div class="text-end">
-        <?= Html::a('API v1 Info', $url->generate('api/info/v1'), ['class' => 'btn btn-link']) ?>
-        <?= Html::a('API v2 Info', $url->generate('api/info/v2'), ['class' => 'btn btn-link']) ?>
-        <?= Html::a('API Users List Data', $url->generate('api/user/index'), ['class' => 'btn btn-link'])?>
+        <?= A::tag()
+            ->content('API v1 Info')
+            ->url($url->generate('api/info/v1'))
+            ->class('btn btn-link')
+        ?>
+        <?= A::tag()
+            ->content('API v2 Info')
+            ->url($url->generate('api/info/v2'))
+            ->class('btn btn-link')
+        ?>
+        <?= A::tag()
+            ->content('API Users List Data')
+            ->url($url->generate('api/user/index'))
+            ->class('btn btn-link')
+        ?>
     </div>
 
     <div class="card shadow">
         <h5 class="card-header bg-primary text-white">
             <i class="bi bi-people"></i> List users
         </h5>
-        <?= GridView::widget()->columns(
-            [
-                [
-                    'attribute()' => ['id'],
-                    'value()' => [static function ($model): int {
-                        return $model->getId();
-                    }],
-                ],
-                [
-                    'attribute()' => ['login'],
-                    'value()' => [static fn ($model): string => $model->getLogin()],
-                ],
-                [
-                    'header()' => ['create_at'],
-                    'value()' => [static fn ($model): string => $model->getCreatedAt()->format('r')],
-                ],
-                [
-                    'header()' => ['api'],
-                    'value()' => [
-                        static function ($model) use ($url): string {
-                            return Html::a(
-                                'API User Data',
-                                $url->generate('api/user/profile', ['login' => $model->getLogin()]),
-                                ['class' => 'btn btn-link', 'target' => '_blank'],
-                            )->render();
-                        },
-                    ],
-                ],
-                [
-                    'header()' => ['profile'],
-                    'value()' => [
-                        static function ($model) use ($url): string {
-                            return Html::a(
-                                Html::tag('i', '', [
-                                    'class' => 'bi bi-person-fill ms-1',
-                                    'style' => 'font-size: 1.5em;',
-                                ]),
-                                $url->generate('user/profile', ['login' => $model->getLogin()]),
-                                ['class' => 'btn btn-link'],
-                            )->render();
-                        },
-                    ],
-                ],
-            ]
-        )
-        ->currentPage($page)
-        ->pageArgument(true)
-        ->paginator($paginator)
-        ->requestArguments(['sort' => $sortOrder, 'page' => $page])
-        ->rowOptions(['class' => 'align-middle'])
-        ->summaryOptions(['class' => 'mt-3 me-3 summary text-end'])
-        ->tableOptions(['class' => 'table table-striped text-center h-75']) ?>
+        <?php
+        $columns = [
+            new SerialColumn(),
+            new CheckboxColumn(
+                multiple: true,
+                content: static function (Checkbox $input, DataContext $context): string {
+                    $data = $context->data;
+
+                    return Input::tag()
+                        ->type('checkbox')
+                        ->addAttributes([
+                            'id' => "",
+                            'name' => 'checkbox[]',
+                            'data-bs-toggle' => 'tooltip',
+                        ])
+                        ->value('value')
+                        ->render();
+                },
+            ),
+            new DataColumn(
+                property: 'id',
+                header: 'Id',
+                withSorting: true,
+                content: static fn($model): string => $model->getId(),
+                filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+                filterEmpty: false,
+            ),
+            new DataColumn(
+                property: 'login',
+                header: 'Login',
+                withSorting: true,
+                content: static fn($model): string => $model->getLogin(),
+                filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+                filterEmpty: false,
+            ),
+            new DataColumn(
+                property: 'created_at',
+                header: 'Created At',
+                withSorting: true,
+                content: static fn($model): string => $model->getCreatedAt()->format('r'),
+                filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+                filterEmpty: false,
+            ),
+            new DataColumn(
+                property: 'created_at',
+                header: 'Created At',
+                withSorting: true,
+                content: static fn($model): string => $model->getCreatedAt()->format('r'),
+                filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+                filterEmpty: false,
+            ),
+            new DataColumn(
+                property: 'api',
+                header: 'Api',
+                withSorting: true,
+                content: static fn($model): string => Html::a(
+                    'API User Data',
+                    $url->generate('api/user/profile', ['login' => $model->getLogin()]),
+                    ['class' => 'btn btn-link', 'target' => '_blank'],
+                )->render(),
+                filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+                filterEmpty: false,
+            ),
+            new DataColumn(
+                property: 'profile',
+                header: 'Profile',
+                withSorting: true,
+                content: static fn($model): string => Html::a(
+                    Html::tag('i', '', [
+                        'class' => 'bi bi-person-fill ms-1',
+                        'style' => 'font-size: 1.5em;',
+                    ]),
+                    $url->generate('user/profile', ['login' => $model->getLogin()]),
+                    ['class' => 'btn btn-link'],
+                )->render(),
+                filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+                filterEmpty: false,
+            ),
+        ];
+        echo GridView::widget()
+            ->dataReader($paginator)
+            ->tableAttributes([
+                'class' => 'table table-striped text-center h-75',
+                'id' => 'table-tariffs-group',
+            ])
+            ->sortableHeaderPrepend('<div class="float-start text-secondary text-opacity-50 me-1">⭥</div>')
+            ->sortableHeaderAscPrepend('<div class="float-start fw-bold me-1">⭡</div>')
+            ->sortableHeaderDescPrepend('<div class="float-start fw-bold me-1">⭣</div>')
+            ->enableHeader(true)
+            ->containerAttributes(['class' => 'table-responsive'])
+            ->headerCellAttributes(['class' => 'table-dark'])
+            ->headerRowAttributes(['class' => 'card-header bg-dark text-white'])
+            ->emptyCellAttributes(['style' => 'color:red'])
+            ->summaryAttributes(['class' => 'mt-3 me-3 summary text-end'])
+            ->emptyTextAttributes(['class' => 'card-header bg-danger text-black'])
+            ->summaryTemplate('Показано {begin}-{end} из {totalCount} записей')
+            ->emptyText('Записи не найдены')
+            ->enableFooter(true)
+            ->emptyCell('-')
+            ->urlParameterProvider(new UrlParameterProvider($currentRoute))
+            ->urlCreator(new UrlCreator($url))
+            ->paginationWidget(
+                OffsetPagination::widget()
+                    ->listTag('ul')
+                    ->listAttributes(['class' => 'pagination width-auto'])
+                    ->itemTag('li')
+                    ->itemAttributes(['class' => 'page-item'])
+                    ->linkAttributes(['class' => 'page-link'])
+                    ->currentItemClass('active')
+                    ->currentLinkClass('page-link')
+                    ->disabledItemClass('disabled')
+                    ->disabledLinkClass('disabled'),
+            )
+            ->columns(...$columns); ?>
     </div>
 </div>

@@ -11,24 +11,18 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class AssignmentsController
+final readonly class AssignmentsController
 {
     private ViewRenderer $viewRenderer;
-    private WebControllerService $webService;
-    private AssignmentsServiceInterface $assignmentsService;
-    private UserQueryServiceInterface $userQueryService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webService,
-        UserQueryServiceInterface $userQueryService,
-        AssignmentsServiceInterface $assignmentsService,
+        private WebControllerService $webService,
+        private UserQueryServiceInterface $userQueryService,
+        private AssignmentsServiceInterface $assignmentsService,
     ) {
-        $this->webService = $webService;
-        $this->assignmentsService = $assignmentsService;
-        $this->userQueryService = $userQueryService;
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@identityBackendView/access');
         $this->viewRenderer = $viewRenderer->withControllerName('assignments');
@@ -68,7 +62,7 @@ final class AssignmentsController
                 'user' => $userWithAssignments,
                 'currentUrl' => null,
             ]);
-        } catch (IdentityException $exception) {
+        } catch (IdentityException) {
             return $this->webService->notFound();
         }
     }

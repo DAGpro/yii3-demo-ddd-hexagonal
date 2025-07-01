@@ -16,38 +16,38 @@ return [
     Group::create('/backend')
         ->routes(
             Group::create('/user')
-            ->routes(
+                ->routes(
 
-                Route::get( '/[page-{page:\d+}]')
-                    ->name('backend/user')
-                    ->middleware(fn (AccessRoleChecker $checker) => $checker->withRole('admin'))
-                    ->middleware(Authentication::class)
-                    ->action([UserController::class, 'index']),
+                    Route::get('/[page/{page:\d+}]')
+                        ->name('backend/user')
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
+                        ->middleware(Authentication::class)
+                        ->action([UserController::class, 'index']),
 
-                Route::get( '/profile/{user_id}')
-                    ->name('backend/user/profile')
-                    ->middleware(fn (AccessRoleChecker $checker) => $checker->withRole('admin'))
-                    ->middleware(Authentication::class)
-                    ->action([UserController::class, 'profile']),
+                    Route::get('/profile/{user_id}')
+                        ->name('backend/user/profile')
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
+                        ->middleware(Authentication::class)
+                        ->action([UserController::class, 'profile']),
 
-                Route::methods([Method::GET, Method::POST], '/create')
-                    ->name('backend/user/create')
-                    ->middleware(fn (AccessRoleChecker $checker) => $checker->withRole('admin'))
-                    ->middleware(Authentication::class)
-                    ->action([CreateUserController::class, 'create']),
+                    Route::methods([Method::GET, Method::POST], '/create')
+                        ->name('backend/user/create')
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
+                        ->middleware(Authentication::class)
+                        ->action([CreateUserController::class, 'create']),
 
-                Route::post( '/delete')
-                    ->name('backend/user/delete')
-                    ->middleware(fn (AccessRoleChecker $checker) => $checker->withRole('admin'))
-                    ->middleware(Authentication::class)
-                    ->action([DeleteUserController::class, 'remove']),
+                    Route::post('/delete')
+                        ->name('backend/user/delete')
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
+                        ->middleware(Authentication::class)
+                        ->action([DeleteUserController::class, 'remove']),
 
-                Route::post( '/clear-users')
-                    ->name('backend/user/clear-users')
-                    ->middleware(fn (AccessRoleChecker $checker) => $checker->withRole('admin'))
-                    ->middleware(Authentication::class)
-                    ->action([UserController::class, 'clearUsers']),
-            ),
+                    Route::post('/clear-users')
+                        ->name('backend/user/clear-users')
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
+                        ->middleware(Authentication::class)
+                        ->action([UserController::class, 'clearUsers']),
+                ),
         ),
 ];
 

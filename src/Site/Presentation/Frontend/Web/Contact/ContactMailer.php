@@ -7,47 +7,39 @@ namespace App\Site\Presentation\Frontend\Web\Contact;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use Yiisoft\Form\FormModelInterface;
+use Yiisoft\FormModel\FormModelInterface;
 use Yiisoft\Mailer\File;
 use Yiisoft\Mailer\MailerInterface;
-use Yiisoft\Mailer\MessageBodyTemplate;
 use Yiisoft\Session\Flash\FlashInterface;
 
 /**
  * ContactMailer sends an email from the contact form
  */
-final class ContactMailer
+final readonly class ContactMailer
 {
-    private FlashInterface $flash;
-    private LoggerInterface $logger;
     private MailerInterface $mailer;
-    private string $sender;
-    private string $to;
 
     public function __construct(
-        FlashInterface $flash,
-        LoggerInterface $logger,
+        private FlashInterface $flash,
+        private LoggerInterface $logger,
         MailerInterface $mailer,
-        string $sender,
-        string $to
+        private string $sender,
+        private string $to,
     ) {
-        $this->flash = $flash;
-        $this->logger = $logger;
         $this->mailer = $mailer->withTemplate(new MessageBodyTemplate(__DIR__ . '/mail/'));
-        $this->sender = $sender;
-        $this->to = $to;
     }
 
     public function send(FormModelInterface $form, ServerRequestInterface $request)
     {
-        $message = $this->mailer->compose(
-            'contact-email',
-            [
-                'content' => $form->getAttributeValue('body'),
-            ]
-        )
-            ->withSubject($form->getAttributeValue('subject'))
-            ->withFrom([$form->getAttributeValue('email') => $form->getAttributeValue('name')])
+        $message = $this->mailer
+            ->compose(
+                'contact-email',
+                [
+                    'content' => $form->getPropertyValue('body'),
+                ],
+            )
+            ->withSubject($form->getPropertyValue('subject'))
+            ->withFrom([$form->getPropertyValue('email') => $form->getPropertyValue('name')])
             ->withSender($this->sender)
             ->withTo($this->to);
 
@@ -60,7 +52,7 @@ final class ContactMailer
                             File::fromContent(
                                 (string)$uploadFile->getStream(),
                                 $uploadFile->getClientFilename(),
-                                $uploadFile->getClientMediaType()
+                                $uploadFile->getClientMediaType(),
                             ),
                         );
                     }
@@ -80,7 +72,7 @@ final class ContactMailer
                 [
                     'body' => $flashMsg,
                 ],
-                true
+                true,
             );
         }
     }

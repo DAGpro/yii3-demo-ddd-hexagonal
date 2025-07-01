@@ -12,20 +12,13 @@ use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Authorization\AuthorizationService;
 
-final class IdentityAccessService
+final readonly class IdentityAccessService
 {
-    private AuthorizationService $authorizationService;
-    private AuthenticationService $authenticationService;
-    private UserQueryServiceInterface $userQueryService;
-
     public function __construct(
-        AuthorizationService $authorizationService,
-        AuthenticationService $authenticationService,
-        UserQueryServiceInterface $userService
+        private AuthorizationService $authorizationService,
+        private AuthenticationService $authenticationService,
+        private UserQueryServiceInterface $userQueryService,
     ) {
-        $this->authorizationService = $authorizationService;
-        $this->authenticationService = $authenticationService;
-        $this->userQueryService = $userService;
     }
 
     public function findAuthor(string $authorName): ?Author

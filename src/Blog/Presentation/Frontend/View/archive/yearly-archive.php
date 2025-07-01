@@ -4,29 +4,42 @@ declare(strict_types=1);
 
 /**
  * @var int $year
- * @var \App\Blog\Domain\Post[]|\Yiisoft\Data\Reader\DataReaderInterface $items
- * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\View\WebView $this
+ * @var Post[]|DataReaderInterface $items
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
  */
 
 use App\Blog\Domain\Post;
+use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Div;
+use Yiisoft\Html\Tag\P;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
 
 $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year]));
 
 ?>
-<h1><?= $translator->translate('blog.archive.for-year', ['year' => '<small class="text-muted">' . $year . '</small>']) ?></h1>
+<h1><?= $translator->translate('blog.archive.for-year',
+        ['year' => '<small class="text-muted">' . $year . '</small>'],
+    ) ?></h1>
 <div class="row">
     <div class="col-sm-8 col-md-8 col-lg-9">
         <?php
         if (count($items) > 0) {
-            echo Html::p(
-                $translator->translate('blog.total.posts', ['count' => count($items)]),
-                ['class' => 'text-muted']
-            );
+            echo P::tag()
+                ->content(
+                    $translator->translate(
+                        'blog.total.posts',
+                        ['count' => count($items)],
+                    ),
+                )
+                ->class('text-muted');
         } else {
-            echo Html::p($translator->translate('views.no-records'));
+            echo P::tag()->content($translator->translate('views.no-records'))->class('bg-danger');
         }
         $currentMonth = null;
         $monthName = '';
@@ -36,21 +49,26 @@ $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year
 
             if ($currentMonth !== $month) {
                 $currentMonth = $month;
-                $monthName = DateTime::createFromFormat('!m', (string) $month)->format('F');
-                echo Html::div("{$year} {$monthName}", ['class' => 'lead']);
+                $monthName = DateTime::createFromFormat('!m', (string)$month)->format('F');
+                echo Div::tag()
+                    ->content("{$year} {$monthName}")
+                    ->class('lead');
             }
-            echo Html::openTag('div');
-            echo Html::a(
-                Html::encode($item->getTitle()),
-                $url->generate('blog/post', ['slug' => $item->getSlug()])
-            );
-            echo ' by ';
-            $login = $item->getAuthor()->getName();
-            echo Html::a(Html::encode($login), $url->generate(
-                'user/profile',
-                ['login' => $login]
-            ));
-            echo Html::closeTag('div');
+            echo Div::tag()
+                ->content(
+                    A::tag()
+                        ->content(Html::encode($item->getTitle()))
+                        ->url($url->generate('blog/post', ['slug' => $item->getSlug()])),
+                    ' by ',
+                    A::tag()
+                        ->content(Html::encode($item->getAuthor()->getName()))
+                        ->url(
+                            $url->generate(
+                                'user/profile',
+                                ['login' => $item->getAuthor()->getName()],
+                            ),
+                        ),
+                );
         }
         ?>
     </div>

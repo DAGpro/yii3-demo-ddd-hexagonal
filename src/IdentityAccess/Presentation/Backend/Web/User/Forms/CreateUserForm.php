@@ -15,15 +15,10 @@ final class CreateUserForm extends FormModel
     private string $login = '';
     private string $password = '';
     private string $passwordVerify = '';
-    private UserQueryServiceInterface $userService;
-    private TranslatorInterface $translator;
 
-    public function __construct(UserQueryServiceInterface $userService, TranslatorInterface $translator)
+    public function __construct(private readonly UserQueryServiceInterface $userService, private readonly TranslatorInterface $translator)
     {
         parent::__construct();
-
-        $this->userService = $userService;
-        $this->translator = $translator;
     }
 
     public function getAttributeLabels(): array

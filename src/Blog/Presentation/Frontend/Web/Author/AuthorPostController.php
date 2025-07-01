@@ -14,35 +14,29 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class AuthorPostController
+final readonly class AuthorPostController
 {
-    private const POSTS_PER_PAGE = 4;
+    private const int POSTS_PER_PAGE = 4;
 
     private ViewRenderer $view;
-    private WebControllerService $webService;
-    private AuthorPostServiceInterface $postService;
-    private IdentityAccessService $identityAccessService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webService,
-        AuthorPostServiceInterface $postService,
-        IdentityAccessService $identityAccessService
+        private WebControllerService $webService,
+        private AuthorPostServiceInterface $postService,
+        private IdentityAccessService $identityAccessService,
     ) {
         $this->view = $viewRenderer->withViewPath('@blogView/author');
-        $this->webService = $webService;
-        $this->postService = $postService;
-        $this->identityAccessService = $identityAccessService;
     }
 
     public function authorPosts(
         CurrentRoute $currentRoute,
-        AuthorPostQueryServiceInterface $postQueryService
+        AuthorPostQueryServiceInterface $postQueryService,
     ): Response {
         $pageNum = (int)$currentRoute->getArgument('page', '1');
         if (!($author = $this->identityAccessService->getAuthor())) {
@@ -51,7 +45,7 @@ final class AuthorPostController
 
         $dataReader = $postQueryService->getAuthorPosts($author);
 
-        $paginator = (new OffsetPaginator($dataReader))
+        $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 
@@ -60,7 +54,7 @@ final class AuthorPostController
 
     public function view(
         CurrentRoute $currentRoute,
-        AuthorPostQueryServiceInterface $postQueryService
+        AuthorPostQueryServiceInterface $postQueryService,
     ): Response {
         $slug = $currentRoute->getArgument('slug', '');
 
@@ -76,24 +70,25 @@ final class AuthorPostController
         return $this->view->render('post', ['post' => $post]);
     }
 
-    public function add(Request $request, ValidatorInterface $validator): Response
-    {
+    public function add(
+        Request $request,
+        PostForm $form,
+        FormHydrator $formHydrator,
+    ): Response {
         if (!($author = $this->identityAccessService->getAuthor())) {
             return $this->webService->accessDenied();
         }
 
-        $form = new PostForm(null);
         if ($request->getMethod() === Method::POST
-            && $form->load($request->getParsedBody())
-            && $validator->validate($form)->isValid()
+            && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             $this->postService->create(
                 new PostCreateDTO(
                     $form->getTitle(),
                     $form->getContent(),
-                    $form->getTags()
+                    $form->getTags(),
                 ),
-                $author
+                $author,
             );
 
             return $this->webService->redirect('blog/author/posts', ['author' => $author->getName()]);
@@ -104,7 +99,7 @@ final class AuthorPostController
                 'title' => 'Add post',
                 'action' => ['blog/author/post/add'],
                 'form' => $form,
-            ]
+            ],
         );
     }
 
@@ -112,7 +107,7 @@ final class AuthorPostController
         Request $request,
         CurrentRoute $currentRoute,
         AuthorPostQueryServiceInterface $postQueryService,
-        ValidatorInterface $validator
+        formHydrator $formHydrator,
     ): Response {
         $slug = $currentRoute->getArgument('slug', '');
 
@@ -126,17 +121,16 @@ final class AuthorPostController
 
         $form = new PostForm($post);
         if ($request->getMethod() === Method::POST
-            && $form->load($request->getParsedBody())
-            && $validator->validate($form)->isValid()
+            && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             try {
                 $this->postService->edit(
                     $post->getSlug(),
                     new PostChangeDTO(
-                        $form->getTitle(), $form->getContent(), $form->getTags()
-                    )
+                        $form->getTitle(), $form->getContent(), $form->getTags(),
+                    ),
                 );
-            } catch (BlogNotFoundException $exception) {
+            } catch (BlogNotFoundException) {
                 return $this->webService->notFound();
             }
 
@@ -145,16 +139,17 @@ final class AuthorPostController
 
         return $this->view->render('form_post',
             [
-            'title' => 'Edit post',
-            'action' => ['blog/author/post/edit', ['slug' => $slug]],
-            'form' => $form,
-        ]);
+                'title' => 'Edit post',
+                'action' => ['blog/author/post/edit', ['slug' => $slug]],
+                'form' => $form,
+            ],
+        );
     }
 
     //remove?
     public function delete(
         CurrentRoute $currentRoute,
-        AuthorPostQueryServiceInterface $postQueryService
+        AuthorPostQueryServiceInterface $postQueryService,
     ): Response {
         $slug = $currentRoute->getArgument('slug', '');
 
@@ -168,7 +163,7 @@ final class AuthorPostController
 
         try {
             $this->postService->delete($slug);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 

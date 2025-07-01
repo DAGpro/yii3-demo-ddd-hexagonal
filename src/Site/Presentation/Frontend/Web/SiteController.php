@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Site\Presentation\Frontend\Web;
 
 use Psr\Http\Message\ResponseInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class SiteController
+final readonly class SiteController
 {
     private ViewRenderer $viewRenderer;
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('site');
+        $this->viewRenderer = $viewRenderer
+            ->withViewPath('@view')
+            ->withControllerName('site');
     }
 
     public function index(): ResponseInterface

@@ -10,16 +10,13 @@ use Cycle\Annotated\Annotation\Embeddable;
 #[Embeddable]
 class Commentator
 {
-    #[Column(type:'integer')]
-    private int $commentatorId;
-
-    #[Column(type: 'string(191)')]
-    private string $commentatorName;
-
-    public function __construct(int $id, string $name)
+    public function __construct(
+        #[Column(type:'integer')]
+        private readonly int $commentatorId,
+        #[Column(type: 'string(191)')]
+        private readonly string $commentatorName
+    )
     {
-        $this->commentatorId = $id;
-        $this->commentatorName = $name;
     }
 
     public function getId(): int

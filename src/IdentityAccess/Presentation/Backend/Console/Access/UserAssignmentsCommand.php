@@ -7,6 +7,8 @@ namespace App\IdentityAccess\Presentation\Backend\Console\Access;
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Override;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,30 +17,50 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'assignments:user',
+    'User assignments list',
+    help: 'This command displays a list of user assignments',
+)]
 final class UserAssignmentsCommand extends Command
 {
-    protected static $defaultName = 'access/userAssignments';
-
-    private AssignmentsServiceInterface $assignmentsService;
-    private UserQueryServiceInterface $userQueryService;
-
     public function __construct(
-        AssignmentsServiceInterface $assignmentsService,
-        UserQueryServiceInterface $userQueryService
+        private readonly AssignmentsServiceInterface $assignmentsService,
+        private readonly UserQueryServiceInterface $userQueryService,
     ) {
-        $this->assignmentsService = $assignmentsService;
-        $this->userQueryService = $userQueryService;
         parent::__construct();
     }
 
+    #[Override]
     public function configure(): void
     {
-        $this
-            ->setDescription('User assignments list')
-            ->setHelp('This command displays a list of user assignments')
-            ->addArgument('userId', InputArgument::REQUIRED, 'User id');
+        $this->addArgument('userId', InputArgument::REQUIRED, 'User id');
     }
 
+    public function getUserPermissionsTable(OutputInterface $output, array $permissions): void
+    {
+        if (empty($permissions)) {
+            $output->writeln('');
+            $output->writeln('User has no assigned permissions!');
+            $output->writeln('');
+            return;
+        }
+
+        $tablePermissions = new Table($output);
+        $tablePermissions->setHeaders(['Permissions']);
+
+        foreach ($permissions as $item) {
+            $tablePermissions->addRow(
+                [
+                    $item->getName(),
+                ],
+            );
+        }
+
+        $tablePermissions->render();
+    }
+
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -51,7 +73,7 @@ final class UserAssignmentsCommand extends Command
                 throw new IdentityException('User is not found!');
             }
 
-            $userAssignments =  $this->assignmentsService->getUserAssignments($user);
+            $userAssignments = $this->assignmentsService->getUserAssignments($user);
             if (!$userAssignments->existRoles() && !$userAssignments->existPermissions()) {
                 $io->success('The user has no assigned access rights!');
                 return ExitCode::OK;
@@ -91,33 +113,10 @@ final class UserAssignmentsCommand extends Command
                     $item->getNestedRolesName(),
                     $item->getNestedPermissionsName(),
                     $item->getChildPermissionsName(),
-                ]
+                ],
             );
         }
         $table->render();
-    }
-
-    public function getUserPermissionsTable(OutputInterface $output, array $permissions): void
-    {
-        if (empty($permissions)) {
-            $output->writeln('');
-            $output->writeln('User has no assigned permissions!');
-            $output->writeln('');
-            return;
-        }
-
-        $tablePermissions = new Table($output);
-        $tablePermissions ->setHeaders(['Permissions']);
-
-        foreach ($permissions as $item) {
-            $tablePermissions ->addRow(
-                [
-                    $item->getName(),
-                ]
-            );
-        }
-
-        $tablePermissions->render();
     }
 
 }

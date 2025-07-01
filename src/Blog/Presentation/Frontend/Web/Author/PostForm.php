@@ -6,24 +6,23 @@ namespace App\Blog\Presentation\Frontend\Web\Author;
 
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
-use Yiisoft\Form\FormModel;
+use Yiisoft\FormModel\FormModel;
 use Yiisoft\Validator\Rule\Each;
-use Yiisoft\Validator\Rule\HasLength;
+use Yiisoft\Validator\Rule\Length;
 use Yiisoft\Validator\Rule\Required;
-use Yiisoft\Validator\RuleSet;
+
 
 final class PostForm extends FormModel
 {
-    private string $title;
-    private string $content;
-    private array $tags;
+    private readonly string $title;
+    private readonly string $content;
+    private readonly array $tags;
 
     public function __construct(?Post $post)
     {
         $this->title = $post ? $post->getTitle() : '';
         $this->content = $post ? $post->getContent() : '';
-        $this->tags = $post ? array_map(static fn (Tag $tag) => $tag->getLabel(), $post->getTags()) : [];
-        parent::__construct();
+        $this->tags = $post ? array_map(static fn(Tag $tag) => $tag->getLabel(), $post->getTags()) : [];
     }
 
     public function getTitle(): string
@@ -41,6 +40,7 @@ final class PostForm extends FormModel
         return $this->tags;
     }
 
+    #[\Override]
     public function getFormName(): string
     {
         return '';
@@ -48,19 +48,19 @@ final class PostForm extends FormModel
 
     public function getRules(): array
     {
-        $rules = new RuleSet();
-        $rules->add(HasLength::rule()->min(3));
         return [
             'title' => [
-                Required::rule(),
-                HasLength::rule()->min(4)->max(191),
+                new Required(),
+                new Length(min: 3, max: 191),
             ],
             'content' => [
-                Required::rule(),
-                HasLength::rule()->min(4),
+                new Required(),
+                new Length(min: 4),
             ],
             'tags' => [
-                Each::rule($rules),
+                new Each(
+                    new Length(min: 3),
+                ),
             ],
         ];
     }

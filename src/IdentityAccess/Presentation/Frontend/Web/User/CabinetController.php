@@ -9,22 +9,18 @@ use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class CabinetController
+final readonly class CabinetController
 {
     private ViewRenderer $view;
-    private AuthenticationService $authenticationService;
-    private WebControllerService $webService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webControllerService,
-        AuthenticationService $authenticationService
+        private WebControllerService $webService,
+        private AuthenticationService $authenticationService
     ) {
         $this->view = $viewRenderer->withViewPath('@identityView/user/cabinet');
-        $this->authenticationService = $authenticationService;
-        $this->webService = $webControllerService;
     }
 
     public function index(): Response
@@ -46,7 +42,7 @@ final class CabinetController
             $userService->deleteUser($user->getId());
 
             return $this->webService->redirect('site/index');
-        } catch (IdentityException $e){
+        } catch (IdentityException){
             return $this->webService->notFound();
         }
 

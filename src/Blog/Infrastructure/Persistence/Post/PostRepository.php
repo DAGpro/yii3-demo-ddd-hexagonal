@@ -5,25 +5,24 @@ declare(strict_types=1);
 namespace App\Blog\Infrastructure\Persistence\Post;
 
 use App\Blog\Domain\Port\PostRepositoryInterface;
-use Cycle\ORM\EntityManager;
-use Cycle\ORM\ORMInterface;
-use Cycle\ORM\Select;
 use Cycle\Database\DatabaseInterface;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
+use Cycle\ORM\EntityManagerInterface;
+use Cycle\ORM\Select;
 
 final class PostRepository extends Select\Repository implements PostRepositoryInterface
 {
-    private EntityManager $entityManager;
-
-    public function __construct(Select $select, ORMInterface $orm)
-    {
-        $this->entityManager = new EntityManager($orm);
+    public function __construct(
+        protected Select $select,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
         parent::__construct($select);
     }
 
+    #[\Override]
     public function save(array $posts): void
     {
         foreach ($posts as $entity) {
@@ -32,6 +31,7 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
         $this->entityManager->run();
     }
 
+    #[\Override]
     public function delete(array $posts): void
     {
         foreach ($posts as $entity) {
@@ -58,7 +58,8 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
 
     private function getDriver(): DriverInterface
     {
-        return $this->select()
+        return $this
+            ->select()
             ->getBuilder()
             ->getLoader()
             ->getSource()

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth\Form;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use Yiisoft\Form\FormModel;
+use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
@@ -15,29 +15,21 @@ final class SignupForm extends FormModel
     private string $login = '';
     private string $password = '';
     private string $passwordVerify = '';
-    private UserQueryServiceInterface $userService;
-    private TranslatorInterface $translator;
 
-    public function __construct(UserQueryServiceInterface $userService, TranslatorInterface $translator)
-    {
-        parent::__construct();
-
-        $this->userService = $userService;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly UserQueryServiceInterface $userService,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
-    public function getAttributeLabels(): array
+    #[\Override]
+    public function getPropertyLabels(): array
     {
         return [
-            'email' => $this->translator->translate('identityAccess.form.login'),
+            'login' => $this->translator->translate('identityAccess.form.login'),
             'password' => $this->translator->translate('identityAccess.form.password'),
             'passwordVerify' => $this->translator->translate('identityAccess.form.password-verify'),
         ];
-    }
-
-    public function getFormName(): string
-    {
-        return 'Signup';
     }
 
     public function getLogin(): string
@@ -53,8 +45,8 @@ final class SignupForm extends FormModel
     public function getRules(): array
     {
         return [
-            'login' => [Required::rule()],
-            'password' => [Required::rule()],
+            'login' => [new Required()],
+            'password' => [new Required()],
             'passwordVerify' => $this->passwordVerifyRules(),
         ];
     }
@@ -62,17 +54,18 @@ final class SignupForm extends FormModel
     private function passwordVerifyRules(): array
     {
         return [
-            Required::rule(),
+            new Required(),
 
             function (): Result {
                 $result = new Result();
                 if ($this->password !== $this->passwordVerify) {
-                    $this->getFormErrors()->addError('password', '');
-                    $result->addError($this->translator->translate('validator.password.not.match'));
+                    $result->addError($this->translator->translate('validator.password.not.match'),
+                        valuePath: ['passwordVerify'],
+                    );
                 }
 
                 if ($result->getErrors() === [] && null !== $this->userService->findByLogin($this->login)) {
-                    $result->addError($this->translator->translate('validator.user.exist'));
+                    $result->addError($this->translator->translate('validator.user.exist'), valuePath: ['login']);
                 }
 
                 return $result;

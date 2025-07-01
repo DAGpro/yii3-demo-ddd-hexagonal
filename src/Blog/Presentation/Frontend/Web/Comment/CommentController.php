@@ -12,38 +12,33 @@ use App\Blog\Infrastructure\Services\IdentityAccessService;
 use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Yiisoft\Data\Paginator\PageToken;
+use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\Validator;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class CommentController
+final readonly class CommentController
 {
     private ViewRenderer $view;
-    private WebControllerService $webService;
-    private IdentityAccessService $identityAccessService;
-    private ReadPostQueryService $postQueryService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webService,
-        ReadPostQueryService $postQueryService,
-        IdentityAccessService $identityAccessService
+        private WebControllerService $webService,
+        private ReadPostQueryService $postQueryService,
+        private IdentityAccessService $identityAccessService,
     ) {
         $this->view = $viewRenderer->withViewPath('@blogView/comment');
-        $this->webService = $webService;
-        $this->identityAccessService = $identityAccessService;
-        $this->postQueryService = $postQueryService;
     }
 
     public function index(
         Request $request,
         CurrentRoute $currentRoute,
-        CommentQueryServiceInterface $commentQueryService
+        CommentQueryServiceInterface $commentQueryService,
     ): Response {
         $paginator = $commentQueryService->getFeedPaginator();
         if ($currentRoute->getArgument('next') !== null) {
-            $paginator = $paginator->withNextPageToken((string)$currentRoute->getArgument('next'));
+            $paginator = $paginator->withToken(PageToken::next((string)$currentRoute->getArgument('next')));
         }
 
         if ($this->isAjaxRequest($request)) {
@@ -53,20 +48,16 @@ final class CommentController
         return $this->view->render('index', ['data' => $paginator]);
     }
 
-    private function isAjaxRequest(Request $request): bool
-    {
-        return $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
-    }
-
     public function add(
         Request $request,
         CurrentRoute $currentRoute,
         CommentServiceInterface $commentService,
-        Validator $validator
+        CommentForm $form,
+        FormHydrator $formHydrator,
     ): Response {
         $postSlug = $currentRoute->getArgument('slug', '');
 
-        if (($commentator = $this->identityAccessService->getCommentator())=== null) {
+        if (($commentator = $this->identityAccessService->getCommentator()) === null) {
             return $this->webService->accessDenied();
         }
 
@@ -79,16 +70,14 @@ final class CommentController
             );
         }
 
-        $form = new CommentForm(null);
         if ($request->getMethod() === Method::POST
-            && $form->load($request->getParsedBody())
-            && $validator->validate($form)->isValid()
+            && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             try {
                 $commentService->add(
                     $post->getId(),
                     $form->getComment(),
-                    $commentator
+                    $commentator,
                 );
             } catch (BlogNotFoundException $exception) {
                 return $this->webService->sessionFlashAndRedirect(
@@ -102,7 +91,7 @@ final class CommentController
         return $this->webService->sessionFlashAndRedirect(
             'Message sent successfully, will be published after moderation',
             'blog/post',
-            ['slug' => $postSlug]
+            ['slug' => $postSlug],
         );
     }
 
@@ -110,8 +99,8 @@ final class CommentController
         Request $request,
         CurrentRoute $currentRoute,
         CommentQueryServiceInterface $commentQueryService,
-        Validator $validator,
-        CommentServiceInterface $commentService
+        FormHydrator $formHydrator,
+        CommentServiceInterface $commentService,
     ): Response {
         $commentId = (int)$currentRoute->getArgument('comment_id');
 
@@ -125,9 +114,8 @@ final class CommentController
         }
 
         $form = new CommentForm($comment);
-        if (($request->getMethod() === Method::POST)
-            && $form->load($request->getParsedBody())
-            && $validator->validate($form)->isValid()
+        if ($request->getMethod() === Method::POST
+            && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             try {
                 $commentService->edit($comment->getId(), $form->getComment());
@@ -147,5 +135,10 @@ final class CommentController
             'action' => ['blog/comment/edit', ['comment_id' => $commentId]],
             'form' => $form,
         ]);
+    }
+
+    private function isAjaxRequest(Request $request): bool
+    {
+        return $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
     }
 }

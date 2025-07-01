@@ -21,21 +21,18 @@ class User
     #[Column(type: 'primary')]
     private ?int $id = null;
 
-    #[Column(type: 'string(48)')]
-    private string $login;
-
     #[Column(type: 'string')]
     private string $passwordHash;
 
     #[Column(type: 'datetime')]
-    private DateTimeImmutable $created_at;
+    private readonly DateTimeImmutable $created_at;
 
     #[Column(type: 'datetime')]
-    private DateTimeImmutable $updated_at;
+    private readonly DateTimeImmutable $updated_at;
 
-    public function __construct(string $login, string $password)
+    public function __construct(#[Column(type: 'string(48)')]
+    private string $login, string $password)
     {
-        $this->login = $login;
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
         $this->setPassword($password);
@@ -58,12 +55,12 @@ class User
 
     public function validatePassword(string $password): bool
     {
-        return (new PasswordHasher())->validate($password, $this->passwordHash);
+        return new PasswordHasher()->validate($password, $this->passwordHash);
     }
 
     public function setPassword(string $password): void
     {
-        $this->passwordHash = (new PasswordHasher())->hash($password);
+        $this->passwordHash = new PasswordHasher()->hash($password);
     }
 
     public function getCreatedAt(): DateTimeImmutable

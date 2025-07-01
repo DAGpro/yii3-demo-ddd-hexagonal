@@ -10,26 +10,22 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class UserController
+final readonly class UserController
 {
-    private const PAGINATION_INDEX = 5;
+    private const int PAGINATION_INDEX = 5;
 
     private ViewRenderer $viewRenderer;
-    private WebControllerService $webService;
-    private UserQueryServiceInterface $userQueryService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webService,
-        UserQueryServiceInterface $userQueryService
+        private WebControllerService $webService,
+        private UserQueryServiceInterface $userQueryService
     ) {
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@identityBackendView/user');
         $this->viewRenderer = $viewRenderer->withControllerName('user');
-        $this->webService = $webService;
-        $this->userQueryService = $userQueryService;
     }
 
     public function index(CurrentRoute $currentRoute): Response
@@ -41,7 +37,7 @@ final class UserController
             ->withSort(Sort::only(['login'])
             ->withOrderString('login'));
 
-        $paginator = (new OffsetPaginator($dataReader))
+        $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::PAGINATION_INDEX)
             ->withCurrentPage($pageNum);
 

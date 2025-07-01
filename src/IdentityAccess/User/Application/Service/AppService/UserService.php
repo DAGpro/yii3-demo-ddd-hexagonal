@@ -8,21 +8,20 @@ use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
+use Throwable;
 
-final class UserService implements UserServiceInterface
+final readonly class UserService implements UserServiceInterface
 {
-    private UserRepositoryInterface $repository;
-
     public function __construct(
-        UserRepositoryInterface $repository,
+        private UserRepositoryInterface $repository,
     ) {
-        $this->repository = $repository;
     }
 
     /**
      * @throws IdentityException
-     * @throws \Throwable
+     * @throws Throwable
      */
+    #[\Override]
     public function createUser(string $login, string $password): void
     {
         if (null !== $this->repository->findByLogin($login)) {
@@ -37,6 +36,7 @@ final class UserService implements UserServiceInterface
     /**
      * @throws IdentityException
      */
+    #[\Override]
     public function deleteUser(int $userId): void
     {
         if (!($user = $this->repository->findUser($userId))) {
@@ -46,6 +46,7 @@ final class UserService implements UserServiceInterface
         $this->repository->delete([$user]);
     }
 
+    #[\Override]
     public function removeAll(): void
     {
         $this->repository->removeAll();

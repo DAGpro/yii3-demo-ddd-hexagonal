@@ -11,30 +11,24 @@ use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Domain\User\Commentator;
 
-final class CommentService implements CommentServiceInterface
+final readonly class CommentService implements CommentServiceInterface
 {
-    private CommentRepositoryInterface $repository;
-    private ReadPostQueryServiceInterface $postQueryService;
-    private CommentQueryServiceInterface $commentQueryService;
-
     public function __construct(
-        CommentRepositoryInterface $repository,
-        ReadPostQueryServiceInterface $postQueryService,
-        CommentQueryServiceInterface $commentQueryService
+        private CommentRepositoryInterface $repository,
+        private ReadPostQueryServiceInterface $postQueryService,
+        private CommentQueryServiceInterface $commentQueryService,
     ) {
-        $this->repository = $repository;
-        $this->postQueryService = $postQueryService;
-        $this->commentQueryService = $commentQueryService;
     }
 
     /**
      * @TODO Frontend
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function add(
         int $postId,
         string $commentText,
-        Commentator $commentator
+        Commentator $commentator,
     ): void {
         if (($post = $this->postQueryService->getPost($postId)) === null) {
             throw new BlogNotFoundException('Post does not exist!');
@@ -48,6 +42,7 @@ final class CommentService implements CommentServiceInterface
      * @TODO Frontend
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function edit(int $commentId, string $commentText): void
     {
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {

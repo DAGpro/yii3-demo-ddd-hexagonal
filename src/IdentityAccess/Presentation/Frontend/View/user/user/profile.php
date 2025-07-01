@@ -3,16 +3,22 @@
 declare(strict_types=1);
 
 /**
- * @var \App\IdentityAccess\User\Domain\User $item
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\View\WebView $this
+ * @var User $item
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
  */
 
+use App\IdentityAccess\User\Domain\User;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\H1;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\View\WebView;
 
 $this->setTitle($item->getLogin());
 
-echo Html::tag('h1', Html::encode($this->getTitle()));
+echo H1::tag()
+    ->content(Html::encode($this->getTitle()))
+    ->render();
 ?>
 <div>
     <span class="text-muted">Created at <?= $item->getCreatedAt()->format('H:i:s d.m.Y') ?></span>

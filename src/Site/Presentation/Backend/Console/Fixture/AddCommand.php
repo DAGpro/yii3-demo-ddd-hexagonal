@@ -18,21 +18,31 @@ use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
 use Cycle\Database\DatabaseManager;
+use DateMalformedStringException;
+use DateTimeImmutable;
 use Faker\Factory;
 use Faker\Generator;
+use Override;
+use Random\RandomException;
+use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Cycle\Command\CycleDependencyProxy;
 
+#[AsCommand(
+    'fixture:add',
+    'Add fixtures',
+    help: 'This command adds random content',
+)]
 final class AddCommand extends Command
 {
-    protected static $defaultName = 'fixture/add';
-
-    private CycleDependencyProxy $promise;
+    private const int DEFAULT_COUNT = 10;
     private Generator $faker;
     /** @var User[] */
     private iterable $users = [];
@@ -40,36 +50,36 @@ final class AddCommand extends Command
     private array $tags = [];
     /** @var Author[] */
     private iterable $authors;
-    private AssignAccessServiceInterface $assignAccessService;
-    private AccessRightsServiceInterface $accessRightsService;
-
-    private const DEFAULT_COUNT = 10;
-    private UserServiceInterface $userService;
-    private DatabaseManager $databaseManager;
 
     public function __construct(
-        CycleDependencyProxy $promise,
-        AccessRightsServiceInterface $accessRightsService,
-        AssignAccessServiceInterface $assignAccessService,
-        UserServiceInterface $userService,
-        DatabaseManager $databaseManager,
+        private readonly CycleDependencyProxy $promise,
+        private readonly AccessRightsServiceInterface $accessRightsService,
+        private readonly AssignAccessServiceInterface $assignAccessService,
+        private readonly UserServiceInterface $userService,
+        private readonly DatabaseManager $databaseManager,
     ) {
-        $this->promise = $promise;
-        $this->assignAccessService = $assignAccessService;
-        $this->accessRightsService = $accessRightsService;
-        $this->userService = $userService;
-        $this->databaseManager = $databaseManager;
         parent::__construct();
     }
 
+    #[Override]
     public function configure(): void
     {
-        $this
-            ->setDescription('Add fixtures')
-            ->setHelp('This command adds random content')
-            ->addArgument('count', InputArgument::OPTIONAL, 'Count', self::DEFAULT_COUNT);
+        $this->addArgument('count', InputArgument::OPTIONAL, 'Count', self::DEFAULT_COUNT);
     }
 
+    public function addAccessRightsToUsers(int $countUsers): void
+    {
+        $usersKeys = array_rand($this->users, $countUsers);
+
+        /** @var User $user */
+        foreach ($usersKeys as $key) {
+            $user = $this->users[$key];
+            $this->assignAccessService->assignRole(new RoleDTO('author'), $user->getId());
+            $this->authors[] = new Author($user->getId(), $user->getLogin());
+        }
+    }
+
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -96,8 +106,7 @@ final class AddCommand extends Command
             $this->addTags($count);
             $this->addPosts($count);
             $db->commit();
-
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $db->rollback();
             $io->error($t->getMessage());
             return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
@@ -109,7 +118,7 @@ final class AddCommand extends Command
     private function addUsers(int $count): void
     {
         for ($i = 0; $i < $count; ++$i) {
-            $login = $this->faker->firstName . rand(0, 9999);
+            $login = $this->faker->firstName . random_int(0, 9999);
 
             $this->userService->createUser($login, $login);
         }
@@ -118,18 +127,6 @@ final class AddCommand extends Command
          */
         $userRepository = $this->promise->getORM()->getRepository(User::class);
         $this->users = $userRepository->select()->orderBy('id', 'DESC')->limit($count)->fetchAll();
-    }
-
-    public function addAccessRightsToUsers(int $countUsers): void
-    {
-        $usersKeys = array_rand($this->users, $countUsers);
-
-        /** @var User $user */
-        foreach ($usersKeys as $key) {
-            $user = $this->users[$key];
-            $this->assignAccessService->assignRole(new RoleDTO('author'), $user->getId());
-            $this->authors[] = new Author($user->getId(), $user->getLogin());
-        }
     }
 
     private function addTags(int $count): void
@@ -154,30 +151,33 @@ final class AddCommand extends Command
         }
     }
 
+    /**
+     * @throws RandomException
+     * @throws DateMalformedStringException
+     */
     private function addPosts(int $count): void
     {
         if (count($this->authors) === 0) {
-            throw new \Exception('No users');
+            throw new RuntimeException('No users');
         }
         $posts = [];
         for ($i = 0; $i < $count; ++$i) {
-
             /** @var Author $postAuthor */
             $postAuthor = $this->authors[array_rand($this->authors)];
 
             $posts[] = $post = new Post(
                 $this->faker->text(64),
                 $this->faker->realText(random_int(1000, 4000)),
-                clone $postAuthor
+                clone $postAuthor,
             );
 
-            $public = rand(0, 2) > 0;
+            $public = random_int(0, 2) > 0;
             $public ? $post->publish() : $post->toDraft();
             if ($public) {
-                $post->setPublishedAt(new \DateTimeImmutable(date('r', rand(time(), strtotime('-2 years')))));
+                $post->setPublishedAt(new DateTimeImmutable(date('r', random_int(time(), strtotime('-2 years')))));
             }
             // link tags
-            $postTags = (array)array_rand($this->tags, rand(1, count($this->tags)));
+            $postTags = (array)array_rand($this->tags, random_int(1, count($this->tags)));
             foreach ($postTags as $tagId) {
                 $tag = $this->tags[$tagId];
                 $post->addTag($tag);
@@ -198,18 +198,19 @@ final class AddCommand extends Command
         // add comments
 
         $comments = [];
-        $commentCount = (int)round($count/2.5);
+        $commentCount = (int)round($count / 2.5);
+        /** @var Post $post */
         foreach ($postsSaveds as $post) {
             for ($j = 0; $j <= $commentCount; ++$j) {
-
                 $commentUser = $this->users[array_rand($this->users)];
                 $commentator = new Commentator($commentUser->getId(), $commentUser->getLogin());
 
+                /** @var Comment $comment */
                 $comment = $post->createComment($this->faker->realText(random_int(100, 500)), clone $commentator);
-                $commentPublic = rand(0, 3) > 0;
+                $commentPublic = random_int(0, 3) > 0;
                 $commentPublic ? $comment->publish() : $comment->toDraft();
                 if ($commentPublic) {
-                    $comment->setPublishedAt(new \DateTimeImmutable(date('r', rand(time(), strtotime('-1 years')))));
+                    $comment->setPublishedAt(new DateTimeImmutable(date('r', random_int(time(), strtotime('-1 years')))));
                 }
 
                 $comments[] = $comment;

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Site\Presentation\Backend\Web;
 
 use Psr\Http\Message\ResponseInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class SiteController
+final readonly class SiteController
 {
     private ViewRenderer $viewRenderer;
 

@@ -3,50 +3,52 @@
 declare(strict_types=1);
 
 /**
- * @var \Yiisoft\View\WebView $this
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
+ * @var WebView $this
+ * @var UrlGeneratorInterface $url
  * @var Field $field
- * @var \Yiisoft\Translator\Translator $translator
- * @var \App\Blog\Presentation\Backend\Web\Form\TagForm $form
+ * @var Translator $translator
+ * @var TagForm $form
  * @var string $csrf
  * @var array $action
  * @var string $title
- * @var \App\Blog\Domain\Tag $tag
+ * @var Tag $tag
  * @var array $error
  */
 
-use Yiisoft\Form\Widget\Field;
-use Yiisoft\Form\Widget\Form;
+
+use App\Blog\Domain\Tag;
+use App\Blog\Presentation\Backend\Web\Form\TagForm;
+use Yiisoft\FormModel\Field;
+use Yiisoft\Html\Tag\Form;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\Translator;
+use Yiisoft\View\WebView;
 
 $this->setTitle($title);
 
 ?>
     <div class="main row">
         <div class="col-md-5">
-            <h3> <?=$translator->translate('blog.tag.change') . $form->getLabel()?></h3>
-            <?= Form::widget()
+            <h3> <?= $translator->translate('blog.tag.change') . $form->getLabel() ?></h3>
+            <?= Form::tag()
                 ->action($url->generate(...$action))
                 ->method('post')
                 ->attributes(['enctype' => 'multipart/form-data'])
                 ->csrf($csrf)
                 ->id('form-moderate-tag')
-                ->begin() ?>
-
-            <?= Field::widget()->text($form, 'label') ?>
-            <?= Field::widget()->text($form, 'id')->attributes(['disabled' => 'disabled']) ?>
-
-            <?= Field::widget()
-                ->submitButton()
-                ->value($translator->translate('button.submit'))
-                ->attributes(
-                    [
-                        'class' => 'btn btn-primary btn-lg mt-3',
-                        'id' => 'login-button'
-                    ]
+                ->content(
+                    Field::text($form, 'label'),
+                    Field::text($form, 'id')->addInputAttributes(['disabled' => 'disabled']),
+                    Field::submitButton()
+                        ->content($translator->translate('button.submit'))
+                        ->addButtonAttributes(
+                            [
+                                'class' => 'btn btn-primary btn-lg mt-3',
+                                'id' => 'login-button',
+                            ],
+                        ),
                 )
             ?>
-
-            <?= Form::end()?>
         </div>
     </div>
 <?php

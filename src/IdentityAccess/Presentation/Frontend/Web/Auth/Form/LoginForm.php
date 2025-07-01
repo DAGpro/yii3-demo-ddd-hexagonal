@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth\Form;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use Yiisoft\Form\FormModel;
+use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
@@ -15,17 +15,9 @@ final class LoginForm extends FormModel
     private string $login = '';
     private string $password = '';
     private bool $rememberMe = false;
-    private TranslatorInterface $translator;
-    private UserQueryServiceInterface $userService;
 
-    public function __construct(
-        UserQueryServiceInterface $userService,
-        TranslatorInterface $translator
-    ) {
-        parent::__construct();
-
-        $this->translator = $translator;
-        $this->userService = $userService;
+    public function __construct(private readonly UserQueryServiceInterface $userService, private readonly TranslatorInterface $translator)
+    {
     }
 
     public function getLogin(): string
@@ -38,7 +30,8 @@ final class LoginForm extends FormModel
         return $this->password;
     }
 
-    public function getAttributeLabels(): array
+    #[\Override]
+    public function getPropertyLabels(): array
     {
         return [
             'login' => $this->translator->translate('identityAccess.form.login'),
@@ -47,6 +40,7 @@ final class LoginForm extends FormModel
         ];
     }
 
+    #[\Override]
     public function getFormName(): string
     {
         return 'Login';
@@ -55,7 +49,7 @@ final class LoginForm extends FormModel
     public function getRules(): array
     {
         return [
-            'login' => [Required::rule()],
+            'login' => [new Required()],
             'password' => $this->passwordRules(),
         ];
     }
@@ -63,15 +57,16 @@ final class LoginForm extends FormModel
     private function passwordRules(): array
     {
         return [
-            Required::rule(),
+            new Required(),
             function (): Result {
                 $result = new Result();
 
                 $user = $this->userService->findByLogin($this->login);
 
                 if ($user === null || !$user->validatePassword($this->password)) {
-                    $this->getFormErrors()->addError('login', '');
-                    $result->addError($this->translator->translate('validator.invalid.login.password'));
+                    $result->addError($this->translator->translate('validator.invalid.login.password'),
+                        valuePath: ['login'],
+                    );
                 }
 
                 return $result;

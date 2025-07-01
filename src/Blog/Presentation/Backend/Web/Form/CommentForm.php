@@ -5,23 +5,22 @@ declare(strict_types=1);
 namespace App\Blog\Presentation\Backend\Web\Form;
 
 use App\Blog\Domain\Comment;
-use Yiisoft\Form\FormModel;
-use Yiisoft\Validator\Rule\Boolean;
+use phpDocumentor\Reflection\Types\Boolean;
+use Yiisoft\FormModel\FormModel;
 use Yiisoft\Validator\Rule\Number;
 use Yiisoft\Validator\Rule\Required;
 
 final class CommentForm extends FormModel
 {
-    private ?int $comment_id;
-    private string $content;
-    private bool $public;
+    private readonly ?int $comment_id;
+    private readonly string $content;
+    private readonly bool $public;
 
     public function __construct(?Comment $comment)
     {
-        $this->comment_id = $comment ? $comment->getId() : null;
+        $this->comment_id = $comment?->getId();
         $this->content = $comment ? $comment->getContent() : '';
         $this->public = $comment && $comment->isPublic();
-        parent::__construct();
     }
 
     public function getCommentId(): ?int
@@ -39,15 +38,17 @@ final class CommentForm extends FormModel
         return $this->public;
     }
 
-    public function getAttributeLabels(): array
+    #[\Override]
+    public function getPropertyLabels(): array
     {
         return [
             'comment_id' => 'Comment Id',
             'content' => 'Content',
-            'public' => 'Publish?'
+            'public' => 'Publish?',
         ];
     }
 
+    #[\Override]
     public function getFormName(): string
     {
         return '';
@@ -57,16 +58,15 @@ final class CommentForm extends FormModel
     {
         return [
             'content' => [
-                Required::rule(),
+                new Required(),
             ],
             'comment_id' => [
-                Required::rule(),
-                Number::rule(),
+                new Required(),
+                new Number(),
             ],
             'public' => [
-                Boolean::rule(),
-            ]
+                new Boolean(),
+            ],
         ];
     }
-
 }

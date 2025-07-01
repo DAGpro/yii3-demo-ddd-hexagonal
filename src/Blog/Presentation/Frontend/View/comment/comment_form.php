@@ -2,22 +2,25 @@
 
 declare(strict_types=1);
 
+use App\Blog\Domain\Comment;
+use App\Blog\Presentation\Frontend\Web\Comment\CommentForm;
 use Yiisoft\Assets\AssetManager;
-use Yiisoft\Form\Widget\Field;
-use Yiisoft\Form\Widget\Form;
+use Yiisoft\Bootstrap5\Alert;
+use Yiisoft\FormModel\Field;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\Form;
 use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\Translator;
 use Yiisoft\View\WebView;
-use Yiisoft\Yii\Bootstrap5\Alert;
 
 /**
  * @var UrlGeneratorInterface $url
  * @var AssetManager $assetManager
  * @var Field $field
- * @var \Yiisoft\Translator\Translator $translator
- * @var \App\Blog\Domain\Comment $comment
+ * @var Translator $translator
+ * @var Comment $comment
  * @var WebView $this
- * @var \App\Blog\Presentation\Frontend\Web\Comment\CommentForm $form
+ * @var CommentForm $form
  * @var array $action
  * @var string $commentText
  * @var string $csrf
@@ -25,7 +28,10 @@ use Yiisoft\Yii\Bootstrap5\Alert;
 
 if (!empty($errors)) {
     foreach ($errors as $field => $error) {
-        echo Alert::widget()->options(['class' => 'alert-danger'])->body(Html::encode($field) . ': ' . Html::encode(...$error));
+        echo Alert::widget()
+            ->addAttributes(['class' => 'alert-danger'])->body(Html::encode($field)
+                . ': ' . Html::encode(...$error),
+            );
     }
 }
 
@@ -36,24 +42,17 @@ echo "<h1 class='mb-3'>{$this->getTitle()}</h1>";
 ?>
 
 
-<?= Form::widget()
+<?= Form::tag()
     ->action($url->generate(...$action))
     ->method('post')
     ->attributes(['enctype' => 'multipart/form-data'])
     ->csrf($csrf)
     ->id('form-comment')
-    ->begin() ?>
-
-<?= Field::widget()->textArea($form, 'comment')->attributes(['rows' => '6']) ?>
-
-<?= Field::widget()
-    ->submitButton($translator->translate('button.submit'))
-    ->attributes(
-        [
-            'class' => 'btn btn-primary btn-lg mt-3',
-            'id' => 'comment-button',
-        ]
+    ->content(
+        Field::textarea($form, 'comment')
+            ->addInputAttributes(['rows' => 6,]),
+        Field::submitButton()
+            ->content($translator->translate('button.submit'))
+            ->addButtonAttributes(['class' => 'btn btn-primary btn-lg mt-3', 'id' => 'comment-button']),
     )
 ?>
-
-<?=Form::end()?>

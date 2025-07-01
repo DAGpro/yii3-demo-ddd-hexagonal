@@ -11,17 +11,14 @@ use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
 use Cycle\ORM\Select;
 use DateTimeImmutable;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class ReadPostQueryService implements ReadPostQueryServiceInterface
+final readonly class ReadPostQueryService implements ReadPostQueryServiceInterface
 {
-    private PostRepositoryInterface $repository;
-
-    public function __construct(PostRepositoryInterface $postRepository)
+    public function __construct(private PostRepositoryInterface $repository)
     {
-        $this->repository = $postRepository;
     }
 
     /**
@@ -29,6 +26,7 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
      *
      * @psalm-return DataReaderInterface<int, Post>
      */
+    #[\Override]
     public function findAllPreloaded(): DataReaderInterface
     {
         $query = $this
@@ -44,6 +42,7 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
      * @return DataReaderInterface
      * @psalm-return DataReaderInterface<int, Post>
      */
+    #[\Override]
     public function findByTag(Tag $tag): DataReaderInterface
     {
         $query = $this
@@ -55,6 +54,7 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
         return $this->prepareDataReader($query);
     }
 
+    #[\Override]
     public function findByAuthor(Author $author): DataReaderInterface
     {
         $query = $this
@@ -66,6 +66,7 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
         return $this->prepareDataReader($query);
     }
 
+    #[\Override]
     public function getPostBySlug(string $slug): ?Post
     {
         return $this
@@ -76,6 +77,7 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
             ->fetchOne();
     }
 
+    #[\Override]
     public function getPost(int $id): ?Post
     {
         return $this->repository
@@ -85,6 +87,7 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
             ->fetchOne();
     }
 
+    #[\Override]
     public function fullPostPage(string $slug): ?Post
     {
         return $this
@@ -94,21 +97,22 @@ final class ReadPostQueryService implements ReadPostQueryServiceInterface
             ->load(['tags'])
             ->load('comments', [
                 'method' => Select::OUTER_QUERY,
-                'where' => ['public' => true]
+                'where' => ['public' => true],
             ])
             ->fetchOne();
     }
 
+    #[\Override]
     public function getMaxUpdatedAt(): DateTimeImmutable
     {
         return new DateTimeImmutable($this->repository->select()->max('updated_at') ?? 'now');
     }
 
-    private function prepareDataReader($query): EntityReader
+    private function prepareDataReader(Select $query): EntityReader
     {
-        return (new EntityReader($query))->withSort(
+        return new EntityReader($query)->withSort(
             Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
-                ->withOrder(['published_at' => 'desc'])
+                ->withOrder(['published_at' => 'desc']),
         );
     }
 

@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace App\Infrastructure\Presentation\Web\Widget;
 
 use Closure;
-use Yiisoft\Data\Paginator\OffsetPaginator as Paginator;
+use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Html\Html;
-use Yiisoft\Yii\Bootstrap5\Widget;
+use Yiisoft\Widget\Widget;
 
 final class OffsetPagination extends Widget
 {
     private array $options = [];
 
     private ?Closure $urlGenerator = null;
-    private ?Paginator $paginator = null;
+    private ?OffsetPaginator $paginator = null;
     private int $pagesCount;
     private int $currentPage;
     private array $pages;
     private bool $prepared;
 
-    public function paginator(?Paginator $paginator): self
+    public function paginator(?OffsetPaginator $paginator): self
     {
         $this->paginator = $paginator;
         $this->prepared = false;
@@ -41,7 +41,7 @@ final class OffsetPagination extends Widget
     /**
      * The HTML attributes for the widget container tag. The following special options are recognized.
      *
-     * {@see \Yiisoft\Html\Html::renderTagAttributes()} for details on how attributes are being rendered.
+     * {@see Html::renderTagAttributes} for details on how attributes are being rendered.
      */
     public function options(array $value): self
     {
@@ -50,7 +50,8 @@ final class OffsetPagination extends Widget
         return $this;
     }
 
-    protected function run(): string
+    #[\Override]
+    public function render(): string
     {
         if ($this->paginator === null) {
             return '';

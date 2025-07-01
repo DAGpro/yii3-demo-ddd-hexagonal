@@ -7,14 +7,10 @@ namespace App\Infrastructure\Authorization;
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 
-final class AuthorizationService
+final readonly class AuthorizationService
 {
-    private AssignmentsServiceInterface $assignmentsService;
-
-    public function __construct(AssignmentsServiceInterface $assignmentsService)
-
+    public function __construct(private AssignmentsServiceInterface $assignmentsService)
     {
-        $this->assignmentsService = $assignmentsService;
     }
 
     public function userHasPermission(string|int $userId, string $permission): bool

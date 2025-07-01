@@ -6,6 +6,8 @@ namespace App\IdentityAccess\Presentation\Backend\Console\Access;
 
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\UserAssignmentsDTO;
+use Override;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -14,30 +16,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'assignments:list',
+    'All assignments list',
+    help: 'This command displays a list of all assignments',
+)]
 final class AssignmentsListCommand extends Command
 {
-    protected static $defaultName = 'access/assignmentsList';
-
-    private AssignmentsServiceInterface $assignmentsService;
-
-    public function __construct(AssignmentsServiceInterface $assignmentsService)
-    {
-        $this->assignmentsService = $assignmentsService;
+    public function __construct(
+        private readonly AssignmentsServiceInterface $assignmentsService,
+    ) {
         parent::__construct();
     }
 
-    public function configure(): void
-    {
-        $this
-            ->setDescription('All assignments list')
-            ->setHelp('This command displays a list of all assignments');
-    }
-
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $userAssignments =  $this->assignmentsService->getAssignments();
+        $userAssignments = $this->assignmentsService->getAssignments();
         if (empty($userAssignments)) {
             $io->error('Users have no assigned access rights!');
             return ExitCode::OK;
@@ -61,7 +58,7 @@ final class AssignmentsListCommand extends Command
         $count = count($roles);
         $i = 0;
         /** @var UserAssignmentsDTO $item */
-        foreach ($roles as  $item) {
+        foreach ($roles as $item) {
             $table->addRow(
                 [
                     $item->getId(),
@@ -70,7 +67,7 @@ final class AssignmentsListCommand extends Command
                     $item->getChildRolesName(),
                     $item->getChildPermissionsName(),
                     $item->getPermissionsName(),
-                ]
+                ],
             );
             if (++$i !== $count) {
                 $table->addRow(new TableSeparator());

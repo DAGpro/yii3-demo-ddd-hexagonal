@@ -12,15 +12,13 @@ use Cycle\ORM\Select\QueryBuilder;
  * Public with condition
  * Sorted
  */
-final class PublicScope implements ConstrainInterface
+final readonly class PublicScope implements ConstrainInterface
 {
-    private ?array $publicOrCondition;
-
-    public function __construct(?array $publicOrCondition = null)
+    public function __construct(private ?array $publicOrCondition = null)
     {
-        $this->publicOrCondition = $publicOrCondition;
     }
 
+    #[\Override]
     public function apply(QueryBuilder $query): void
     {
         // public or...

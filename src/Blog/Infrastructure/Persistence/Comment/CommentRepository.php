@@ -2,34 +2,35 @@
 
 declare(strict_types=1);
 
-namespace  App\Blog\Infrastructure\Persistence\Comment;
+namespace App\Blog\Infrastructure\Persistence\Comment;
 
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
-use Cycle\ORM\EntityManager;
-use Cycle\ORM\ORMInterface;
+use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
 
 final class CommentRepository extends Select\Repository implements CommentRepositoryInterface
 {
-    private EntityManager $entityManager;
-
-    public function __construct(Select $select, ORMInterface $orm)
-    {
+    public function __construct(
+        protected Select $select,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
         parent::__construct($select);
-        $this->entityManager = new EntityManager($orm);
     }
 
+    #[\Override]
     public function getPublicComment(int $commentId): ?Comment
     {
         return $this->findOne(['id' => $commentId]);
     }
 
+    #[\Override]
     public function getComment(int $commentId): ?Comment
     {
         return $this->select()->scope()->where(['id' => $commentId])->fetchOne();
     }
 
+    #[\Override]
     public function save(array $comments): void
     {
         foreach ($comments as $entity) {
@@ -38,6 +39,7 @@ final class CommentRepository extends Select\Repository implements CommentReposi
         $this->entityManager->run();
     }
 
+    #[\Override]
     public function delete(array $comments): void
     {
         foreach ($comments as $entity) {

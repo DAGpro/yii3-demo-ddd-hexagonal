@@ -7,20 +7,18 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 use App\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterface;
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
+use Cycle\ORM\Select;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class ModerateCommentQueryService implements ModerateCommentQueryServiceInterface
+final readonly class ModerateCommentQueryService implements ModerateCommentQueryServiceInterface
 {
-
-    private CommentRepositoryInterface $repository;
-
-    public function __construct(CommentRepositoryInterface $repository)
+    public function __construct(private CommentRepositoryInterface $repository)
     {
-        $this->repository = $repository;
     }
 
+    #[\Override]
     public function findAllPreloaded(): ?DataReaderInterface
     {
         $sort = $this->getSort()->withOrder(['published_at' => 'desc']);
@@ -29,18 +27,19 @@ final class ModerateCommentQueryService implements ModerateCommentQueryServiceIn
                 ->select()
                 ->scope()
                 ->andWhere('deleted_at', '=', null),
-            $sort
+            $sort,
         );
     }
 
+    #[\Override]
     public function getComment(int $commentId): ?Comment
     {
         return $this->repository->getComment($commentId);
     }
 
-    private function prepareDataReader($query, Sort $sort): DataReaderInterface
+    private function prepareDataReader(Select $query, Sort $sort): DataReaderInterface
     {
-        return (new EntityReader($query))->withSort($sort);
+        return new EntityReader($query)->withSort($sort);
     }
 
     private function getSort(): Sort

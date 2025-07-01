@@ -11,25 +11,19 @@ use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Port\TagRepositoryInterface;
 
-final class ModeratePostService implements ModeratePostServiceInterface
+final readonly class ModeratePostService implements ModeratePostServiceInterface
 {
-    private PostRepositoryInterface $repository;
-    private TagRepositoryInterface $tagRepository;
-    private ModeratePostQueryServiceInterface $postQueryService;
-
     public function __construct(
-        ModeratePostQueryServiceInterface $postQueryService,
-        PostRepositoryInterface $repository,
-        TagRepositoryInterface  $tagRepository
+        private ModeratePostQueryServiceInterface $postQueryService,
+        private PostRepositoryInterface $repository,
+        private TagRepositoryInterface $tagRepository,
     ) {
-        $this->repository = $repository;
-        $this->tagRepository = $tagRepository;
-        $this->postQueryService = $postQueryService;
     }
 
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function public(int $postId): void
     {
         if (($post = $this->postQueryService->getPost($postId)) === null) {
@@ -44,6 +38,7 @@ final class ModeratePostService implements ModeratePostServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function draft(int $postId): void
     {
         if (($post = $this->postQueryService->getPost($postId)) === null) {
@@ -58,6 +53,7 @@ final class ModeratePostService implements ModeratePostServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function moderate(int $postId, PostModerateDTO $postModerateDTO): void
     {
         if (($post = $this->postQueryService->getPost($postId)) === null) {
@@ -84,6 +80,7 @@ final class ModeratePostService implements ModeratePostServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function delete(int $postId): void
     {
         if (($post = $this->postQueryService->getPost($postId)) === null) {

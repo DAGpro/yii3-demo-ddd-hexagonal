@@ -2,18 +2,23 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Form\Widget\Field;
-use Yiisoft\Form\Widget\Form;
+
+use App\Site\Presentation\Frontend\Web\Contact\ContactForm;
+use Yiisoft\FormModel\Field;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\Form;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
 /**
- * @var Yiisoft\Yii\View\Csrf $csrf
- * @var \App\Site\Presentation\Frontend\Web\Contact\ContactForm $form
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\Form\Widget\Field $field
+ * @var string $csrf
+ * @var ContactForm $form
+ * @var UrlGeneratorInterface $url
+ * @var Field $field
  * @var WebView $this
- * @var \Yiisoft\Translator\TranslatorInterface $translator
+ * @var TranslatorInterface $translator
+ * @var $this Yiisoft\View\WebView
  */
 
 $this->setTitle($translator->translate('menu.contact'));
@@ -27,40 +32,38 @@ $this->setTitle($translator->translate('menu.contact'));
                     <h1 class="fw-normal h3 text-center"><?= Html::encode($this->getTitle()) ?></h1>
                 </div>
                 <div class="card-body p-5 text-center">
-                    <?= Form::widget()
+                    <?= Form::tag()
                         ->action($url->generate('site/contact'))
                         ->csrf($csrf)
                         ->id('form-contact')
-                        ->begin()
-                    ?>
+                        ->content(
 
-                    <?= Field::widget()->text($form, 'name') ?>
-                    <?= Field::widget()->email($form, 'email') ?>
-                    <?= Field::widget()->text($form, 'subject') ?>
-                    <?= Field::widget()->textArea($form, 'body')->attributes(['style' => 'height: 100px']) ?>
-                    <?= Field::widget()
-                        ->containerClass('mb-3')
-                        ->file($form, 'attachFiles', ['multiple()' => [true]])
-                        ->label(null)
-                    ?>
-                    <?= Field::widget()
-                        ->containerClass('btn-group btn-toolbar float-end')
-                        ->buttonGroup(
-                            [
-                                ['label' => 'Reset', 'type' => 'reset'],
-                                ['label' => 'Submit', 'type' => 'submit'],
-                            ],
-                            ['individualButtonAttributes()' => [
+                            Field::text($form, 'name'),
+                            Field::email($form, 'email'),
+                            Field::text($form, 'subject'),
+                            Field::textArea($form, 'body')->addInputAttributes(['style' => 'height: 100px']),
+                            Field::file($form, 'attachFiles', ['multiple()' => [true]])
+                                ->containerClass('mb-3')
+                                ->label(null),
+                            Field::buttonGroup(
                                 [
-                                    0 => ['class' => 'btn btn-lg btn-danger'],
-                                    1 => ['class' => 'btn btn-lg btn-primary', 'name' => 'contact-button'],
+                                    [
+                                        ['label' => 'Reset', 'type' => 'reset'],
+                                        ['label' => 'Submit', 'type' => 'submit'],
+                                    ],
+                                    [
+                                        'individualButtonAttributes()' => [
+                                            [
+                                                0 => ['class' => 'btn btn-lg btn-danger'],
+                                                1 => ['class' => 'btn btn-lg btn-primary', 'name' => 'contact-button'],
+                                            ],
+                                        ],
+
+                                    ],
                                 ],
-                            ],
-                            ],
+                            )->containerClass('btn-group btn-toolbar float-end'),
                         )
                     ?>
-
-                    <?= Form::end() ?>
                 </div>
             </div>
         </div>

@@ -11,6 +11,8 @@ use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Override;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,36 +20,29 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'assign:allPermissions',
+    'Assign RBAC all permissions to given user',
+    help: 'This command allows you to assign RBAC all permissions to user'
+)]
 final class AssignAllPermissionsCommand extends Command
 {
-    protected static $defaultName = 'assign/assignAllPermissions';
-
-    private AssignAccessServiceInterface $assignAccessService;
-    private AccessRightsServiceInterface $accessRightsService;
-    private UserQueryServiceInterface $userService;
-    private AssignmentsServiceInterface $assignmentsService;
-
     public function __construct(
-        AssignAccessServiceInterface $assignAccessService,
-        AccessRightsServiceInterface $accessRightsService,
-        AssignmentsServiceInterface $assignmentsService,
-        UserQueryServiceInterface $userService
+        private readonly AssignAccessServiceInterface $assignAccessService,
+        private readonly AccessRightsServiceInterface $accessRightsService,
+        private readonly AssignmentsServiceInterface $assignmentsService,
+        private readonly UserQueryServiceInterface $userService,
     ) {
-        $this->assignAccessService = $assignAccessService;
-        $this->accessRightsService = $accessRightsService;
-        $this->userService = $userService;
-        $this->assignmentsService = $assignmentsService;
         parent::__construct();
     }
 
+    #[Override]
     public function configure(): void
     {
-        $this
-            ->setDescription('Assign RBAC all permissions to given user')
-            ->setHelp('This command allows you to assign RBAC all permissions to user')
-            ->addArgument('userId', InputArgument::REQUIRED, 'User id');
+        $this->addArgument('userId', InputArgument::REQUIRED, 'User id');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

@@ -11,20 +11,10 @@ use Yiisoft\Auth\IdentityInterface;
 use Yiisoft\Auth\IdentityRepositoryInterface;
 use Yiisoft\User\CurrentUser;
 
-final class AuthenticationService
+final readonly class AuthenticationService
 {
-    private CurrentUser $currentUser;
-    private UserQueryServiceInterface $userQueryService;
-    private IdentityRepositoryInterface $identityRepository;
-
-    public function __construct(
-        CurrentUser $currentUser,
-        UserQueryServiceInterface $userQueryService,
-        IdentityRepositoryInterface $identityRepository,
-    ) {
-        $this->currentUser = $currentUser;
-        $this->userQueryService = $userQueryService;
-        $this->identityRepository = $identityRepository;
+    public function __construct(private CurrentUser $currentUser, private UserQueryServiceInterface $userQueryService, private IdentityRepositoryInterface $identityRepository)
+    {
     }
 
     public function login(string $login, string $password): IdentityInterface

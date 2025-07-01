@@ -26,26 +26,20 @@ use DateTimeImmutable;
 class Comment
 {
     #[Column(type: 'primary')]
-    private ?int $id = null;
+    public ?int $id = null;
 
     #[Column(type: 'bool', default: 'false', typecast: 'bool')]
     private bool $public = false;
 
-    #[Column(type: 'text')]
-    private string $content;
-
-    #[Embedded(target: Commentator::class)]
-    private Commentator $commentator;
-
-    #[BelongsTo(target: Post::class,  nullable: false)]
-    private Post $post;
+    #[BelongsTo(target: Post::class, nullable: false)]
+    private readonly Post $post;
     private int $post_id;
 
     #[Column(type: 'datetime')]
-    private DateTimeImmutable $created_at;
+    private readonly DateTimeImmutable $created_at;
 
     #[Column(type: 'datetime')]
-    private DateTimeImmutable $updated_at;
+    private readonly DateTimeImmutable $updated_at;
 
     #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $published_at = null;
@@ -54,12 +48,12 @@ class Comment
     private ?DateTimeImmutable $deleted_at = null;
 
     public function __construct(
-        string $content,
+        #[Column(type: 'text')]
+        private string $content,
         Post $post,
-        Commentator $commentator
+        #[Embedded(target: Commentator::class)]
+        private Commentator $commentator,
     ) {
-        $this->content = $content;
-        $this->commentator = $commentator;
         $this->post_id = $post->getId();
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
@@ -80,12 +74,12 @@ class Comment
     public function change(
         string $content,
         ?Post $post = null,
-        ?Commentator $commentator = null
+        ?Commentator $commentator = null,
     ): void {
         $this->content = $content;
 
         if ($post !== null) {
-            $this->post_id =  $post->getId();
+            $this->post_id = $post->getId();
         }
 
         if ($commentator !== null) {
@@ -143,15 +137,16 @@ class Comment
         return $this->published_at;
     }
 
-    public function getDeletedAt(): ?DateTimeImmutable
-    {
-        return $this->deleted_at;
-    }
-
-    //TODO fixture data
     public function setPublishedAt(DateTimeImmutable $date): void
     {
         $this->published_at = $date;
+    }
+
+    //TODO fixture data
+
+    public function getDeletedAt(): ?DateTimeImmutable
+    {
+        return $this->deleted_at;
     }
 
 }

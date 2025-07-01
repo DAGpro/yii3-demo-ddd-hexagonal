@@ -13,6 +13,8 @@ use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Override;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,37 +23,31 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'assign:role',
+    'Assign RBAC role to given user',
+    help: 'This command allows you to assign RBAC role to user'
+)]
 final class AssignRoleCommand extends Command
 {
-    protected static $defaultName = 'assign/assignRole';
-
-    private AssignAccessServiceInterface $assignAccessService;
-    private AccessManagementServiceInterface $accessManagementService;
-    private AccessRightsServiceInterface $accessRightsService;
-    private UserQueryServiceInterface $userQueryService;
-
     public function __construct(
-        AssignAccessServiceInterface $assignAccessService,
-        AccessManagementServiceInterface $managementService,
-        AccessRightsServiceInterface $accessRightsService,
-        UserQueryServiceInterface $userQueryService
+        private readonly AssignAccessServiceInterface $assignAccessService,
+        private readonly AccessManagementServiceInterface $accessManagementService,
+        private readonly AccessRightsServiceInterface $accessRightsService,
+        private readonly UserQueryServiceInterface $userQueryService,
     ) {
-        $this->assignAccessService = $assignAccessService;
-        $this->accessManagementService = $managementService;
-        $this->accessRightsService = $accessRightsService;
-        $this->userQueryService = $userQueryService;
         parent::__construct();
     }
 
+    #[Override]
     public function configure(): void
     {
         $this
-            ->setDescription('Assign RBAC role to given user')
-            ->setHelp('This command allows you to assign RBAC role to user')
             ->addArgument('userId', InputArgument::REQUIRED, 'User id')
             ->addArgument('role', InputArgument::REQUIRED, 'RBAC role');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

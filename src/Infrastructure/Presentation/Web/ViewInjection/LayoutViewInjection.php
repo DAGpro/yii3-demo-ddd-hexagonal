@@ -6,26 +6,24 @@ namespace App\Infrastructure\Presentation\Web\ViewInjection;
 
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Authorization\AuthorizationService;
-use Yiisoft\Yii\View\LayoutParametersInjectionInterface;
+use Yiisoft\Yii\View\Renderer\LayoutParametersInjectionInterface;
 
-final class LayoutViewInjection implements LayoutParametersInjectionInterface
+final readonly class LayoutViewInjection implements LayoutParametersInjectionInterface
 {
-    private AuthenticationService $authenticationService;
-    private AuthorizationService $authorizationService;
-
-    public function __construct(AuthenticationService $authenticationService, AuthorizationService $authorizationService)
+    public function __construct(private AuthenticationService $authenticationService, private AuthorizationService $authorizationService)
     {
-        $this->authenticationService = $authenticationService;
-        $this->authorizationService = $authorizationService;
     }
 
+    #[\Override]
     public function getLayoutParameters(): array
     {
         $user = $this->authenticationService->getUser();
         return [
             'brandLabel' => 'Yii Demo',
             'user' => $user,
-            'canAddPost' => $user !== null && $this->authorizationService->userHasRole((string)$user->getId(), 'author'),
+            'canAddPost' => $user !== null && $this->authorizationService->userHasRole((string)$user->getId(),
+                    'author',
+                ),
         ];
     }
 }

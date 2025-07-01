@@ -3,13 +3,20 @@
 declare(strict_types=1);
 
 /**
- * @var \Yiisoft\Data\Reader\DataReaderInterface|string[][] $archive
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\View\WebView $this
+ * @var DataReaderInterface|string[][] $archive
+ * @var UrlGeneratorInterface $url
+ * @var TranslatorInterface $translator
+ * @var WebView $this
  */
 
+use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Div;
+use Yiisoft\Html\Tag\Li;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
 
 $this->setTitle($translator->translate('blog.archive'));
 
@@ -19,12 +26,9 @@ $this->setTitle($translator->translate('blog.archive'));
     <div class="col-sm-12">
         <?php
         $currentYear = null;
-        $sectionBegin = Html::openTag(
-            'li',
-            ['class' => 'list-group-item d-flex flex-column justify-content-between lh-condensed']
-        );
-        $sectionEnd = Html::closeTag('li');
+
         if (count($archive)) {
+            $monthList = [];
             foreach ($archive->read() as $item) {
                 $year = $item['year'];
                 $month = $item['month'];
@@ -34,33 +38,50 @@ $this->setTitle($translator->translate('blog.archive'));
                     continue;
                 }
 
-                if ($currentYear !== $year) {
-                    // print Year
-                    echo $sectionBegin, Html::a(
-                        $year,
-                        $url->generate('blog/archive/year', ['year' => $year]),
-                        ['class' => 'h5']
-                    ), Html::openTag(
-                        'div',
-                        ['class' => 'd-flex flex-wrap']
-                    );
-                }
-                echo Html::openTag('div', ['class' => 'mx-2 my-1']);
-                // Print month name
-                echo Html::a(
-                    Date('F', mktime(0, 0, 0, (int)$month, 1, (int)$year)),
-                    $url->generate('blog/archive/month', [
-                        'year' => $year,
-                        'month' => $month,
-                    ]),
-                    ['class' => 'text-muted']
-                ), ' ', Html::tag('sup', $count, ['class' => '']);
-                echo Html::closeTag('div');
-                $currentYear = $year;
+                $monthList[$year][] = Div::tag()
+                    ->class('d-flex flex-wrap')
+                    ->content(
+                        Div::tag()
+                            ->class('mx-2 my-1')
+                            ->content(
+                                A::tag()
+                                    ->class('text-muted')
+                                    ->content(
+                                        Date('F', mktime(0, 0, 0, (int)$month, 1, (int)$year)),
+                                    )
+                                    ->url(
+                                        $url->generate(
+                                            'blog/archive/year',
+                                            ['year' => $year, 'month' => $month],
+                                        ),
+                                    )
+                                    ->url(
+                                        $url->generate(
+                                            'blog/archive/month',
+                                            ['year' => $year, 'month' => $month,],
+                                        ),
+                                    ),
+                                Html::tag('sup', (string)$count),
+                            ),
+                    )
+                    ->encode(false);
             }
-            echo Html::closeTag('div'), $sectionEnd;
+
+            foreach ($monthList as $year => $months) {
+                echo Li::tag()
+                    ->class('list-group-item d-flex flex-column justify-content-between lh-condensed')
+                    ->content(
+                        A::tag()
+                            ->content((string)$year)
+                            ->url($url->generate('blog/archive/year', ['year' => $year]))
+                            ->class('h5'),
+                        ...$months,
+                    )
+                    ->encode(false)
+                    ->render();
+            }
         } else {
-            echo $sectionBegin, $translator->translate('layout.no records'), $sectionEnd;
+            echo $translator->translate('layout.no.records');
         }
         ?>
     </div>

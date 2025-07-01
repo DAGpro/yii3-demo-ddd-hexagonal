@@ -9,6 +9,7 @@ use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,31 +17,29 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'assign:revokeRole',
+    'Revoke RBAC role to given user',
+    help: 'This command allows you to revoke RBAC role to user',
+)]
 final class RevokeRoleCommand extends Command
 {
-    protected static $defaultName = 'assign/revokeRole';
-
-    private AssignAccessServiceInterface $assigningService;
-    private UserQueryServiceInterface $userQueryService;
-
     public function __construct(
-        AssignAccessServiceInterface $assignAccessService,
-        UserQueryServiceInterface $userQueryService
+        private readonly AssignAccessServiceInterface $assignAccessService,
+        private readonly UserQueryServiceInterface $userQueryService,
     ) {
-        $this->assigningService = $assignAccessService;
         parent::__construct();
-        $this->userQueryService = $userQueryService;
     }
 
+    #[\Override]
     public function configure(): void
     {
         $this
-            ->setDescription('Revoke RBAC role to given user')
-            ->setHelp('This command allows you to revoke RBAC role to user')
             ->addArgument('userId', InputArgument::REQUIRED, 'User id')
             ->addArgument('role', InputArgument::REQUIRED, 'RBAC role');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -55,7 +54,7 @@ final class RevokeRoleCommand extends Command
             }
 
             $role = new RoleDTO($roleName);
-            $this->assigningService->revokeRole($role, $user->getId());
+            $this->assignAccessService->revokeRole($role, $user->getId());
 
             $io->success('Role was revoke to given user');
         } catch (AssignedItemException|IdentityException $t) {

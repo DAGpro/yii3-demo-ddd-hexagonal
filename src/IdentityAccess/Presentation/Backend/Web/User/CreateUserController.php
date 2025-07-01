@@ -15,24 +15,20 @@ use Psr\Log\LoggerInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class CreateUserController
+final readonly class CreateUserController
 {
     private ViewRenderer $viewRenderer;
-    private WebControllerService $webService;
-    private UserServiceInterface $userService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webService,
-        UserServiceInterface $userService
+        private WebControllerService $webService,
+        private UserServiceInterface $userService
     ) {
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@identityBackendView/user');
         $this->viewRenderer = $viewRenderer->withControllerName('create-user');
-        $this->webService = $webService;
-        $this->userService = $userService;
     }
 
     public function create(

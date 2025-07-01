@@ -22,7 +22,7 @@ class EventListenerConfigurationTest extends TestCase
 
         $containerConfig = ContainerConfig::create()
             ->withDefinitions($config->get('console'));
-        $container = (new Container($containerConfig))->get(ContainerInterface::class);
+        $container = new Container($containerConfig)->get(ContainerInterface::class);
         $checker = $container->get(ListenerConfigurationChecker::class);
         $checker->check($config->get('events-console'));
 

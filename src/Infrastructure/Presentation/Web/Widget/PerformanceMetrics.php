@@ -9,14 +9,12 @@ use Yiisoft\Widget\Widget;
 
 final class PerformanceMetrics extends Widget
 {
-    private Timer $timer;
-
-    public function __construct(Timer $timer)
+    public function __construct(private readonly Timer $timer)
     {
-        $this->timer = $timer;
     }
 
-    protected function run(): string
+    #[\Override]
+    public function render(): string
     {
         $time = round($this->timer->get('overall'), 4);
         $memory = round(memory_get_peak_usage() / (1024 * 1024), 4);

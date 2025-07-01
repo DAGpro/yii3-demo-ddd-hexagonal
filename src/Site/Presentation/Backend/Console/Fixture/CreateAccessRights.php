@@ -8,35 +8,29 @@ use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterfa
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'fixture:addAccess',
+    'Add demo access rights',
+    help: 'This command adds demo access rights',
+)]
 final class CreateAccessRights extends Command
 {
-    protected static $defaultName = 'fixture/addAccess';
-
-    private AccessManagementServiceInterface $accessManagementService;
-    private AccessRightsServiceInterface $accessRightsService;
-
     public function __construct(
-        AccessManagementServiceInterface $accessManagementService,
-        AccessRightsServiceInterface $accessRightsService
+        private readonly AccessManagementServiceInterface $accessManagementService,
+        private readonly AccessRightsServiceInterface $accessRightsService,
     ) {
-        $this->accessManagementService = $accessManagementService;
-        $this->accessRightsService = $accessRightsService;
         parent::__construct();
     }
 
-    public function configure(): void
-    {
-        $this
-            ->setDescription('Add demo access rights')
-            ->setHelp('This command adds demo access rights');
-    }
-
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -91,13 +85,17 @@ final class CreateAccessRights extends Command
             }
 
             foreach ($adminPermissions as $permission) {
-                $this->accessManagementService->addChildPermission(new RoleDTO('admin'), new PermissionDTO($permission));
+                $this->accessManagementService->addChildPermission(new RoleDTO('admin'),
+                    new PermissionDTO($permission),
+                );
             }
 
             foreach ($authorPermissions as $permission) {
-                $this->accessManagementService->addChildPermission(new RoleDTO('author'), new PermissionDTO($permission));
+                $this->accessManagementService->addChildPermission(new RoleDTO('author'),
+                    new PermissionDTO($permission),
+                );
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $io->error($t->getMessage());
             return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }

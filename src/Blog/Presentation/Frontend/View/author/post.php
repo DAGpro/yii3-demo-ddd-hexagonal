@@ -3,24 +3,32 @@
 declare(strict_types=1);
 
 /**
- * @var \App\Blog\Domain\Post $post
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\View\WebView $this
- * @var \App\Blog\Domain\User\Author $author
+ * @var Post $post
+ * @var UrlGeneratorInterface $url
+ * @var TranslatorInterface $translator
+ * @var WebView $this
+ * @var Author $author
  * @var bool $canAddComment
  * @var string $csrf
  * @var string $slug
  */
 
+use App\Blog\Domain\Post;
+use App\Blog\Domain\User\Author;
+use Yiisoft\Bootstrap5\Alert;
 use Yiisoft\Html\Html;
-use Yiisoft\Yii\Bootstrap5\Alert;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Article;
+use Yiisoft\Html\Tag\Div;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
 
 $this->setTitle($post->getTitle());
 
 if (!empty($errors)) {
     foreach ($errors as $field => $error) {
-        echo Alert::widget()->options(['class' => 'alert-danger'])->body(Html::encode($field . ':' . $error));
+        echo Alert::widget()->addAttributes(['class' => 'alert-danger'])->body(Html::encode($field . ':' . $error));
     }
 }
 
@@ -29,33 +37,47 @@ if (!empty($errors)) {
     <div>
         <span class="text-muted"><?= $post->getPublishedAt() === null
                 ? $translator->translate('blog.not.published.post')
-                : $translator->translate('blog.published.post', ['date' => $post->getPublishedAt()->format('H:i:s d.m.Y')])?> by</span>
+                : $translator->translate('blog.published.post',
+                    ['date' => $post->getPublishedAt()->format('H:i:s d.m.Y')],
+                ) ?> by</span>
         <?php
-        echo Html::a(
-            $post->getAuthor()->getName(),
-            $url->generate('user/profile', ['login' => $post->getAuthor()->getName()]),
-            ['class' => 'mr-3']
-        );
+        echo A::tag()
+            ->class('mr-3')
+            ->content($post->getAuthor()->getName())
+            ->url($url->generate('user/profile', ['login' => $post->getAuthor()->getName()]))
+            ->encode(false)
+            ->render();
 
-        echo Html::a(
-            'Edit',
-            $url->generate('blog/author/post/edit', ['slug' => $post->getSlug()]),
-            ['class' => 'btn btn-outline-secondary btn-sm ms-2']
-        );
+        echo A::tag()
+            ->class('btn btn-outline-secondary btn-sm ms-2')
+            ->content('Edit')
+            ->url($url->generate('blog/author/post/edit', ['slug' => $post->getSlug()]))
+            ->encode(false)
+            ->render();
         ?>
     </div>
 <?php
 
-echo Html::tag('article', $post->getContent(), ['class' => 'text-justify']);
+echo Article::tag()
+    ->content($post->getContent())
+    ->class('text-justify')
+    ->encode(false)
+    ->render();
 
 if ($post->getTags()) {
-    echo Html::openTag('div', ['class' => 'mt-3 mb-3']);
+    $tagLinks = '';
     foreach ($post->getTags() as $tag) {
-        echo Html::a(
-            Html::encode($tag->getLabel()),
-            $url->generate('blog/tag', ['label' => $tag->getLabel()]),
-            ['class' => 'btn btn-outline-secondary btn-sm mb-1 me-2']
-        );
+        $tagLinks .= A::tag()
+            ->class('btn btn-outline-secondary btn-sm mb-1 me-2')
+            ->content(Html::encode($tag->getLabel()))
+            ->url($url->generate('blog/tag', ['label' => $tag->getLabel()]))
+            ->encode(false)
+            ->render();
     }
-    echo Html::closeTag('div');
+
+    echo Div::tag()
+        ->class('mt-3 mb-3')
+        ->content($tagLinks)
+        ->encode(false)
+        ->render();
 }

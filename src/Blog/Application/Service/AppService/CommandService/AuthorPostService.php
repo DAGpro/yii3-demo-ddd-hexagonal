@@ -14,28 +14,22 @@ use App\Blog\Domain\Port\TagRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 
-final class AuthorPostService implements AuthorPostServiceInterface
+final readonly class AuthorPostService implements AuthorPostServiceInterface
 {
-    private PostRepositoryInterface $repository;
-    private TagRepositoryInterface $tagRepository;
-    private AuthorPostQueryServiceInterface $postQueryService;
-
     public function __construct(
-        PostRepositoryInterface $repository,
-        AuthorPostQueryServiceInterface $postQueryService,
-        TagRepositoryInterface  $tagRepository
+        private PostRepositoryInterface $repository,
+        private AuthorPostQueryServiceInterface $postQueryService,
+        private TagRepositoryInterface $tagRepository,
     ) {
-        $this->repository = $repository;
-        $this->tagRepository = $tagRepository;
-        $this->postQueryService = $postQueryService;
     }
 
+    #[\Override]
     public function create(PostCreateDTO $postCreateDTO, Author $author): void
     {
         $post = new Post(
             $postCreateDTO->getTitle(),
             $postCreateDTO->getContent(),
-            $author
+            $author,
         );
 
         foreach ($postCreateDTO->getTags() as $tag) {
@@ -48,6 +42,7 @@ final class AuthorPostService implements AuthorPostServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function edit(string $postSlug, PostChangeDTO $postChangeDTO): void
     {
         if (($post = $this->postQueryService->getPostBySlug($postSlug)) === null) {
@@ -67,6 +62,7 @@ final class AuthorPostService implements AuthorPostServiceInterface
     /**
      * @throws BlogNotFoundException
      */
+    #[\Override]
     public function delete(string $postSlug): void
     {
         if (($post = $this->postQueryService->getPostBySlug($postSlug)) === null) {

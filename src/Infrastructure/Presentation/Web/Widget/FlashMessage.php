@@ -6,18 +6,16 @@ namespace App\Infrastructure\Presentation\Web\Widget;
 
 use Yiisoft\Session\Flash\FlashInterface;
 use Yiisoft\Widget\Widget;
-use Yiisoft\Yii\Bootstrap5\Alert;
+use Yiisoft\Bootstrap5\Alert;
 
 final class FlashMessage extends Widget
 {
-    private FlashInterface $flash;
-
-    public function __construct(FlashInterface $flash)
+    public function __construct(private readonly FlashInterface $flash)
     {
-        $this->flash = $flash;
     }
 
-    public function run(): string
+    #[\Override]
+    public function render(): string
     {
         $flashes = $this->flash->getAll();
 
@@ -25,12 +23,12 @@ final class FlashMessage extends Widget
         foreach ($flashes as $type => $data) {
             foreach ($data as $message) {
                 $html[] = Alert::widget()
-                    ->options(['class' => "alert-{$type} shadow"])
+                    ->addAttributes(['class' => "alert-{$type} shadow"])
                     ->body($message['body'])
                 ;
             }
         }
 
-        return implode($html);
+        return implode('', $html);
     }
 }

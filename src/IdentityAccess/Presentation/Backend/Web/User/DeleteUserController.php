@@ -12,17 +12,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Http\Method;
 
-final class DeleteUserController
+final readonly class DeleteUserController
 {
-    private WebControllerService $webService;
-    private UserServiceInterface $userService;
-
-    public function __construct(
-        WebControllerService $webService,
-        UserServiceInterface $userService
-    ) {
-        $this->webService = $webService;
-        $this->userService = $userService;
+    public function __construct(private WebControllerService $webService, private UserServiceInterface $userService)
+    {
     }
 
     public function remove(Request $request, LoggerInterface $logger): ?ResponseInterface

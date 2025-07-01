@@ -11,19 +11,18 @@ use App\Blog\Infrastructure\Services\IdentityAccessService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class BlogController
+final readonly class BlogController
 {
-    private const POSTS_PER_PAGE = 3;
-    private const POPULAR_TAGS_COUNT = 10;
-    private const ARCHIVE_MONTHS_COUNT = 12;
+    private const int POSTS_PER_PAGE = 3;
+    private const int POPULAR_TAGS_COUNT = 10;
+    private const int ARCHIVE_MONTHS_COUNT = 12;
 
     private ViewRenderer $view;
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-
         $this->view = $viewRenderer->withViewPath('@blogView');
     }
 
@@ -32,13 +31,13 @@ final class BlogController
         ReadPostQueryServiceInterface $postQueryService,
         TagQueryServiceInterface $tagQueryService,
         ArchivePostQueryServiceInterface $archivePostQueryService,
-        IdentityAccessService $identityAccessService
+        IdentityAccessService $identityAccessService,
     ): Response {
         $pageNum = (int)$currentRoute->getArgument('page', '1');
 
         $dataReader = $postQueryService->findAllPreloaded();
 
-        $paginator = (new OffsetPaginator($dataReader))
+        $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 
@@ -49,7 +48,7 @@ final class BlogController
                 'archive' => $archivePostQueryService->getFullArchive(self::ARCHIVE_MONTHS_COUNT),
                 'tags' => $tagQueryService->getTagMentions(self::POPULAR_TAGS_COUNT),
                 'author' => $identityAccessService->getAuthor(),
-            ]
+            ],
         );
     }
 }

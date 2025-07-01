@@ -3,20 +3,26 @@
 declare(strict_types=1);
 
 /**
- * @var \Yiisoft\View\WebView $this
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\Data\Paginator\PaginatorInterface $paginator
+ * @var WebView $this
+ * @var UrlGeneratorInterface $url
+ * @var PaginatorInterface $paginator
  * @var Field $field
- * @var \Yiisoft\Translator\TranslatorInterface $translator
+ * @var TranslatorInterface $translator
  * @var string $csrf
  * @var string $action
  * @var string $title
- * @var \App\IdentityAccess\Presentation\Backend\Web\User\Forms\CreateUserForm $form
+ * @var CreateUserForm $form
  */
 
-use Yiisoft\Form\Widget\Field;
-use Yiisoft\Form\Widget\Form;
+
+use App\IdentityAccess\Presentation\Backend\Web\User\Forms\CreateUserForm;
+use Yiisoft\Data\Paginator\PaginatorInterface;
+use Yiisoft\FormModel\Field;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\Form;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
 
 ?>
 
@@ -28,28 +34,25 @@ use Yiisoft\Html\Html;
                     <h1 class="fw-normal h3 text-center"><?= Html::encode($this->getTitle()) ?></h1>
                 </div>
                 <div class="card-body p-5 text-center">
-                    <?= Form::widget()
+                    <?= Form::tag()
                         ->action($url->generate('backend/user/create'))
                         ->attributes(['enctype' => 'multipart/form-data'])
                         ->csrf($csrf)
                         ->id('signupForm')
-                        ->begin() ?>
-
-                    <?= Field::widget()->text($form, 'login')->attributes(['autofocus' => true]) ?>
-                    <?= Field::widget()->password($form, 'password') ?>
-                    <?= Field::widget()->password($form, 'passwordVerify') ?>
-                    <?= Field::widget()
-                        ->submitButton()
-                        ->value($translator->translate('button.submit'))
-                        ->attributes(
-                            [
-                                'class' => 'btn btn-primary btn-lg mt-3',
-                                'id' => 'register-button',
-                            ]
-                        )
-                    ?>
-
-                    <?= Form::end() ?>
+                        ->content(
+                            Field::text($form, 'login')
+                                ->addInputAttributes(['autofocus' => true]),
+                            Field::password($form, 'password'),
+                            Field::password($form, 'passwordVerify'),
+                            Field::submitButton()
+                                ->content($translator->translate('button.submit'))
+                                ->addButtonAttributes(
+                                    [
+                                        'class' => 'btn btn-primary btn-lg mt-3',
+                                        'id' => 'register-button',
+                                    ],
+                                ),
+                        ) ?>
                 </div>
             </div>
         </div>

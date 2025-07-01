@@ -9,7 +9,8 @@ use App\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
-use Exception;
+use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,38 +19,32 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'user:create',
+    'Creates a user [login] [password] [isAdmin:]',
+    help: 'This command allows you to create a user',
+)]
 final class CreateUserCommand extends Command
 {
-    private AssignAccessServiceInterface $assignAccessService;
-    private AccessRightsServiceInterface $accessRightsService;
-    private UserServiceInterface $userService;
-    private UserQueryServiceInterface $userQueryService;
-
-    protected static $defaultName = 'user/create';
-
     public function __construct(
-        AssignAccessServiceInterface $assignAccessService,
-        AccessRightsServiceInterface $rolesStorage,
-        UserServiceInterface $userService,
-        UserQueryServiceInterface $userQueryService
+        private readonly AssignAccessServiceInterface $assignAccessService,
+        private readonly AccessRightsServiceInterface $accessRightsService,
+        private readonly UserServiceInterface $userService,
+        private readonly UserQueryServiceInterface $userQueryService,
     ) {
-        $this->assignAccessService = $assignAccessService;
-        $this->accessRightsService = $rolesStorage;
-        $this->userService = $userService;
-        $this->userQueryService = $userQueryService;
         parent::__construct();
     }
 
+    #[\Override]
     public function configure(): void
     {
         $this
-            ->setDescription('Creates a user')
-            ->setHelp('This command allows you to create a user')
             ->addArgument('login', InputArgument::REQUIRED, 'Login')
             ->addArgument('password', InputArgument::REQUIRED, 'Password')
             ->addArgument('isAdmin', InputArgument::OPTIONAL, 'Create user as admin');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -62,7 +57,6 @@ final class CreateUserCommand extends Command
             $this->userService->createUser($login, $password);
 
             if ($isAdmin) {
-
                 $role = $this->accessRightsService->getRoleByName('admin');
                 $user = $this->userQueryService->findByLogin($login);
 
@@ -71,7 +65,7 @@ final class CreateUserCommand extends Command
                 }
 
                 if ($role === null) {
-                    throw new Exception('Role admin is NULL');
+                    throw new RuntimeException('Role admin is NULL');
                 }
 
                 $this->assignAccessService->assignRole($role, (string)$user->getId());

@@ -15,32 +15,23 @@ use App\IdentityAccess\User\Domain\User;
 use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\Manager;
 
-final class AssignmentsService implements AssignmentsServiceInterface
+final readonly class AssignmentsService implements AssignmentsServiceInterface
 {
-
-    private AssignmentsStorageInterface $assignmentsStorage;
-    private AccessRightsServiceInterface $accessRightsService;
-    private Manager $manager;
-    private UserQueryServiceInterface $userQueryService;
-
     public function __construct(
-        AssignmentsStorageInterface $assignmentsStorage,
-        AccessRightsServiceInterface $accessRightsService,
-        UserQueryServiceInterface $userQueryService,
-        Manager $manager
+        private AssignmentsStorageInterface $assignmentsStorage,
+        private AccessRightsServiceInterface $accessRightsService,
+        private UserQueryServiceInterface $userQueryService,
+        private Manager $manager,
     ) {
-        $this->assignmentsStorage = $assignmentsStorage;
-        $this->accessRightsService = $accessRightsService;
-        $this->userQueryService = $userQueryService;
-        $this->manager = $manager;
     }
 
-
+    #[\Override]
     public function getUserIdsByRole(RoleDTO $roleDTO): array
     {
         return $this->manager->getUserIdsByRoleName($roleDTO->getName());
     }
 
+    #[\Override]
     public function getRolesByUser(string|int $userId): array
     {
         $roles = [];
@@ -51,6 +42,7 @@ final class AssignmentsService implements AssignmentsServiceInterface
         return $roles;
     }
 
+    #[\Override]
     public function getPermissionsByUser(string|int $userId): array
     {
         $permissions = [];
@@ -61,16 +53,19 @@ final class AssignmentsService implements AssignmentsServiceInterface
         return $permissions;
     }
 
+    #[\Override]
     public function userHasPermission(string|int $userId, string $permissionName): bool
     {
         return $this->manager->userHasPermission($userId, $permissionName);
     }
 
+    #[\Override]
     public function userHasRole(string|int $userId, string $roleName): bool
     {
         return $this->assignmentsStorage->get($roleName, (string)$userId) !== null;
     }
 
+    #[\Override]
     public function isAssignedRoleToUsers(RoleDTO $roleDTO): bool
     {
         return $this->assignmentsStorage->hasItem($roleDTO->getName());
@@ -79,29 +74,32 @@ final class AssignmentsService implements AssignmentsServiceInterface
     /**
      * @throws NotExistItemException
      */
+    #[\Override]
     public function isAssignedPermissionToUsers(PermissionDTO $permissionDTO): bool
     {
         return $this->assignmentsStorage->hasItem($permissionDTO->getName());
     }
 
+    #[\Override]
     public function getUserAssignments(User $user): UserAssignmentsDTO
     {
         $rolesDTO = $this->getRolesByUser($user->getId());
         //getByUserId method is used instead of getPermissionsByUser, so as not to load inherited permissions
         $userAssignments = $this->assignmentsStorage->getByUserId((string)$user->getId());
-        if(empty($rolesDTO) && empty($userAssignments)) {
+        if (empty($rolesDTO) && empty($userAssignments)) {
             return new UserAssignmentsDTO($user);
         }
 
         $permissionsDTO = [];
         foreach ($userAssignments as $assignment) {
             $permission = $this->accessRightsService->getPermissionByName($assignment->getItemName());
-            $permission === null  ?: $permissionsDTO[] = $permission;
+            $permission === null ?: $permissionsDTO[] = $permission;
         }
 
         return new UserAssignmentsDTO($user, $rolesDTO, $permissionsDTO);
     }
 
+    #[\Override]
     public function getAssignments(): array
     {
         $assignments = $this->assignmentsStorage->getAll();
@@ -116,12 +114,12 @@ final class AssignmentsService implements AssignmentsServiceInterface
                 $userAssignments = $assignments[$user->getId()];
                 $roles = [];
                 $permissions = [];
-                foreach ($userAssignments as $name => $assignment){
+                foreach ($userAssignments as $name => $assignment) {
                     $role = $this->accessRightsService->getRoleByName($name);
                     $role === null ?: $roles[] = $role;
 
                     $permission = $this->accessRightsService->getPermissionByName($name);
-                    $permission === null  ?: $permissions[] = $permission;
+                    $permission === null ?: $permissions[] = $permission;
                 }
                 $usersDTO[$user->getId()] = new UserAssignmentsDTO($user, $roles, $permissions);
             }

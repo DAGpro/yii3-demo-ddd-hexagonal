@@ -5,70 +5,71 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth;
 
 use App\IdentityAccess\Presentation\Frontend\Web\Auth\Form\LoginForm;
-use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\Infrastructure\Authentication\AuthenticationException;
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Presentation\Web\Service\WebControllerService;
+use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
+use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\User\Login\Cookie\CookieLogin;
 use Yiisoft\User\Login\Cookie\CookieLoginIdentityInterface;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class AuthController
+final readonly class AuthController
 {
-    private WebControllerService $webService;
     private ViewRenderer $viewRenderer;
-    private AuthenticationService $authService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        AuthenticationService $authService,
-        WebControllerService $webService
+        private AuthenticationService $authService,
+        private WebControllerService $webService,
     ) {
         $this->viewRenderer = $viewRenderer->withViewPath('@identityView/auth/auth');
-        $this->authService = $authService;
-        $this->webService = $webService;
     }
 
+    /**
+     * @throws JsonException
+     */
     public function login(
         ServerRequestInterface $request,
-        UserQueryServiceInterface $userQueryService,
+        CookieLogin $cookieLogin,
         TranslatorInterface $translator,
-        ValidatorInterface $validator,
-        CookieLogin $cookieLogin
+        LoginForm $loginForm,
+        FormHydrator $formHydrator,
     ): ResponseInterface {
         if (!$this->authService->isGuest()) {
             return $this->redirectToMain();
         }
 
-        $body = $request->getParsedBody();
-        $loginForm = new LoginForm($userQueryService, $translator);
-
         if (
             $request->getMethod() === Method::POST
-            && $loginForm->load(is_array($body) ? $body : [])
-            && $validator->validate($loginForm)->isValid()
+            && $formHydrator->populateFromPostAndValidate($loginForm, $request)
         ) {
             try {
                 $identity = $this->authService->login($loginForm->getLogin(), $loginForm->getPassword());
-                if ($identity instanceof CookieLoginIdentityInterface && !$loginForm->getAttributeValue('rememberMe')) {
+                if ($identity instanceof CookieLoginIdentityInterface && !$loginForm->getPropertyValue('rememberMe')) {
                     return $cookieLogin->addCookie($identity, $this->redirectToMain());
                 }
 
                 return $this->redirectToMain();
             } catch (AuthenticationException $exception) {
-                $loginForm->getFormErrors()->addError('password', $translator->translate($exception->getMessage()));
+                $loginForm->getValidationResult()->addError(
+                    $translator->translate($exception->getMessage()),
+                    valuePath: ['password'],
+                );
             }
-
         }
 
         return $this->viewRenderer->render('login', ['formModel' => $loginForm]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function logout(): ResponseInterface
     {
         $this->authService->logout();

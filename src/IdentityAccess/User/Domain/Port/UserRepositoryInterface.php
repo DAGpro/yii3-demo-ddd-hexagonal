@@ -8,7 +8,6 @@ use App\IdentityAccess\User\Domain\User;
 
 interface UserRepositoryInterface
 {
-
     public function findUser(int $userId): ?User;
 
     public function findByLogin(string $login): ?User;

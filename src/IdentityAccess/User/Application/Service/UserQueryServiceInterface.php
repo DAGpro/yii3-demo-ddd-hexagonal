@@ -9,7 +9,7 @@ use Yiisoft\Data\Reader\DataReaderInterface;
 
 interface UserQueryServiceInterface
 {
-    public function findAllPreloaded(): DataReaderInterface;
+    public function findAllPreloaded(array $scope = [], array $orderBy = []): DataReaderInterface;
 
     public function getUser(int $userId): ?User;
 

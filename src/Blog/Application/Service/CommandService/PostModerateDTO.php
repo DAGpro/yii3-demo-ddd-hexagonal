@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace App\Blog\Application\Service\CommandService;
 
-final class PostModerateDTO
+final readonly class PostModerateDTO
 {
-    private string $title;
-    private string $content;
-    private bool $public;
-    private array $tags;
 
-    public function __construct(string $title, string $content, bool $public, array $tags)
-    {
-        $this->title = $title;
-        $this->content = $content;
-        $this->public = $public;
-        $this->tags = $tags;
+    public function __construct(
+        private string $title,
+        private string $content,
+        private bool $public,
+        private array $tags,
+    ) {
     }
 
     public function getTitle(): string

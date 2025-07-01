@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Backend\Console\Access;
 
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -13,25 +14,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'access:list',
+    'List of access rights with children',
+    help: 'This command shows a list of permissions with children'
+)]
 final class AccessListCommand extends Command
 {
-    protected static $defaultName = 'access/list';
-
-    private AccessRightsServiceInterface $accessRightsService;
-
-    public function __construct(AccessRightsServiceInterface $managementService)
-    {
-        $this->accessRightsService = $managementService;
+    public function __construct(
+        private readonly AccessRightsServiceInterface $accessRightsService,
+    ) {
         parent::__construct();
     }
 
-    public function configure(): void
-    {
-        $this
-            ->setDescription('List of access rights with children')
-            ->setHelp('This command shows a list of permissions with children');
-    }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -68,7 +65,7 @@ final class AccessListCommand extends Command
                     $item->getNestedRolesName(),
                     $item->getChildPermissionsName(),
                     $item->getNestedPermissionsName(),
-                ]
+                ],
             );
 
             if (++$i !== $count) {

@@ -7,22 +7,21 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 use App\Blog\Application\Service\QueryService\CommentQueryServiceInterface;
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
+use Cycle\ORM\Select;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Paginator\KeysetPaginator;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class CommentQueryService implements CommentQueryServiceInterface
+final readonly class CommentQueryService implements CommentQueryServiceInterface
 {
-    private const COMMENTS_FEED_PER_PAGE = 10;
+    private const int COMMENTS_FEED_PER_PAGE = 10;
 
-    private CommentRepositoryInterface $repository;
-
-    public function __construct(CommentRepositoryInterface $repository)
+    public function __construct(private CommentRepositoryInterface $repository)
     {
-        $this->repository = $repository;
     }
 
+    #[\Override]
     public function getFeedPaginator(): KeysetPaginator
     {
         $sort = $this->getSort()->withOrder(['id' => 'asc']);
@@ -30,21 +29,22 @@ final class CommentQueryService implements CommentQueryServiceInterface
             $this->repository
                 ->select()
                 ->andWhere('deleted_at', '=', null),
-            $sort
+            $sort,
         );
 
-        return (new KeysetPaginator($dataReader))
+        return new KeysetPaginator($dataReader)
             ->withPageSize(self::COMMENTS_FEED_PER_PAGE);
     }
 
+    #[\Override]
     public function getComment(int $commentId): ?Comment
     {
         return $this->repository->getPublicComment($commentId);
     }
 
-    private function prepareDataReader($query, Sort $sort): DataReaderInterface
+    private function prepareDataReader(Select $query, Sort $sort): DataReaderInterface
     {
-        return (new EntityReader($query))->withSort($sort);
+        return new EntityReader($query)->withSort($sort);
     }
 
     private function getSort(): Sort

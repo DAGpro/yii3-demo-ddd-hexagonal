@@ -5,47 +5,80 @@ declare(strict_types=1);
 /**
  * @var int $year
  * @var int $month
- * @var \Yiisoft\Data\Paginator\OffsetPaginator $paginator
- * @var \Yiisoft\Translator\TranslatorInterface $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\View\WebView $this
+ * @var OffsetPaginator $paginator
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
  */
 
 use App\Blog\Domain\Post;
 use App\Blog\Presentation\Frontend\View\Widget\PostCard;
-use App\Infrastructure\Presentation\Web\Widget\OffsetPagination;
-use Yiisoft\Html\Html;
+use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Html\Tag\Div;
+use Yiisoft\Html\Tag\P;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
+use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
+use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
-$monthName = DateTime::createFromFormat('!m', (string) $month)->format('F');
+$monthName = DateTime::createFromFormat('!m', (string)$month)->format('F');
 $this->setTitle($translator->translate('blog.archive.for') . "<small class='text-muted'>$monthName $year</small>");
 
-$pagination = OffsetPagination::widget()
-    ->paginator($paginator)
-    ->urlGenerator(
-        fn ($page) => $url->generate(
-            'blog/archive/month',
-            ['year' => $year, 'month' => $month, 'page' => $page]
-        )
-    );
+$pagination = Div::tag()
+    ->content(
+        new OffsetPagination()
+            ->withContext(
+                new PaginationContext(
+                    $url->generate(
+                        'blog/archive/month',
+                        ['year' => $year, 'month' => $month],
+                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
+                    $url->generate(
+                        'blog/archive/month',
+                        ['year' => $year, 'month' => $month],
+                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
+                    $url->generate('blog/archive/month', ['year' => $year, 'month' => $month]),
+                ),
+            )
+            ->listTag('ul')
+            ->listAttributes(['class' => 'pagination width-auto'])
+            ->itemTag('li')
+            ->itemAttributes(['class' => 'page-item'])
+            ->linkAttributes(['class' => 'page-link'])
+            ->currentItemClass('active')
+            ->currentLinkClass('page-link')
+            ->disabledItemClass('disabled')
+            ->disabledLinkClass('disabled')
+            ->withPaginator($paginator),
+    )
+    ->class('table-responsive')
+    ->encode(false)
+    ->render();
 ?>
-<h1><?=$this->getTitle()?></h1>
+<h1><?= $this->getTitle() ?></h1>
 <div class="row">
     <div class="col-sm-8 col-md-8 col-lg-9">
         <?php
         $pageSize = $paginator->getCurrentPageSize();
         if ($pageSize > 0) {
-            echo Html::p(
-                $translator->translate('pagination-summary', ['pageSize' => $pageSize, 'total' => $paginator->getTotalItems()]),
-                ['class' => 'text-muted']
-            );
+            echo P::tag()
+                ->content(
+                    $translator->translate('pagination-summary',
+                        ['pageSize' => $pageSize, 'total' => $paginator->getTotalItems()],
+                    ),
+                )
+                ->class('text-muted');
         } else {
-            echo Html::p($translator->translate('views.no-records'));
+            echo P::tag()->content($translator->translate('views.no-records'));
         }
+
         /** @var Post $item */
         foreach ($paginator->read() as $item) {
             echo PostCard::widget()->post($item);
         }
-        if ($pagination->isRequired()) {
+
+        if ($paginator->getTotalItems() > 0) {
             echo $pagination;
         }
         ?>

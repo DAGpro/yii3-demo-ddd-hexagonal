@@ -33,21 +33,21 @@ return [
     // Identity routes
     Group::create('/user')
         ->routes(
-            Route::get( '/cabinet')
+            Route::get('/cabinet')
                 ->name('user/cabinet')
                 ->middleware(Authentication::class)
                 ->action([CabinetController::class, 'index']),
 
-            Route::post( 'cabinet/delete')
+            Route::post('cabinet/delete')
                 ->name('user/cabinet/delete')
                 ->middleware(Authentication::class)
                 ->action([CabinetController::class, 'deleteAccount']),
 
-            Route::get( '/all[/page-{page}]')
+            Route::get('/all[/page/{page}]')
                 ->name('user/index')
                 ->action([UserController::class, 'index']),
 
-            Route::get( '/profile/{login}')
+            Route::get('/profile/{login}')
                 ->name('user/profile')
                 ->action([UserController::class, 'profile']),
         ),
@@ -74,6 +74,6 @@ return [
             Route::get('/user/{login}')
                 ->name('api/user/profile')
                 ->middleware(FormatDataResponseAsJson::class)
-                ->action([ApiUserController::class, 'profile'])
+                ->action([ApiUserController::class, 'profile']),
         ),
 ];

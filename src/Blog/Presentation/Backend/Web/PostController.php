@@ -13,29 +13,22 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class PostController
+final readonly class PostController
 {
-    private const POSTS_PER_PAGE = 3;
-
-    private ModeratePostQueryServiceInterface $postQueryService;
-    private ModeratePostServiceInterface $postService;
+    private const int POSTS_PER_PAGE = 3;
     private ViewRenderer $view;
-    private WebControllerService $webService;
 
     public function __construct(
-        ModeratePostQueryServiceInterface $postQueryService,
-        ModeratePostServiceInterface $postService,
+        private ModeratePostQueryServiceInterface $postQueryService,
+        private ModeratePostServiceInterface $postService,
         ViewRenderer $viewRenderer,
-        WebControllerService $webService
+        private WebControllerService $webService,
     ) {
-        $this->postQueryService = $postQueryService;
-        $this->postService = $postService;
-        $this->webService = $webService;
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@blogBackendView');
         $this->view = $viewRenderer->withControllerName('post');
@@ -47,7 +40,7 @@ final class PostController
 
         $dataReader = $this->postQueryService->findAllPreloaded();
 
-        $paginator = (new OffsetPaginator($dataReader))
+        $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 
@@ -55,7 +48,7 @@ final class PostController
             'index',
             [
                 'paginator' => $paginator,
-            ]
+            ],
         );
     }
 
@@ -70,7 +63,7 @@ final class PostController
             'view',
             [
                 'post' => $post,
-            ]
+            ],
         );
     }
 
@@ -84,20 +77,20 @@ final class PostController
                 'The post_id parameter is required in the post request!',
                 'backend/post',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         try {
             $this->postService->draft((int)$postId);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 
         return $this->webService->sessionFlashAndRedirect(
             'Post moved to draft!',
             'backend/post/view',
-            ['post_id' => $postId]
+            ['post_id' => $postId],
         );
     }
 
@@ -111,27 +104,27 @@ final class PostController
                 'The post_id parameter is required in the post request!',
                 'backend/post',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         try {
             $this->postService->public((int)$postId);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 
         return $this->webService->sessionFlashAndRedirect(
             'Post published!',
             'backend/post/view',
-            ['post_id' => $postId]
+            ['post_id' => $postId],
         );
     }
 
     public function moderate(
         Request $request,
         CurrentRoute $currentRoute,
-        ValidatorInterface $validator
+        FormHydrator $formHydrator,
     ): ResponseInterface {
         $postId = (int)$currentRoute->getArgument('post_id');
         if (($post = $this->postQueryService->getPost($postId)) === null) {
@@ -140,8 +133,7 @@ final class PostController
 
         $form = new PostForm($post);
         if (($request->getMethod() === Method::POST)
-            && $form->load($request->getParsedBody())
-            && $validator->validate($form)->isValid()
+            && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             try {
                 $this->postService->moderate(
@@ -150,10 +142,10 @@ final class PostController
                         $form->getTitle(),
                         $form->getContent(),
                         $form->getPublic(),
-                        $form->getTags()
-                    )
+                        $form->getTags(),
+                    ),
                 );
-            } catch (BlogNotFoundException $exception) {
+            } catch (BlogNotFoundException) {
                 return $this->webService->notFound();
             }
 
@@ -162,7 +154,7 @@ final class PostController
 
         return $this->view->render('moderate', [
             'action' => ['backend/post/moderate', ['post_id' => $post->getId()]],
-            'form' => $form
+            'form' => $form,
         ]);
     }
 
@@ -176,19 +168,19 @@ final class PostController
                 'The post_id parameter is required in the post request!',
                 'backend/post',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         try {
             $this->postService->delete((int)$postId);
-        } catch (BlogNotFoundException $exception) {
+        } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
 
         return $this->webService->sessionFlashAndRedirect(
             'Post successfully deleted!',
-            'backend/post'
+            'backend/post',
         );
     }
 }

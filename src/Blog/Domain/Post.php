@@ -34,40 +34,31 @@ class Post
     #[Column(type: 'primary')]
     private ?int $id = null;
 
-    #[Column(type: 'string(191)', default: '')]
-    private string $title;
-
-    #[Column(type: 'text')]
-    private string $content;
-
     #[Column(type: 'string(128)')]
     private string $slug;
 
-    #[Embedded(target: Author::class)]
-    private Author $author;
-
     #[HasMany(target: Comment::class)]
-    private ArrayCollection $comments;
+    private readonly ArrayCollection $comments;
 
     /**
      * @var PivotedCollection<array-key, Tag, PostTag>
      */
     #[ManyToMany(
         target: Tag::class,
-        though: PostTag::class,
+        through: PostTag::class,
         fkAction: 'CASCADE'
     )]
-    private PivotedCollection $tags;
+    private readonly PivotedCollection $tags;
     private ?int $tag_id = null;
 
     #[Column(type: 'bool', default: 'false', typecast: 'bool')]
     private bool $public = false;
 
     #[Column(type: 'datetime')]
-    private DateTimeImmutable $created_at;
+    private readonly DateTimeImmutable $created_at;
 
     #[Column(type: 'datetime')]
-    private DateTimeImmutable $updated_at;
+    private readonly DateTimeImmutable $updated_at;
 
     #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $published_at = null;
@@ -75,11 +66,11 @@ class Post
     #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $deleted_at = null;
 
-    public function __construct(string $title, string $content, Author $author)
+    public function __construct(#[Column(type: 'string(191)', default: '')]
+    private string $title, #[Column(type: 'text')]
+    private string $content, #[Embedded(target: Author::class)]
+    private Author $author)
     {
-        $this->title = $title;
-        $this->content = $content;
-        $this->author = $author;
         $this->tags = new PivotedCollection();
         $this->comments = new ArrayCollection();
         $this->created_at = new DateTimeImmutable();
@@ -91,7 +82,7 @@ class Post
     public function edit(
         string $title,
         string $content,
-        ?Author $author = null
+        ?Author $author = null,
     ): void {
         $this->title = $title;
         $this->content = $content;
@@ -113,12 +104,12 @@ class Post
         $this->published_at = null;
     }
 
-    public function isAuthor(Author $author) :bool
+    public function isAuthor(Author $author): bool
     {
         return $this->author->isEqual($author);
     }
 
-    public function changeAuthor(Author $author) :void
+    public function changeAuthor(Author $author): void
     {
         $this->author = $author;
     }
@@ -210,15 +201,16 @@ class Post
         return $this->published_at;
     }
 
-    public function getDeletedAt(): ?DateTimeImmutable
-    {
-        return $this->deleted_at;
-    }
-
-    //TODO fixture data
     public function setPublishedAt(DateTimeImmutable $date): void
     {
         $this->published_at = $date;
+    }
+
+    //TODO fixture data
+
+    public function getDeletedAt(): ?DateTimeImmutable
+    {
+        return $this->deleted_at;
     }
 
 }

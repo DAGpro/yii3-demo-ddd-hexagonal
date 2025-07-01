@@ -8,17 +8,20 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Http\Status;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class NotFoundHandler implements RequestHandlerInterface
+final readonly class NotFoundHandler implements RequestHandlerInterface
 {
     private ViewRenderer $viewRenderer;
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('controller/site');
+        $this->viewRenderer = $viewRenderer
+            ->withViewPath('@view')
+            ->withControllerName('site');
     }
 
+    #[\Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return $this->viewRenderer->render('404')->withStatus(Status::NOT_FOUND);

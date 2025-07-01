@@ -3,8 +3,13 @@
 declare(strict_types=1);
 
 
+use App\Infrastructure\Authentication\Identity;
+use App\Infrastructure\Authentication\IdentityRepository;
+use Cycle\ORM\ORMInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Access\AccessCheckerInterface;
+use Yiisoft\Auth\IdentityRepositoryInterface;
 use Yiisoft\Cookies\CookieEncryptor;
 use Yiisoft\Cookies\CookieMiddleware;
 use Yiisoft\Cookies\CookieSigner;

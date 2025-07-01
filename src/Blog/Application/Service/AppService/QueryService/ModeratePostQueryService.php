@@ -7,17 +7,15 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 use App\Blog\Application\Service\QueryService\ModeratePostQueryServiceInterface;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
+use Cycle\ORM\Select;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Yii\Cycle\Data\Reader\EntityReader;
 
-final class ModeratePostQueryService implements ModeratePostQueryServiceInterface
+final readonly class ModeratePostQueryService implements ModeratePostQueryServiceInterface
 {
-    private PostRepositoryInterface $repository;
-
-    public function __construct(PostRepositoryInterface $repository)
+    public function __construct(private PostRepositoryInterface $repository)
     {
-        $this->repository = $repository;
     }
 
     /**
@@ -25,6 +23,7 @@ final class ModeratePostQueryService implements ModeratePostQueryServiceInterfac
      *
      * @psalm-return DataReaderInterface<int, Post>
      */
+    #[\Override]
     public function findAllPreloaded(): DataReaderInterface
     {
         $query = $this
@@ -37,6 +36,7 @@ final class ModeratePostQueryService implements ModeratePostQueryServiceInterfac
         return $this->prepareDataReader($query);
     }
 
+    #[\Override]
     public function getPost(int $id): ?Post
     {
         return $this
@@ -48,11 +48,11 @@ final class ModeratePostQueryService implements ModeratePostQueryServiceInterfac
             ->fetchOne();
     }
 
-    private function prepareDataReader($query): DataReaderInterface
+    private function prepareDataReader(Select $query): DataReaderInterface
     {
-        return (new EntityReader($query))->withSort(
+        return new EntityReader($query)->withSort(
             Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
-                ->withOrder(['published_at' => 'desc'])
+                ->withOrder(['published_at' => 'desc']),
         );
     }
 }

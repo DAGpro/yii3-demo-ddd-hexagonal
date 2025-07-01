@@ -6,46 +6,49 @@ namespace App\IdentityAccess\User\Infrastructure\Persistence;
 
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
-use Cycle\ORM\EntityManager;
-use Cycle\ORM\ORMInterface;
 use Cycle\Database\Injection\Parameter;
+use Cycle\ORM\EntityManagerInterface;
+use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
 use Throwable;
 
 final class UserRepository extends Repository implements UserRepositoryInterface
 {
-    private EntityManager $entityManager;
-    private ORMInterface $orm;
-
-    public function __construct(Select $select, ORMInterface $orm)
-    {
-        $this->entityManager = new EntityManager($orm);
-        $this->orm = $orm;
+    public function __construct(
+        protected Select $select,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ORMInterface $orm,
+    ) {
         parent::__construct($select);
     }
 
+    #[\Override]
     public function findUser(int $userId): ?User
     {
         return $this->findOne(['id' => $userId]);
     }
 
+    #[\Override]
     public function findByLogin(string $login): ?User
     {
         return $this->findOne(['login' => $login]);
     }
 
+    #[\Override]
     public function getUsers(array $userIds): iterable
     {
-        return $this->select()
+        return $this
+            ->select()
             ->where([
                 'id' => [
                     'in' => new Parameter($userIds),
-                ]
+                ],
             ])
             ->fetchAll();
     }
 
+    #[\Override]
     public function removeAll(): void
     {
         $source = $this->orm->getSource(User::class);
@@ -56,6 +59,7 @@ final class UserRepository extends Repository implements UserRepositoryInterface
     /**
      * @throws Throwable
      */
+    #[\Override]
     public function save(array $users): void
     {
         foreach ($users as $entity) {
@@ -64,6 +68,7 @@ final class UserRepository extends Repository implements UserRepositoryInterface
         $this->entityManager->run();
     }
 
+    #[\Override]
     public function delete(array $users): void
     {
         foreach ($users as $entity) {

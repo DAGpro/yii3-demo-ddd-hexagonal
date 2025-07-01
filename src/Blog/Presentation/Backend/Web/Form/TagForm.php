@@ -5,21 +5,20 @@ declare(strict_types=1);
 namespace App\Blog\Presentation\Backend\Web\Form;
 
 use App\Blog\Domain\Tag;
-use Yiisoft\Form\FormModel;
-use Yiisoft\Validator\Rule\HasLength;
+use Yiisoft\FormModel\FormModel;
+use Yiisoft\Validator\Rule\Length;
 use Yiisoft\Validator\Rule\Number;
 use Yiisoft\Validator\Rule\Required;
 
 final class TagForm extends FormModel
 {
-    private string $id;
-    private string $label;
+    private readonly string $id;
+    private readonly string $label;
 
     public function __construct(?Tag $tag)
     {
-        $this->id = $tag ? (string)$tag->getId() : '';
+        $this->id = (string)$tag?->getId();
         $this->label = $tag ? $tag->getLabel() : '';
-        parent::__construct();
     }
 
     public function getId(): string
@@ -32,6 +31,7 @@ final class TagForm extends FormModel
         return $this->label;
     }
 
+    #[\Override]
     public function getFormName(): string
     {
         return '';
@@ -41,12 +41,12 @@ final class TagForm extends FormModel
     {
         return [
             'id' => [
-                Required::rule(),
-                Number::rule(),
+                new Required(),
+                new Number(),
             ],
             'label' => [
-                Required::rule(),
-                HasLength::rule()->min(3)->max(191),
+                new Required(),
+                new Length(min: 3, max: 191),
             ],
         ];
     }

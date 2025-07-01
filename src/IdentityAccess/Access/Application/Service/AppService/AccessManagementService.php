@@ -17,28 +17,20 @@ use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\Role;
 
-final class AccessManagementService implements AccessManagementServiceInterface
+final readonly class AccessManagementService implements AccessManagementServiceInterface
 {
-    private Manager $manager;
-    private ItemsStorageInterface $storage;
-    private AccessRightsServiceInterface $accessRightsService;
-    private AssignmentsServiceInterface $assignmentsService;
-
     public function __construct(
-        Manager $manager,
-        ItemsStorageInterface $storage,
-        AccessRightsServiceInterface $accessRightsService,
-        AssignmentsServiceInterface $assignmentsService
+        private Manager $manager,
+        private ItemsStorageInterface $storage,
+        private AccessRightsServiceInterface $accessRightsService,
+        private AssignmentsServiceInterface $assignmentsService,
     ) {
-        $this->manager = $manager;
-        $this->accessRightsService = $accessRightsService;
-        $this->storage = $storage;
-        $this->assignmentsService = $assignmentsService;
     }
 
     /**
      * @throws ExistItemException
      */
+    #[\Override]
     public function addRole(RoleDTO $roleDTO): void
     {
         $this->throwExceptionIfExistRole($roleDTO);
@@ -51,13 +43,15 @@ final class AccessManagementService implements AccessManagementServiceInterface
      * @throws AssignedItemException
      * @throws NotExistItemException
      */
+    #[\Override]
     public function removeRole(RoleDTO $roleDTO): void
     {
         $this->throwExceptionIfNotExistRole($roleDTO);
 
         if ($this->assignmentsService->isAssignedRoleToUsers($roleDTO)) {
             throw new AssignedItemException('This role is assigned to users.
-                Change assign the role to users before deleting the role!');
+                Change assign the role to users before deleting the role!',
+            );
         }
 
         $role = new Role($roleDTO->getName());
@@ -67,6 +61,7 @@ final class AccessManagementService implements AccessManagementServiceInterface
     /**
      * @throws ExistItemException
      */
+    #[\Override]
     public function addPermission(PermissionDTO $permissionDTO): void
     {
         $this->throwExceptionIfExistPermission($permissionDTO);
@@ -79,13 +74,15 @@ final class AccessManagementService implements AccessManagementServiceInterface
      * @throws AssignedItemException
      * @throws NotExistItemException
      */
+    #[\Override]
     public function removePermission(PermissionDTO $permissionDTO): void
     {
         $this->throwExceptionIfNotExistPermission($permissionDTO);
 
         if ($this->assignmentsService->isAssignedPermissionToUsers($permissionDTO)) {
             throw new AssignedItemException('This permission is assigned to users.
-                change assign the permission to users before deleting the permission!');
+                change assign the permission to users before deleting the permission!',
+            );
         }
 
         $permission = new Permission($permissionDTO->getName());
@@ -96,6 +93,7 @@ final class AccessManagementService implements AccessManagementServiceInterface
      * @throws ExistItemException
      * @throws NotExistItemException
      */
+    #[\Override]
     public function addChildRole(RoleDTO $parentDTO, RoleDTO $childDTO): void
     {
         $this->throwExceptionIfNotExistRole($parentDTO);
@@ -118,6 +116,7 @@ final class AccessManagementService implements AccessManagementServiceInterface
      * @throws ExistItemException
      * @throws NotExistItemException
      */
+    #[\Override]
     public function addChildPermission(RoleDTO $parentDTO, PermissionDTO $childDTO): void
     {
         $this->throwExceptionIfNotExistRole($parentDTO);
@@ -139,12 +138,13 @@ final class AccessManagementService implements AccessManagementServiceInterface
     /**
      * @throws NotExistItemException
      */
+    #[\Override]
     public function removeChildRole(RoleDTO $parentDTO, RoleDTO $childDTO): void
     {
         $this->throwExceptionIfNotExistRole($parentDTO);
         $this->throwExceptionIfNotExistRole($childDTO);
 
-        if (!$this->hasChildRole($parentDTO, $childDTO)){
+        if (!$this->hasChildRole($parentDTO, $childDTO)) {
             throw new NotExistItemException('The parent role does not have this child role!');
         }
 
@@ -156,12 +156,13 @@ final class AccessManagementService implements AccessManagementServiceInterface
     /**
      * @throws NotExistItemException
      */
+    #[\Override]
     public function removeChildPermission(RoleDTO $parentRoleDTO, PermissionDTO $childPermissionDTO): void
     {
         $this->throwExceptionIfNotExistRole($parentRoleDTO);
         $this->throwExceptionIfNotExistPermission($childPermissionDTO);
 
-        if (!$this->hasChildPermission($parentRoleDTO, $childPermissionDTO)){
+        if (!$this->hasChildPermission($parentRoleDTO, $childPermissionDTO)) {
             throw new NotExistItemException('The parent role does not have this child permission!');
         }
 
@@ -173,6 +174,7 @@ final class AccessManagementService implements AccessManagementServiceInterface
     /**
      * @throws NotExistItemException
      */
+    #[\Override]
     public function removeChildren(RoleDTO $parentDTO): void
     {
         $this->throwExceptionIfNotExistRole($parentDTO);
@@ -181,6 +183,7 @@ final class AccessManagementService implements AccessManagementServiceInterface
         $this->manager->removeChildren($parent->getName());
     }
 
+    #[\Override]
     public function hasChildRole(RoleDTO $parentRoleDTO, RoleDTO $childRoleDTO): bool
     {
         $parentRole = new Role($parentRoleDTO->getName());
@@ -188,6 +191,7 @@ final class AccessManagementService implements AccessManagementServiceInterface
         return $this->manager->hasChild($parentRole->getName(), $childRole->getName());
     }
 
+    #[\Override]
     public function hasChildPermission(RoleDTO $parentRoleDTO, PermissionDTO $childPermissionDTO): bool
     {
         $parentRole = new Role($parentRoleDTO->getName());
@@ -195,6 +199,7 @@ final class AccessManagementService implements AccessManagementServiceInterface
         return $this->manager->hasChild($parentRole->getName(), $childPermission->getName());
     }
 
+    #[\Override]
     public function clearAccessRights(): void
     {
         $this->storage->clear();

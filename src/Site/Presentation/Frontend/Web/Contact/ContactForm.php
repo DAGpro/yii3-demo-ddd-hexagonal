@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Site\Presentation\Frontend\Web\Contact;
 
-use Yiisoft\Form\FormModel;
+use Yiisoft\FormModel\FormModel;
 use Yiisoft\Validator\Rule\Email;
 use Yiisoft\Validator\Rule\Required;
 
@@ -16,7 +16,8 @@ final class ContactForm extends FormModel
     private string $body = '';
     private ?array $attachFiles = null;
 
-    public function getAttributeLabels(): array
+    #[\Override]
+    public function getPropertyLabels(): array
     {
         return [
             'name' => 'Name',
@@ -26,6 +27,7 @@ final class ContactForm extends FormModel
         ];
     }
 
+    #[\Override]
     public function getFormName(): string
     {
         return 'ContactForm';
@@ -34,10 +36,10 @@ final class ContactForm extends FormModel
     public function getRules(): array
     {
         return [
-            'name' => [Required::rule()],
-            'email' => [Required::rule(), Email::rule()],
-            'subject' => [Required::rule()],
-            'body' => [Required::rule()],
+            'name' => [new Required()],
+            'email' => [new Required(), new Email()],
+            'subject' => [new Required()],
+            'body' => [new Required()],
         ];
     }
 }

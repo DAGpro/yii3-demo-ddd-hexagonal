@@ -22,21 +22,18 @@ class Tag
     #[Column(type: 'primary')]
     private ?int $id = null;
 
-    #[Column(type: 'string(191)')]
-    private string $label;
-
     #[Column(type: 'datetime')]
-    private DateTimeImmutable $created_at;
+    private readonly DateTimeImmutable $created_at;
 
     /**
      * @var PivotedCollection<array-key, Post, PostTag>
      */
-    #[ManyToMany(target: Post::class, though: PostTag::class, fkAction: 'CASCADE', indexCreate: false)]
-    private PivotedCollection $posts;
+    #[ManyToMany(target: Post::class, through: PostTag::class, fkAction: 'CASCADE', indexCreate: false)]
+    private readonly PivotedCollection $posts;
 
-    public function __construct(string $label)
+    public function __construct(#[Column(type: 'string(191)')]
+    private string $label)
     {
-        $this->label = $label;
         $this->created_at = new DateTimeImmutable();
         $this->posts = new PivotedCollection();
     }

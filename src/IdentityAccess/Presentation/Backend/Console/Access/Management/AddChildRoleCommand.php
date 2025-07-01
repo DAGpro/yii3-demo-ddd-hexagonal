@@ -8,6 +8,7 @@ use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterfa
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,27 +16,28 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'access:addChildRole',
+    'Add child role for a role in access control rights',
+    help: 'This command adds a child role to a role in access control rights'
+)]
 final class AddChildRoleCommand extends Command
 {
-    protected static $defaultName = 'access/addChildRole';
-
-    private AccessManagementServiceInterface $accessManagementService;
-
-    public function __construct(AccessManagementServiceInterface $managementService)
-    {
-        $this->accessManagementService = $managementService;
+    public function __construct(
+        private readonly AccessManagementServiceInterface $accessManagementService,
+    ) {
         parent::__construct();
     }
 
+    #[\Override]
     public function configure(): void
     {
         $this
-            ->setDescription('Add child role for a role in access control rights')
-            ->setHelp('This command adds a child role to a role in access control rights')
             ->addArgument('parentRole', InputArgument::REQUIRED, 'RBAC parent role')
             ->addArgument('childRole', InputArgument::REQUIRED, 'RBAC child role');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -53,8 +55,8 @@ final class AddChildRoleCommand extends Command
                 sprintf(
                     'Child role `%s` added to parent role `%s`!',
                     $childRoleDTO->getName(),
-                    $parentRoleDTO->getName()
-                )
+                    $parentRoleDTO->getName(),
+                ),
             );
 
             return ExitCode::OK;

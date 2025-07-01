@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Site\Presentation\Backend\Console\Router;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -12,18 +13,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Router\RouteCollectionInterface;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(name: 'router:list')]
 final class ListCommand extends Command
 {
-    private RouteCollectionInterface $routeCollection;
-
-    protected static $defaultName = 'router/list';
-
-    public function __construct(RouteCollectionInterface $routeCollection)
+    public function __construct(private readonly RouteCollectionInterface $routeCollection)
     {
-        $this->routeCollection = $routeCollection;
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -31,15 +29,14 @@ final class ListCommand extends Command
             ->setHelp('This command displays a list of registered routes.');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);
         $routes = $this->routeCollection->getRoutes();
         uasort(
             $routes,
-            static function ($a, $b) {
-                return ($a->getHost() <=> $b->getHost()) ?: ($a->getName() <=> $b->getName());
-            }
+            static fn($a, $b) => ($a->getHost() <=> $b->getHost()) ?: ($a->getName() <=> $b->getName())
         );
         $table->setHeaders(['Host', 'Methods', 'Name', 'Pattern', 'Defaults']);
         foreach ($routes as $route) {

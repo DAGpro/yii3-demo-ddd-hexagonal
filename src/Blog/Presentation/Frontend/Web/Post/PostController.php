@@ -10,22 +10,18 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Yii\View\ViewRenderer;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-final class PostController
+final readonly class PostController
 {
     private ViewRenderer $view;
-    private WebControllerService $webService;
-    private IdentityAccessService $identityAccessService;
 
     public function __construct(
         ViewRenderer $viewRenderer,
-        WebControllerService $webService,
-        IdentityAccessService $identityAccessService
+        private WebControllerService $webService,
+        private IdentityAccessService $identityAccessService
     ) {
         $this->view = $viewRenderer->withViewPath('@blogView/post');
-        $this->webService = $webService;
-        $this->identityAccessService = $identityAccessService;
     }
 
     public function index(

@@ -9,6 +9,7 @@ use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,31 +17,29 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 
+#[AsCommand(
+    'assign:revokePermission',
+    'Revoke RBAC permission to given user',
+    help: 'This command allows you to revoke RBAC permission to user',
+)]
 final class RevokePermissionCommand extends Command
 {
-    protected static $defaultName = 'assign/revokePermission';
-
-    private AssignAccessServiceInterface $assigningService;
-    private UserQueryServiceInterface $userQueryService;
-
     public function __construct(
-        AssignAccessServiceInterface $assignAccessService,
-        UserQueryServiceInterface $userQueryService
+        private readonly AssignAccessServiceInterface $assignAccessService,
+        private readonly UserQueryServiceInterface $userQueryService,
     ) {
-        $this->assigningService = $assignAccessService;
-        $this->userQueryService = $userQueryService;
         parent::__construct();
     }
 
+    #[\Override]
     public function configure(): void
     {
         $this
-            ->setDescription('Revoke RBAC permission to given user')
-            ->setHelp('This command allows you to revoke RBAC permission to user')
             ->addArgument('userId', InputArgument::REQUIRED, 'User id')
             ->addArgument('permission', InputArgument::REQUIRED, 'RBAC permission');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -55,7 +54,7 @@ final class RevokePermissionCommand extends Command
             }
 
             $permissionDTO = new PermissionDTO($permissionName);
-            $this->assigningService->revokePermission($permissionDTO, $user->getId());
+            $this->assignAccessService->revokePermission($permissionDTO, $user->getId());
 
             $io->success('Permission was revoke to given user');
         } catch (AssignedItemException|IdentityException $t) {

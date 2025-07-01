@@ -12,11 +12,8 @@ use Yiisoft\Auth\IdentityRepositoryInterface;
 
 final class IdentityRepository extends Select\Repository implements IdentityRepositoryInterface
 {
-    private EntityManager $entityManager;
-
-    public function __construct(Select $select, EntityManager $entityWriter)
+    public function __construct(Select $select, private readonly EntityManager $entityManager)
     {
-        $this->entityManager = $entityWriter;
         parent::__construct($select);
     }
 
@@ -35,6 +32,7 @@ final class IdentityRepository extends Select\Repository implements IdentityRepo
      *
      * @return Identity|null
      */
+    #[\Override]
     public function findIdentity(string $id): ?Identity
     {
         return $this->findOne(['id' => $id]);

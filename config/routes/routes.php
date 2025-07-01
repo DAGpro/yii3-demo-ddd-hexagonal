@@ -17,9 +17,11 @@ return [
     Route::get('/')
         ->action([SiteController::class, 'index'])
         ->name('site/index'),
+
     Route::post('/locale')
         ->action([SiteController::class, 'setLocale'])
         ->name('site/set-locale'),
+
     Route::methods([Method::GET, Method::POST], '/contact')
         ->action([ContactController::class, 'contact'])
         ->name('site/contact'),
@@ -30,7 +32,7 @@ return [
             Route::get('')
                 ->name('swagger/index')
                 ->middleware(FormatDataResponseAsHtml::class)
-                ->action(fn (SwaggerUi $swaggerUi) => $swaggerUi->withJsonUrl('/swagger/json-url')),
+                ->action(fn(SwaggerUi $swaggerUi) => $swaggerUi->withJsonUrl('/swagger/json-url')),
             Route::get('/json-url')
                 ->middleware(FormatDataResponseAsJson::class)
                 ->action(SwaggerJson::class),
