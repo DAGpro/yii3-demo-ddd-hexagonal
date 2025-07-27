@@ -34,7 +34,7 @@ final class UserController
             ->findAllPreloaded()
             ->withSort(
                 Sort::only(['id', 'login'])
-                    ->withOrderString($sortOrderString['sort'] ?? ''),
+                    ->withOrderString((string)($sortOrderString['sort'] ?? '')),
             );
 
         $paginator = new OffsetPaginator($dataReader)
@@ -55,6 +55,10 @@ final class UserController
         ResponseFactoryInterface $responseFactory,
     ): Response {
         $login = $currentRoute->getArgument('login');
+        if ($login === null) {
+            return $responseFactory->createResponse(404);
+        }
+
         $item = $userQueryService->findByLogin($login);
         if ($item === null) {
             return $responseFactory->createResponse(404);

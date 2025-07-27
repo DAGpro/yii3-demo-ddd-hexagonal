@@ -11,6 +11,7 @@ final readonly class PostModerateDTO
         private string $title,
         private string $content,
         private bool $public,
+        /** @var string[] */
         private array $tags,
     ) {
     }
@@ -20,6 +21,9 @@ final readonly class PostModerateDTO
         return $this->title;
     }
 
+    /**
+     * @return string[]
+     */
     public function getTags(): array
     {
         return $this->tags;

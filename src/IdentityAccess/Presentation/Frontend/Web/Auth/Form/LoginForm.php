@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth\Form;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use Override;
 use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RulesProviderInterface;
 
-final class LoginForm extends FormModel
+final class LoginForm extends FormModel implements RulesProviderInterface
 {
     private string $login = '';
     private string $password = '';
     private bool $rememberMe = false;
 
-    public function __construct(private readonly UserQueryServiceInterface $userService, private readonly TranslatorInterface $translator)
-    {
+    public function __construct(
+        private readonly UserQueryServiceInterface $userService,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function getLogin(): string
@@ -30,7 +34,7 @@ final class LoginForm extends FormModel
         return $this->password;
     }
 
-    #[\Override]
+    #[Override]
     public function getPropertyLabels(): array
     {
         return [
@@ -40,12 +44,13 @@ final class LoginForm extends FormModel
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function getFormName(): string
     {
         return 'Login';
     }
 
+    #[Override]
     public function getRules(): array
     {
         return [

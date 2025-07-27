@@ -8,6 +8,7 @@ use App\Blog\Application\Service\CommandService\AuthorPostServiceInterface;
 use App\Blog\Application\Service\CommandService\PostChangeDTO;
 use App\Blog\Application\Service\CommandService\PostCreateDTO;
 use App\Blog\Application\Service\QueryService\AuthorPostQueryServiceInterface;
+use App\Blog\Domain\Exception\BlogAccessDeniedException;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Infrastructure\Services\IdentityAccessService;
 use App\Infrastructure\Presentation\Web\Service\WebControllerService;
@@ -38,7 +39,7 @@ final readonly class AuthorPostController
         CurrentRoute $currentRoute,
         AuthorPostQueryServiceInterface $postQueryService,
     ): Response {
-        $pageNum = (int)$currentRoute->getArgument('page', '1');
+        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
         if (!($author = $this->identityAccessService->getAuthor())) {
             return $this->webService->accessDenied();
         }
@@ -56,7 +57,10 @@ final readonly class AuthorPostController
         CurrentRoute $currentRoute,
         AuthorPostQueryServiceInterface $postQueryService,
     ): Response {
-        $slug = $currentRoute->getArgument('slug', '');
+        $slug = $currentRoute->getArgument('slug');
+        if ($slug === null) {
+            return $this->webService->notFound();
+        }
 
         $post = $postQueryService->getPostBySlug($slug);
         if ($post === null) {
@@ -70,6 +74,9 @@ final readonly class AuthorPostController
         return $this->view->render('post', ['post' => $post]);
     }
 
+    /**
+     * @throws BlogNotFoundException
+     */
     public function add(
         Request $request,
         PostForm $form,
@@ -97,25 +104,33 @@ final readonly class AuthorPostController
         return $this->view->render('form_post',
             [
                 'title' => 'Add post',
-                'action' => ['blog/author/post/add'],
+                'action' => ['route' => 'blog/author/post/add'],
                 'form' => $form,
             ],
         );
     }
 
+    /**
+     * @throws BlogNotFoundException
+     */
     public function edit(
         Request $request,
         CurrentRoute $currentRoute,
         AuthorPostQueryServiceInterface $postQueryService,
         formHydrator $formHydrator,
     ): Response {
-        $slug = $currentRoute->getArgument('slug', '');
-
-        if (!($post = $postQueryService->getPostBySlug($slug))) {
+        $slug = $currentRoute->getArgument('slug');
+        if ($slug === null) {
             return $this->webService->notFound();
         }
 
-        if (!$this->identityAccessService->isAuthor($post)) {
+        $post = $postQueryService->getPostBySlug($slug);
+        if ($post === null) {
+            return $this->webService->notFound();
+        }
+
+        $author = $this->identityAccessService->getAuthor();
+        if ($author === null || !$post->isAuthor($author)) {
             return $this->webService->accessDenied();
         }
 
@@ -129,9 +144,10 @@ final readonly class AuthorPostController
                     new PostChangeDTO(
                         $form->getTitle(), $form->getContent(), $form->getTags(),
                     ),
+                    $author,
                 );
-            } catch (BlogNotFoundException) {
-                return $this->webService->notFound();
+            } catch (BlogAccessDeniedException $e) {
+                return $this->webService->accessDenied($e->getMessage());
             }
 
             return $this->webService->redirect('blog/author/post/view', ['slug' => $post->getSlug()]);
@@ -140,31 +156,42 @@ final readonly class AuthorPostController
         return $this->view->render('form_post',
             [
                 'title' => 'Edit post',
-                'action' => ['blog/author/post/edit', ['slug' => $slug]],
+                'action' => ['route' => 'blog/author/post/edit', 'arguments' => ['slug' => $slug]],
                 'form' => $form,
             ],
         );
     }
 
     //remove?
+
+    /**
+     * @throws BlogNotFoundException
+     */
     public function delete(
         CurrentRoute $currentRoute,
         AuthorPostQueryServiceInterface $postQueryService,
     ): Response {
-        $slug = $currentRoute->getArgument('slug', '');
-
-        if (!($post = $postQueryService->getPostBySlug($slug))) {
+        $slug = $currentRoute->getArgument('slug');
+        if ($slug === null) {
             return $this->webService->notFound();
         }
 
-        if (!$this->identityAccessService->isAuthor($post)) {
+        $post = $postQueryService->getPostBySlug($slug);
+        if ($post === null) {
+            return $this->webService->notFound();
+        }
+
+        $author = $this->identityAccessService->getAuthor();
+        if ($author === null || !$post->isAuthor($author)) {
             return $this->webService->accessDenied();
         }
 
         try {
-            $this->postService->delete($slug);
-        } catch (BlogNotFoundException) {
-            return $this->webService->notFound();
+            $this->postService->delete($slug, $author);
+        } catch (BlogAccessDeniedException $exception) {
+            return $this->webService->accessDenied(
+                $exception->getMessage(),
+            );
         }
 
         return $this->webService->redirect('blog');

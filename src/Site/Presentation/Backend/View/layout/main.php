@@ -69,54 +69,48 @@ $this->beginPage();
             ->begin() ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()->getPath())
+            ->currentPath($currentRoute->getUri()?->getPath())
             ->addAttributes(['class' => 'navbar-nav mx-auto'])
             ->items(
-                [
-                    [
-                        'label' => $translator->translate('backend_menu.blog'),
-                        'url' => '',
-                        'items' => [
-                            [
-                                'label' => $translator->translate('backend_menu.posts'),
-                                'url' => $url->generate('backend/post'),
-                                'active' => StringHelper::startsWith($currentRouteName, 'backend/post'),
-                            ],
-                            [
-                                'label' => $translator->translate('backend_menu.comments'),
-                                'url' => $url->generate('backend/comment'),
-                                'active' => StringHelper::startsWith($currentRouteName, 'backend/comment'),
-                            ],
-                            [
-                                'label' => $translator->translate('backend_menu.tags'),
-                                'url' => $url->generate('backend/tag'),
-                                'active' => StringHelper::startsWith($currentRouteName, 'backend/tag'),
-                            ],
-                        ],
-                    ],
-                    [
-                        'label' => $translator->translate('backend_menu.identityAccess'),
-                        'url' => '',
-                        'items' => [
-                            [
-                                'label' => $translator->translate('backend_menu.accessRights'),
-                                'url' => $url->generate('backend/access'),
-                                'active' => StringHelper::startsWith($currentRouteName, 'backend/access'),
-                            ],
-                            [
-                                'label' => $translator->translate('backend_menu.user'),
-                                'url' => $url->generate('backend/user'),
-                                'active' => StringHelper::startsWith($currentRouteName, 'backend/user'),
-                            ],
-                        ],
-                    ],
-                    ['label' => $translator->translate('menu.frontend'), 'url' => $url->generate('site/index'),],
-                ],
+                Dropdown::widget()
+                    ->togglerContent($translator->translate('backend_menu.blog'))
+                    ->items(
+                        DropdownItem::link(
+                            $translator->translate('backend_menu.posts'),
+                            $url->generate('backend/post'),
+                        )
+                            ->active(StringHelper::startsWith($currentRouteName, 'backend/post')),
+                        DropdownItem::link(
+                            $translator->translate('backend_menu.comments'),
+                            $url->generate('backend/comment'),
+                        )
+                            ->active(StringHelper::startsWith($currentRouteName, 'backend/comment')),
+                        DropdownItem::link(
+                            $translator->translate('backend_menu.tags'),
+                            $url->generate('backend/tag'),
+                        )
+                            ->active(StringHelper::startsWith($currentRouteName, 'backend/tag')),
+                    ),
+                Dropdown::widget()
+                    ->togglerContent($translator->translate('backend_menu.identityAccess'))
+                    ->items(
+                        DropdownItem::link(
+                            $translator->translate('backend_menu.accessRights'),
+                            $url->generate('backend/access'),
+                        )
+                            ->active(StringHelper::startsWith($currentRouteName, 'backend/access')),
+                        DropdownItem::link(
+                            $translator->translate('backend_menu.user'),
+                            $url->generate('backend/user'),
+                        )
+                            ->active(StringHelper::startsWith($currentRouteName, 'backend/user')),
+                    ),
+                NavLink::to($translator->translate('menu.frontend'), $url->generate('site/index')),
             ) ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()->getPath())
-            ->addAttributes(['class' => 'navbar-nav'])
+            ->currentPath($currentRoute->getUri()?->getPath())
+            ->addAttributes(['class' => 'navbar-nav me-2'])
             ->items(
                 ...$user?->getId() === null
                 ?
@@ -160,39 +154,24 @@ $this->beginPage();
                                 ),
                             ),
                         ),
-                    NavLink::to(
-                        Form::tag()
-                            ->action($url->generate('auth/logout'))
-                            ->csrf($csrf)
-                            ->content(
-                                Field::submitButton(
-                                    $translator->translate(
-                                        'menu.logout',
-                                        ['login' => Html::encode($user->getLogin())],
-                                    ),
-                                )
-                                    ->containerClass('mb-1')
-                                    ->addButtonClass('btn btn-primary'),
-                            ),
-                    ),
 
                 ],
-            );
+            )
         ?>
-        <?=
-        Form::tag()
-            ->action($url->generate('auth/logout'))
-            ->csrf($csrf)
-            ->content(
-                Field::submitButton(
-                    $translator->translate(
-                        'menu.logout',
-                        ['login' => Html::encode($user->getLogin())],
-                    ),
+        <?= $user === null ? '' :
+            Form::tag()
+                ->action($url->generate('auth/logout'))
+                ->csrf($csrf)
+                ->content(
+                    Field::submitButton(
+                        $translator->translate(
+                            'menu.logout',
+                            ['login' => Html::encode($user->getLogin())],
+                        ),
+                    )
+                        ->containerClass('mb-1')
+                        ->buttonClass('btn btn-primary btn-sm mt-1'),
                 )
-                    ->containerClass('mb-1')
-                    ->addButtonClass('btn btn-primary'),
-            );
         ?>
         <?= NavBar::end() ?>
     </header>

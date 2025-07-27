@@ -6,6 +6,7 @@ namespace App\IdentityAccess\Presentation\Backend\Console\Access;
 
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -28,18 +29,18 @@ final class ViewRoleCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this->addArgument('role', InputArgument::REQUIRED, 'View role and child roles and permissions');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = $input->getArgument('role');
+        $roleName = (string)$input->getArgument('role');
         $role = $this->accessRightsService->getRoleByName($roleName);
 
         if (!$role) {

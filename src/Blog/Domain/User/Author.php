@@ -7,6 +7,9 @@ namespace App\Blog\Domain\User;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Embeddable;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 #[Embeddable]
 class Author
 {
@@ -14,9 +17,8 @@ class Author
         #[Column(type: 'integer')]
         private readonly int $authorId,
         #[Column(type: 'string(191)')]
-        private readonly string $authorName
-    )
-    {
+        private readonly string $authorName,
+    ) {
     }
 
     public function getId(): int

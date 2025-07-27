@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 
 use Yiisoft\FormModel\Field;
+use Yiisoft\FormModel\FormModelInterface;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\Form;
 use Yiisoft\Router\UrlGeneratorInterface;
@@ -33,6 +34,7 @@ $error ??= null;
                 <div class="card-body p-5 text-center">
                     <?= Form::tag()
                         ->action($url->generate('auth/login'))
+                        ->method('post')
                         ->csrf($csrf)
                         ->id('loginForm')
                         ->content(

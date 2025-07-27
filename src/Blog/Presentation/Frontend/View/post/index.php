@@ -2,21 +2,10 @@
 
 declare(strict_types=1);
 
-/**
- * @var Post $item
- * @var TranslatorInterface $translator
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- * @var bool $canEdit
- * @var Commentator $commentator
- * @var string $csrf
- * @var string $slug
- */
 
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Commentator;
-use Yiisoft\Bootstrap5\Alert;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\A;
 use Yiisoft\Html\Tag\Div;
@@ -25,15 +14,17 @@ use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
+/**
+ * @var Post $item
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ * @var bool $canEdit
+ * @var ?Commentator $commentator
+ * @var string $csrf
+ * @var string $slug
+ */
 $this->setTitle($item->getTitle());
-
-if (!empty($errors)) {
-    foreach ($errors as $field => $error) {
-        echo Alert::widget()
-            ->addAttributes(['class' => 'alert-danger'])
-            ->body(Html::encode($field . ':' . $error));
-    }
-}
 
 ?>
     <h1><?= Html::encode($item->getTitle()) ?></h1>
@@ -41,7 +32,7 @@ if (!empty($errors)) {
         <span class="text-muted"><?= $item->getPublishedAt() === null
                 ? 'not published'
                 : $translator->translate('blog.published.post',
-                    ['date' => $item->getPublishedAt()->format('H:i:s d.m.Y')],
+                    ['date' => $item->getPublishedAt()?->format('H:i:s d.m.Y')],
                 ) ?> by</span>
         <?php
         echo A::tag()
@@ -125,7 +116,7 @@ if ($item->getComments()) {
                             <i><?= $translator->translate('blog.updated.at') ?></i>
                             <?= $comment->getUpdatedAt()->format('H:i d.m.Y') ?>
                         </span>
-                    <?php
+                        <?php
                     } ?>
                     <span>
                         <?= $commentator !== null && $commentator->isEqual($comment->getCommentator())

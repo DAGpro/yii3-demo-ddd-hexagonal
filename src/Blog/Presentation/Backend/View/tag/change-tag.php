@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+
+use App\Blog\Domain\Tag;
+use App\Blog\Presentation\Backend\Web\Form\TagForm;
+use Yiisoft\FormModel\Field;
+use Yiisoft\Html\Tag\Form;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\Translator;
+use Yiisoft\View\WebView;
+
 /**
  * @var WebView $this
  * @var UrlGeneratorInterface $url
@@ -14,41 +23,34 @@ declare(strict_types=1);
  * @var Tag $tag
  * @var array $error
  */
-
-
-use App\Blog\Domain\Tag;
-use App\Blog\Presentation\Backend\Web\Form\TagForm;
-use Yiisoft\FormModel\Field;
-use Yiisoft\Html\Tag\Form;
-use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Translator\Translator;
-use Yiisoft\View\WebView;
-
 $this->setTitle($title);
 
 ?>
     <div class="main row">
         <div class="col-md-5">
-            <h3> <?= $translator->translate('blog.tag.change') . $form->getLabel() ?></h3>
-            <?= Form::tag()
-                ->action($url->generate(...$action))
-                ->method('post')
-                ->attributes(['enctype' => 'multipart/form-data'])
-                ->csrf($csrf)
-                ->id('form-moderate-tag')
-                ->content(
-                    Field::text($form, 'label'),
-                    Field::text($form, 'id')->addInputAttributes(['disabled' => 'disabled']),
-                    Field::submitButton()
-                        ->content($translator->translate('button.submit'))
-                        ->addButtonAttributes(
-                            [
-                                'class' => 'btn btn-primary btn-lg mt-3',
-                                'id' => 'login-button',
-                            ],
-                        ),
-                )
-            ?>
+            <div class="card">
+                <h3 class="card-header"> <?= $translator->translate('blog.tag.change') . $form->getLabel() ?></h3>
+                <?= Form::tag()
+                    ->action($url->generate('backend/tag/change', ['tag_id' => $form->getId()]))
+                    ->method('post')
+                    ->attributes(['enctype' => 'multipart/form-data'])
+                    ->csrf($csrf)
+                    ->class('card-body')
+                    ->id('form-moderate-tag')
+                    ->content(
+                        Field::text($form, 'label'),
+                        Field::text($form, 'id')->addInputAttributes(['disabled' => 'disabled']),
+                        Field::submitButton()
+                            ->content($translator->translate('button.submit'))
+                            ->addButtonAttributes(
+                                [
+                                    'class' => 'btn btn-primary btn-lg mt-3',
+                                    'id' => 'login-button',
+                                ],
+                            ),
+                    )
+                ?>
+            </div>
         </div>
     </div>
 <?php

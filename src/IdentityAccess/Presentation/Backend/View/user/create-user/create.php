@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+
+use App\IdentityAccess\Presentation\Backend\Web\User\Forms\CreateUserForm;
+use Yiisoft\Data\Paginator\PaginatorInterface;
+use Yiisoft\FormModel\Field;
+use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\Form;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
+
 /**
  * @var WebView $this
  * @var UrlGeneratorInterface $url
@@ -13,17 +23,6 @@ declare(strict_types=1);
  * @var string $title
  * @var CreateUserForm $form
  */
-
-
-use App\IdentityAccess\Presentation\Backend\Web\User\Forms\CreateUserForm;
-use Yiisoft\Data\Paginator\PaginatorInterface;
-use Yiisoft\FormModel\Field;
-use Yiisoft\Html\Html;
-use Yiisoft\Html\Tag\Form;
-use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Translator\TranslatorInterface;
-use Yiisoft\View\WebView;
-
 ?>
 
 <div class="container py-5 h-100">

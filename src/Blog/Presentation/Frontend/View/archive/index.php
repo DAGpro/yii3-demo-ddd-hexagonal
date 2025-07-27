@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var DataReaderInterface|string[][] $archive
- * @var UrlGeneratorInterface $url
- * @var TranslatorInterface $translator
- * @var WebView $this
- */
 
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Html;
@@ -18,6 +12,14 @@ use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
+/**
+ * @var DataReaderInterface $archive
+ * @var UrlGeneratorInterface $url
+ * @var TranslatorInterface $translator
+ * @var WebView $this
+ */
+
+/** @psalm-scope-this WebView */
 $this->setTitle($translator->translate('blog.archive'));
 
 ?>
@@ -29,9 +31,21 @@ $this->setTitle($translator->translate('blog.archive'));
 
         if (count($archive)) {
             $monthList = [];
+            /**
+             * @var array{year: int|null, month: int|null, count: int} $item
+             */
             foreach ($archive->read() as $item) {
+                /**
+                 * @var string|null $year
+                 **/
                 $year = $item['year'];
+                /**
+                 * @var string|null $month
+                 **/
                 $month = $item['month'];
+                /**
+                 * @var int $count
+                 **/
                 $count = $item['count'];
 
                 if ($year === null || $month === null) {
@@ -67,13 +81,17 @@ $this->setTitle($translator->translate('blog.archive'));
                     ->encode(false);
             }
 
-            foreach ($monthList as $year => $months) {
+            /**
+             * @var int $yearMonths
+             * @var array $months
+             */
+            foreach ($monthList as $yearMonths => $months) {
                 echo Li::tag()
                     ->class('list-group-item d-flex flex-column justify-content-between lh-condensed')
                     ->content(
                         A::tag()
-                            ->content((string)$year)
-                            ->url($url->generate('blog/archive/year', ['year' => $year]))
+                            ->content((string)$yearMonths)
+                            ->url($url->generate('blog/archive/year', ['year' => $yearMonths]))
                             ->class('h5'),
                         ...$months,
                     )

@@ -6,15 +6,18 @@ namespace App\Infrastructure\Presentation\Web\ViewInjection;
 
 use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Authorization\AuthorizationService;
+use Override;
 use Yiisoft\Yii\View\Renderer\LayoutParametersInjectionInterface;
 
 final readonly class LayoutViewInjection implements LayoutParametersInjectionInterface
 {
-    public function __construct(private AuthenticationService $authenticationService, private AuthorizationService $authorizationService)
-    {
+    public function __construct(
+        private AuthenticationService $authenticationService,
+        private AuthorizationService $authorizationService,
+    ) {
     }
 
-    #[\Override]
+    #[Override]
     public function getLayoutParameters(): array
     {
         $user = $this->authenticationService->getUser();

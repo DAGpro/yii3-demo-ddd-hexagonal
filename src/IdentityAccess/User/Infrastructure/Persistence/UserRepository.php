@@ -11,10 +11,17 @@ use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
+use Override;
 use Throwable;
 
+/**
+ * @extends Repository<User>
+ */
 final class UserRepository extends Repository implements UserRepositoryInterface
 {
+    /**
+     * @param Select<User> $select
+     */
     public function __construct(
         protected Select $select,
         private readonly EntityManagerInterface $entityManager,
@@ -23,19 +30,21 @@ final class UserRepository extends Repository implements UserRepositoryInterface
         parent::__construct($select);
     }
 
-    #[\Override]
+    #[Override]
     public function findUser(int $userId): ?User
     {
-        return $this->findOne(['id' => $userId]);
+        $result = $this->findOne(['id' => $userId]);
+        return $result instanceof User ? $result : null;
     }
 
-    #[\Override]
+    #[Override]
     public function findByLogin(string $login): ?User
     {
-        return $this->findOne(['login' => $login]);
+        $result = $this->findOne(['login' => $login]);
+        return $result instanceof User ? $result : null;
     }
 
-    #[\Override]
+    #[Override]
     public function getUsers(array $userIds): iterable
     {
         return $this
@@ -48,7 +57,7 @@ final class UserRepository extends Repository implements UserRepositoryInterface
             ->fetchAll();
     }
 
-    #[\Override]
+    #[Override]
     public function removeAll(): void
     {
         $source = $this->orm->getSource(User::class);
@@ -59,18 +68,26 @@ final class UserRepository extends Repository implements UserRepositoryInterface
     /**
      * @throws Throwable
      */
-    #[\Override]
+    #[Override]
     public function save(array $users): void
     {
+        if (empty($users)) {
+            return;
+        }
+
         foreach ($users as $entity) {
             $this->entityManager->persist($entity);
         }
         $this->entityManager->run();
     }
 
-    #[\Override]
+    #[Override]
     public function delete(array $users): void
     {
+        if (empty($users)) {
+            return;
+        }
+
         foreach ($users as $entity) {
             $this->entityManager->delete($entity);
         }

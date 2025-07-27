@@ -6,7 +6,6 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 
 use App\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
 use App\Blog\Domain\Port\PostRepositoryInterface;
-use Cycle\Database\Query\SelectQuery;
 use Cycle\ORM\Select;
 use DateTimeImmutable;
 use Override;
@@ -20,6 +19,9 @@ final readonly class ArchivePostQueryService implements ArchivePostQueryServiceI
     {
     }
 
+    /**
+     * @param int<0, max>|null $limit
+     */
     #[Override]
     public function getFullArchive(?int $limit = null): DataReaderInterface
     {
@@ -74,14 +76,7 @@ final readonly class ArchivePostQueryService implements ArchivePostQueryServiceI
         return $this->prepareDataReader($query);
     }
 
-    /**
-     * @psalm-suppress UndefinedDocblockClass
-     *
-     * @param Select|SelectQuery $query
-     *
-     * @return EntityReader
-     */
-    private function prepareDataReader(Select $query): EntityReader
+    private function prepareDataReader(Select $query): DataReaderInterface
     {
         return new EntityReader($query)
             ->withSort(

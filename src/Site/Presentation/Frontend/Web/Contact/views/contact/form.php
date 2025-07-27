@@ -6,6 +6,7 @@ declare(strict_types=1);
 use App\Site\Presentation\Frontend\Web\Contact\ContactForm;
 use Yiisoft\FormModel\Field;
 use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\Button;
 use Yiisoft\Html\Tag\Form;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
@@ -18,7 +19,6 @@ use Yiisoft\View\WebView;
  * @var Field $field
  * @var WebView $this
  * @var TranslatorInterface $translator
- * @var $this Yiisoft\View\WebView
  */
 
 $this->setTitle($translator->translate('menu.contact'));
@@ -33,6 +33,7 @@ $this->setTitle($translator->translate('menu.contact'));
                 </div>
                 <div class="card-body p-5 text-center">
                     <?= Form::tag()
+                        ->method('POST')
                         ->action($url->generate('site/contact'))
                         ->csrf($csrf)
                         ->id('form-contact')
@@ -45,23 +46,19 @@ $this->setTitle($translator->translate('menu.contact'));
                             Field::file($form, 'attachFiles', ['multiple()' => [true]])
                                 ->containerClass('mb-3')
                                 ->label(null),
-                            Field::buttonGroup(
-                                [
-                                    [
-                                        ['label' => 'Reset', 'type' => 'reset'],
-                                        ['label' => 'Submit', 'type' => 'submit'],
-                                    ],
-                                    [
-                                        'individualButtonAttributes()' => [
-                                            [
-                                                0 => ['class' => 'btn btn-lg btn-danger'],
-                                                1 => ['class' => 'btn btn-lg btn-primary', 'name' => 'contact-button'],
-                                            ],
-                                        ],
-
-                                    ],
-                                ],
-                            )->containerClass('btn-group btn-toolbar float-end'),
+                            Field::buttonGroup()
+                                ->buttons(
+                                    Button::tag()
+                                        ->type('Reset')
+                                        ->class('btn btn-lg btn-danger')
+                                        ->content('Reset'),
+                                    Button::tag()
+                                        ->type('Submit')
+                                        ->class('btn btn-lg btn-primary')
+                                        ->addAttributes(['name' => 'contact-button'])
+                                        ->content('Submit'),
+                                )
+                                ->containerClass('btn-group btn-toolbar float-end'),
                         )
                     ?>
                 </div>

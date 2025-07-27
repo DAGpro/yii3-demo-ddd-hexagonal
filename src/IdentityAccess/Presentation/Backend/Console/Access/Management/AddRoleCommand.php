@@ -7,6 +7,7 @@ namespace App\IdentityAccess\Presentation\Backend\Console\Access\Management;
 use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,18 +28,18 @@ final class AddRoleCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this->addArgument('role', InputArgument::REQUIRED, 'RBAC role');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = $input->getArgument('role');
+        $roleName = (string)$input->getArgument('role');
 
         try {
             $roleDTO = new RoleDTO($roleName);

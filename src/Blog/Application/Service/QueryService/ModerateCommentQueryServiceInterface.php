@@ -9,7 +9,7 @@ use Yiisoft\Data\Reader\DataReaderInterface;
 
 interface ModerateCommentQueryServiceInterface
 {
-    public function findAllPreloaded(): ?DataReaderInterface;
+    public function findAllPreloaded(): DataReaderInterface;
 
     public function getComment(int $commentId): ?Comment;
 }

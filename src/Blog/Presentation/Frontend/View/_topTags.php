@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var DataReaderInterface $tags
- * @var TranslatorInterface $translator
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- */
 
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Html;
@@ -18,6 +12,13 @@ use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
+/**
+ * @var DataReaderInterface $tags
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ */
+
 ?>
 <h4 class="text-muted mb-3">
     <?= $translator->translate('blog.popular.tags') ?>
@@ -27,7 +28,7 @@ use Yiisoft\View\WebView;
     $content = [];
 
     try {
-        // Итерируемся по DataReader
+        /** @var array{label: string, count: int} $tag */
         foreach ($tags->read() as $tag) {
             $content[] = Li::tag()
                 ->class('list-group-item d-flex justify-content-between align-items-center')

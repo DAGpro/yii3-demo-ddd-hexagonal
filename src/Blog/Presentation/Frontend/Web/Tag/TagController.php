@@ -30,10 +30,15 @@ final readonly class TagController
         TagQueryServiceInterface $tagQueryService,
         ReadPostQueryServiceInterface $postQueryService,
     ): Response {
-        $label = $currentRoute->getArgument('label', '');
-        $pageNum = (int)$currentRoute->getArgument('page', '1');
+        $label = $currentRoute->getArgument('label');
+        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
 
-        if (($tag = $tagQueryService->findByLabel($label)) === null) {
+        if ($label === null) {
+            return $this->webService->notFound();
+        }
+
+        $tag = $tagQueryService->findByLabel($label);
+        if ($tag === null) {
             return $this->webService->notFound();
         }
 

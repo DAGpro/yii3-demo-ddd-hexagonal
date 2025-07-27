@@ -10,6 +10,7 @@ use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Domain\User\Commentator;
+use Override;
 
 final readonly class CommentService implements CommentServiceInterface
 {
@@ -24,7 +25,7 @@ final readonly class CommentService implements CommentServiceInterface
      * @TODO Frontend
      * @throws BlogNotFoundException
      */
-    #[\Override]
+    #[Override]
     public function add(
         int $postId,
         string $commentText,
@@ -33,6 +34,7 @@ final readonly class CommentService implements CommentServiceInterface
         if (($post = $this->postQueryService->getPost($postId)) === null) {
             throw new BlogNotFoundException('Post does not exist!');
         }
+
         $comment = $post->createComment($commentText, $commentator);
 
         $this->repository->save([$comment]);
@@ -42,7 +44,7 @@ final readonly class CommentService implements CommentServiceInterface
      * @TODO Frontend
      * @throws BlogNotFoundException
      */
-    #[\Override]
+    #[Override]
     public function edit(int $commentId, string $commentText): void
     {
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {

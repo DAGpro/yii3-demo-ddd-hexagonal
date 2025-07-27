@@ -8,6 +8,7 @@ use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterfa
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,7 +30,7 @@ final class AddChildRoleCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this
@@ -37,13 +38,13 @@ final class AddChildRoleCommand extends Command
             ->addArgument('childRole', InputArgument::REQUIRED, 'RBAC child role');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $parentRole = $input->getArgument('parentRole');
-        $childRole = $input->getArgument('childRole');
+        $parentRole = (string)$input->getArgument('parentRole');
+        $childRole = (string)$input->getArgument('childRole');
 
         try {
             $parentRoleDTO = new RoleDTO($parentRole);

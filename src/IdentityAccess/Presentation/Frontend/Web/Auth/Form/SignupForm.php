@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth\Form;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use Override;
 use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RulesProviderInterface;
 
-final class SignupForm extends FormModel
+final class SignupForm extends FormModel implements RulesProviderInterface
 {
     private string $login = '';
     private string $password = '';
@@ -22,7 +24,7 @@ final class SignupForm extends FormModel
     ) {
     }
 
-    #[\Override]
+    #[Override]
     public function getPropertyLabels(): array
     {
         return [
@@ -42,6 +44,7 @@ final class SignupForm extends FormModel
         return $this->password;
     }
 
+    #[Override]
     public function getRules(): array
     {
         return [

@@ -29,7 +29,7 @@ use Yiisoft\View\WebView;
  * @var TranslatorInterface $translator
  * @var string $content
  *
- * @see \App\ApplicationViewInjection
+ * @see App\Infrastructure\Presentation\Web\ViewInjection\
  * @var User|null $user
  * @var string $csrf
  * @var string $brandLabel
@@ -71,7 +71,7 @@ $this->beginPage();
             ->begin() ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()->getPath())
+            ->currentPath($currentRoute->getUri()?->getPath())
             ->addAttributes(['class' => 'navbar-nav mx-auto'])
             ->items(
                 NavLink::to(
@@ -103,7 +103,7 @@ $this->beginPage();
             ) ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()->getPath())
+            ->currentPath($currentRoute->getUri()?->getPath())
             ->addAttributes(['class' => 'navbar-nav'])
             ->items(
                 Dropdown::widget()
@@ -147,38 +147,41 @@ $this->beginPage();
                     ),
                 ]
                 :
-                Dropdown::widget()
-                    ->togglerContent(Html::encode($user->getLogin()))
-                    ->items(
-                        DropdownItem::link(
-                            Html::encode($user->getLogin()),
-                            $url->generate('blog/author/posts', ['author' => $user->getLogin()]),
-                        //visible: $isGuest,
-                        ),
-                        ...$canAddPost ?
-                        [
-                            DropdownItem::link('Posts',
+                [
+                    Dropdown::widget()
+                        ->togglerContent(Html::encode($user->getLogin()))
+                        ->items(
+                            DropdownItem::link(
+                                Html::encode($user->getLogin()),
                                 $url->generate('blog/author/posts', ['author' => $user->getLogin()]),
+                            //visible: $isGuest,
                             ),
-                            DropdownItem::link('Cabinet', $url->generate('user/cabinet')),
-                            DropdownItem::text(
-                                Form::tag()
-                                    ->action($url->generate('auth/logout'))
-                                    ->csrf($csrf)
-                                    ->content(
-                                        Field::submitButton()
-                                            ->addButtonAttributes(['class' => 'dropdown-item'])
-                                            ->containerClass('mb-1')
-                                            ->content(
-                                                $translator->translate('menu.logout',
-                                                    ['login' => Html::encode($user->getLogin())],
-                                                ),
-                                            )
-                                            ->encodeContent(false),
-                                    ),
-                            ),
-                        ] : [],
-                    ),
+                            ...$canAddPost ?
+                            [
+                                DropdownItem::link(
+                                    'Posts',
+                                    $url->generate('blog/author/posts', ['author' => $user->getLogin()]),
+                                ),
+                                DropdownItem::link('Cabinet', $url->generate('user/cabinet')),
+                                DropdownItem::text(
+                                    Form::tag()
+                                        ->action($url->generate('auth/logout'))
+                                        ->csrf($csrf)
+                                        ->content(
+                                            Field::submitButton()
+                                                ->addButtonAttributes(['class' => 'dropdown-item'])
+                                                ->containerClass('mb-1')
+                                                ->content(
+                                                    $translator->translate('menu.logout',
+                                                        ['login' => Html::encode($user->getLogin())],
+                                                    ),
+                                                )
+                                                ->encodeContent(false),
+                                        ),
+                                ),
+                            ] : [],
+                        ),
+                ],
             ) ?>
         <?= NavBar::end() ?>
     </header>

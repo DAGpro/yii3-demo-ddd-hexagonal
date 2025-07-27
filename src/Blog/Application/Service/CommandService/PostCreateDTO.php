@@ -10,6 +10,7 @@ final readonly class PostCreateDTO
     public function __construct(
         private string $title,
         private string $content,
+        /** @var string[] */
         private array $tags,
     ) {
     }
@@ -19,6 +20,9 @@ final readonly class PostCreateDTO
         return $this->title;
     }
 
+    /**
+     * @return string[]
+     */
     public function getTags(): array
     {
         return $this->tags;

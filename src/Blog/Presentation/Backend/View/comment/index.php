@@ -2,14 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var OffsetPaginator $paginator ;
- * @var UrlGeneratorInterface $url
- * @var Translator $translator
- * @var WebView $this
- * @var string $csrf
- * @var bool $canPublicPost
- */
 
 use App\Blog\Domain\Comment;
 use Yiisoft\Data\Paginator\OffsetPaginator;
@@ -22,19 +14,30 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
+/**
+ * @var OffsetPaginator $paginator ;
+ * @var UrlGeneratorInterface $url
+ * @var Translator $translator
+ * @var WebView $this
+ * @var string $csrf
+ * @var bool $canPublicPost
+ */
 $this->setTitle($translator->translate('backend.title.comments'));
 $pagination = Div::tag()
     ->content(
         new OffsetPagination()
             ->withContext(
+            /**
+             * @psalm-suppress InternalMethod
+             */
                 new PaginationContext(
                     $url->generate(
-                        'blog/comment',
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
+                        'backend/comment',
+                    ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
                     $url->generate(
-                        'blog/comment',
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('blog/comment'),
+                        'backend/comment',
+                    ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
+                    $url->generate('backend/comment'),
                 ),
             )
             ->listTag('ul')
@@ -74,16 +77,16 @@ $pagination = Div::tag()
             $status = $comment->isPublic() ? $translator->translate('blog.public') : $translator->translate('draft');
             $colorButton = $comment->isPublic() ? 'success' : 'danger';
             echo <<<COMMENT
-                <div class="comment-list m-2 mb-3 p-2 border border-light border-2">
-                    <p>
+                <div class="comment-list m-2 mb-4 border border-2 card">
+                    <p class="card-header">
                         <a href="{$url->generate('backend/comment/view', ['comment_id' => $comment->getId()])}">
                             {$translator->translate('blog.comment.id.№')}{$comment->getId()}
                         </a>
                     </p>
-                    <p class="small">{$comment->getContent()}</p>
+                    <p class="small card-body">{$comment->getContent()}</p>
 
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-$colorButton">$status</button>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-sm btn-$colorButton me-1">$status</button>
                         <form
                             id="removeRole"
                             class="d-inline"

@@ -10,7 +10,9 @@ use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
 use Cycle\ORM\Select;
+use DateMalformedStringException;
 use DateTimeImmutable;
+use Override;
 use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
@@ -26,7 +28,7 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
      *
      * @psalm-return DataReaderInterface<int, Post>
      */
-    #[\Override]
+    #[Override]
     public function findAllPreloaded(): DataReaderInterface
     {
         $query = $this
@@ -34,15 +36,18 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
             ->select()
             ->load(['tags']);
 
+        /**
+         * @psalm-return DataReaderInterface<int, Post>
+         */
         return $this->prepareDataReader($query);
     }
 
     /**
-     * @param Tag $tag
-     * @return DataReaderInterface
+     * Get posts without filter with preloaded Users and Tags
+     *
      * @psalm-return DataReaderInterface<int, Post>
      */
-    #[\Override]
+    #[Override]
     public function findByTag(Tag $tag): DataReaderInterface
     {
         $query = $this
@@ -51,10 +56,18 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
             ->load(['tags'])
             ->where(['tags.label' => $tag->getLabel()]);
 
+        /**
+         * @psalm-return DataReaderInterface<int, Post>
+         */
         return $this->prepareDataReader($query);
     }
 
-    #[\Override]
+    /**
+     * Get posts without filter with preloaded Users and Tags
+     *
+     * @psalm-return DataReaderInterface<int, Post>
+     */
+    #[Override]
     public function findByAuthor(Author $author): DataReaderInterface
     {
         $query = $this
@@ -63,34 +76,47 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
             ->load(['tags'])
             ->where(['author_id' => $author->getId()]);
 
+        /**
+         * @psalm-return DataReaderInterface<int, Post>
+         */
         return $this->prepareDataReader($query);
     }
 
-    #[\Override]
+    #[Override]
     public function getPostBySlug(string $slug): ?Post
     {
-        return $this
+        /** @var Post|null $post */
+        $post = $this
             ->repository
             ->select()
             ->where(['slug' => $slug])
             ->load(['tags'])
             ->fetchOne();
+
+        return $post;
     }
 
-    #[\Override]
+    /**
+     * @psalm-return Post|null
+     */
+    #[Override]
     public function getPost(int $id): ?Post
     {
-        return $this->repository
+        /** @var Post|null $post */
+        $post = $this->repository
             ->select()
             ->where(['id' => $id])
             ->load(['tags'])
             ->fetchOne();
+
+        return $post;
     }
 
-    #[\Override]
+    #[Override]
     public function fullPostPage(string $slug): ?Post
     {
-        return $this
+        /** @var Post|null $post */
+        $post = $this
             ->repository
             ->select()
             ->where(['slug' => $slug])
@@ -100,20 +126,34 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
                 'where' => ['public' => true],
             ])
             ->fetchOne();
+
+        return $post;
     }
 
-    #[\Override]
+    /**
+     * @throws DateMalformedStringException
+     */
+    #[Override]
     public function getMaxUpdatedAt(): DateTimeImmutable
     {
-        return new DateTimeImmutable($this->repository->select()->max('updated_at') ?? 'now');
+        $time = (string)($this->repository->select()->max('updated_at') ?? 'now');
+        return new DateTimeImmutable($time);
     }
 
-    private function prepareDataReader(Select $query): EntityReader
+    /**
+     * @return DataReaderInterface<int, Post>
+     */
+    private function prepareDataReader(Select $query): DataReaderInterface
     {
-        return new EntityReader($query)->withSort(
+        /** @var EntityReader<int, Post> $reader */
+        $reader = new EntityReader($query);
+
+        /** @var DataReaderInterface<int, Post> $result */
+        $result = $reader->withSort(
             Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
                 ->withOrder(['published_at' => 'desc']),
         );
-    }
 
+        return $result;
+    }
 }

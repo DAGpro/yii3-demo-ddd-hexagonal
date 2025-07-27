@@ -37,7 +37,7 @@ final readonly class ArchiveController
         TagQueryServiceInterface $tagQueryService,
         ArchivePostQueryServiceInterface $archivePostQueryService,
     ): Response {
-        $pageNum = (int)$currentRoute->getArgument('page', '1');
+        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
         $year = (int)$currentRoute->getArgument('year', '0');
         $month = (int)$currentRoute->getArgument('month', '0');
 

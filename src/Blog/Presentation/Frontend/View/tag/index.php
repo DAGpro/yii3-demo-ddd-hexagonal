@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var OffsetPaginator $paginator
- * @var TranslatorInterface $translator
- * @var Tag $item
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- */
 
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
@@ -25,11 +18,22 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
+
+/**
+ * @var OffsetPaginator $paginator
+ * @var TranslatorInterface $translator
+ * @var Tag $item
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ */
 $this->setTitle($item->getLabel());
 $pagination = Div::tag()
     ->content(
         new OffsetPagination()
             ->withContext(
+            /**
+             * @psalm-suppress InternalMethod
+             */
                 new PaginationContext(
                     $url->generate('blog/tag',
                         ['label' => $item->getLabel()],

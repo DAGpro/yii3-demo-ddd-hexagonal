@@ -9,6 +9,7 @@ use App\IdentityAccess\Access\Application\Service\AssignAccessServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Override;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -35,7 +36,7 @@ final class CreateUserCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this
@@ -44,13 +45,13 @@ final class CreateUserCommand extends Command
             ->addArgument('isAdmin', InputArgument::OPTIONAL, 'Create user as admin');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $login = $input->getArgument('login');
-        $password = $input->getArgument('password');
+        $login = (string)$input->getArgument('login');
+        $password = (string)$input->getArgument('password');
         $isAdmin = (bool)$input->getArgument('isAdmin');
 
         try {
@@ -74,7 +75,7 @@ final class CreateUserCommand extends Command
             $io->success('User created');
         } catch (Throwable $t) {
             $io->error($t->getMessage());
-            return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
+            return (int)$t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }
         return ExitCode::OK;
     }

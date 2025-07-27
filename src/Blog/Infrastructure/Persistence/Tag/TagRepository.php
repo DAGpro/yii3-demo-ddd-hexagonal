@@ -14,10 +14,16 @@ use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
-use Yiisoft\Data\Reader\DataReaderInterface;
+use Override;
 
+/**
+ * @extends Repository<Tag>
+ */
 final class TagRepository extends Repository implements TagRepositoryInterface
 {
+    /**
+     * @param Select<Tag> $select
+     */
     public function __construct(
         protected Select $select,
         private readonly EntityManagerInterface $entityManager,
@@ -26,37 +32,41 @@ final class TagRepository extends Repository implements TagRepositoryInterface
         parent::__construct($select);
     }
 
-    #[\Override]
+    #[Override]
     public function getOrCreate(string $label): Tag
     {
         $tag = $this->findByLabel($label);
         return $tag ?? new Tag($label);
     }
 
-    #[\Override]
+    #[Override]
     public function findByLabel(string $label): ?Tag
     {
-        return $this
+        /** @var Tag|null $tag */
+        $tag = $this
             ->select()
             ->where(['label' => $label])
             ->fetchOne();
+        return $tag;
     }
 
-    #[\Override]
+    #[Override]
     public function getTag(int $tagId): ?Tag
     {
-        return $this
+        /** @var Tag|null $tag */
+        $tag = $this
             ->select()
             ->where(['id' => $tagId])
             ->fetchOne();
+        return $tag;
     }
 
     /**
      * @param int $limit
      *
-     * @return DataReaderInterface Collection of Array('label' => 'Tag Label', 'count' => '8')
+     * @return SelectQuery
      */
-    #[\Override]
+    #[Override]
     public function getTagMentions(int $limit = 0): SelectQuery
     {
         /** @var Repository $postTagRepo */
@@ -148,20 +158,38 @@ final class TagRepository extends Repository implements TagRepositoryInterface
         return $case3;
     }
 
-    #[\Override]
-    public function save(array $tags): void
+    #[Override]
+    /**
+     * @param iterable<Tag> $tags
+     */
+    public function save(iterable $tags): void
     {
+        if ($tags === []) {
+            return;
+        }
+
         foreach ($tags as $entity) {
-            $this->entityManager->persist($entity);
+            if ($entity instanceof Tag) {
+                $this->entityManager->persist($entity);
+            }
         }
         $this->entityManager->run();
     }
 
-    #[\Override]
-    public function delete(array $tags): void
+    #[Override]
+    /**
+     * @param iterable<Tag> $tags
+     */
+    public function delete(iterable $tags): void
     {
+        if ($tags === []) {
+            return;
+        }
+
         foreach ($tags as $entity) {
-            $this->entityManager->delete($entity);
+            if ($entity instanceof Tag) {
+                $this->entityManager->delete($entity);
+            }
         }
         $this->entityManager->run();
     }

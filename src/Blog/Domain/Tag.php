@@ -14,6 +14,9 @@ use Cycle\ORM\Collection\Pivoted\PivotedCollection;
 use Cycle\ORM\Entity\Behavior;
 use DateTimeImmutable;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 #[Entity(repository: TagRepository::class)]
 #[Index(columns: ['label'], unique: true)]
 #[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
@@ -31,11 +34,16 @@ class Tag
     #[ManyToMany(target: Post::class, through: PostTag::class, fkAction: 'CASCADE', indexCreate: false)]
     private readonly PivotedCollection $posts;
 
-    public function __construct(#[Column(type: 'string(191)')]
-    private string $label)
-    {
+    public function __construct(
+        #[Column(type: 'string(191)')]
+        private string $label,
+    ) {
         $this->created_at = new DateTimeImmutable();
-        $this->posts = new PivotedCollection();
+        /**
+         * @var PivotedCollection<array-key, Post, PostTag> $posts
+         */
+        $posts = new PivotedCollection();
+        $this->posts = $posts;
     }
 
     public function change(string $label): void
@@ -43,9 +51,14 @@ class Tag
         $this->label = $label;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function hasId(): bool
+    {
+        return $this->id !== null;
     }
 
     public function getLabel(): string
@@ -54,11 +67,14 @@ class Tag
     }
 
     /**
-     * @return Post[]
+     * @psalm-return array<array-key, Post>
      */
     public function getPosts(): array
     {
-        return $this->posts->toArray();
+        /** @var array<array-key, Post> $posts */
+        $posts = array_values($this->posts->toArray());
+
+        return $posts;
     }
 
     public function addPost(Post $post): void

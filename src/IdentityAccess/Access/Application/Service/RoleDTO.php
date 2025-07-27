@@ -6,13 +6,35 @@ namespace App\IdentityAccess\Access\Application\Service;
 
 final class RoleDTO
 {
+    /**
+     * @var array<RoleDTO>
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
     private array $childRoles = [];
+    /**
+     * @var array<PermissionDTO>
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
     private array $childPermissions = [];
+
+    /**
+     * @var array<PermissionDTO>
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
     private array $nestedPermissions;
+
+    /**
+     * @var array<RoleDTO>
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
     private array $nestedRoles;
 
-    public function __construct(private readonly string $name, private readonly ?string $description = null, private readonly ?int $created_at = null, private readonly ?int $updated_at = null)
-    {
+    public function __construct(
+        private readonly string $name,
+        private readonly ?string $description = null,
+        private readonly ?int $created_at = null,
+        private readonly ?int $updated_at = null,
+    ) {
     }
 
     public function getName(): string
@@ -20,21 +42,33 @@ final class RoleDTO
         return $this->name;
     }
 
+    /**
+     * @param array<RoleDTO> $roles
+     */
     public function withChildRoles(array $roles): void
     {
         $this->childRoles = $roles;
     }
 
+    /**
+     * @param array<RoleDTO> $roles
+     */
     public function withNestedRoles(array $roles): void
     {
         $this->nestedRoles = $roles;
     }
 
+    /**
+     * @param array<PermissionDTO> $permissions
+     */
     public function withChildPermissions(array $permissions): void
     {
         $this->childPermissions = $permissions;
     }
 
+    /**
+     * @param array<string,PermissionDTO> $nestedPermissions
+     */
     public function withNestedPermissions(array $nestedPermissions): void
     {
         $this->nestedPermissions = $nestedPermissions;
@@ -53,7 +87,7 @@ final class RoleDTO
     public function getChildRolesName(): string
     {
         $rolesName = '';
-        foreach ($this->childRoles as $role){
+        foreach ($this->childRoles as $role) {
             $rolesName .= $role->getName() . ', ';
         }
 
@@ -63,18 +97,24 @@ final class RoleDTO
     public function getNestedRolesName(): string
     {
         $rolesName = '';
-        foreach ($this->nestedRoles as $role){
+        foreach ($this->nestedRoles as $role) {
             $rolesName .= $role->getName() . ', ';
         }
 
         return substr_replace($rolesName, '', strlen($rolesName) - 2, 2);
     }
 
+    /**
+     * @return PermissionDTO[]
+     */
     public function getChildPermissions(): array
     {
         return $this->childPermissions;
     }
 
+    /**
+     * @return PermissionDTO[]
+     */
     public function getNestedPermissions(): array
     {
         return $this->nestedPermissions;
@@ -83,7 +123,7 @@ final class RoleDTO
     public function getChildPermissionsName(): string
     {
         $permissionsName = '';
-        foreach ($this->getChildPermissions() as $permission){
+        foreach ($this->getChildPermissions() as $permission) {
             $permissionsName .= $permission->getName() . ', ';
         }
 
@@ -93,7 +133,7 @@ final class RoleDTO
     public function getNestedPermissionsName(): string
     {
         $permissionsName = '';
-        foreach ($this->getNestedPermissions() as $permission){
+        foreach ($this->getNestedPermissions() as $permission) {
             $permissionsName .= $permission->getName() . ', ';
         }
 
@@ -103,7 +143,7 @@ final class RoleDTO
     public function getChildRolesNameWithPermissionName(): array
     {
         $rolesName = [];
-        foreach ($this->childRoles as $role){
+        foreach ($this->childRoles as $role) {
             $rolesName[] = $role->getName()
                 . '[ permissions: '
                 . $this->getChildPermissionsName()
@@ -115,7 +155,7 @@ final class RoleDTO
 
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?: '';
     }
 
     public function getCreatedAt(): ?int

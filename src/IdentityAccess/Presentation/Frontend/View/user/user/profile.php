@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-/**
- * @var User $item
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- */
-
 use App\IdentityAccess\User\Domain\User;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\H1;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\View\WebView;
+
+/**
+ * @var User $item
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ */
 
 $this->setTitle($item->getLogin());
 

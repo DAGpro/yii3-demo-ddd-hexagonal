@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Infrastructure\Presentation\Web\Widget;
 
 use App\Timer;
+use Override;
 use Yiisoft\Widget\Widget;
 
 final class PerformanceMetrics extends Widget
 {
-    public function __construct(private readonly Timer $timer)
-    {
+    public function __construct(
+        private readonly Timer $timer,
+    ) {
     }
 
-    #[\Override]
+    #[Override]
     public function render(): string
     {
         $time = round($this->timer->get('overall'), 4);

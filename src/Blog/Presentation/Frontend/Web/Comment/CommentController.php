@@ -55,7 +55,10 @@ final readonly class CommentController
         CommentForm $form,
         FormHydrator $formHydrator,
     ): Response {
-        $postSlug = $currentRoute->getArgument('slug', '');
+        $postSlug = $currentRoute->getArgument('slug');
+        if ($postSlug === null) {
+            return $this->webService->notFound();
+        }
 
         if (($commentator = $this->identityAccessService->getCommentator()) === null) {
             return $this->webService->accessDenied();
@@ -64,7 +67,7 @@ final readonly class CommentController
         if (($post = $this->postQueryService->getPostBySlug($postSlug)) === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'This post does not exist!',
-                'blog',
+                'blog/index',
                 [],
                 'danger',
             );
@@ -73,16 +76,28 @@ final readonly class CommentController
         if ($request->getMethod() === Method::POST
             && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
+            $postId = $post->getId();
+            $commentText = $form->getComment();
+
+            if ($postId === null || $commentText === null) {
+                return $this->webService->sessionFlashAndRedirect(
+                    'Something went wrong!',
+                    'blog/index',
+                    [],
+                    'danger',
+                );
+            }
+
             try {
                 $commentService->add(
-                    $post->getId(),
-                    $form->getComment(),
+                    $postId,
+                    $commentText,
                     $commentator,
                 );
             } catch (BlogNotFoundException $exception) {
                 return $this->webService->sessionFlashAndRedirect(
                     $exception->getMessage(),
-                    'blog',
+                    'blog/index',
                     [],
                     'danger',
                 );
@@ -118,7 +133,18 @@ final readonly class CommentController
             && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             try {
-                $commentService->edit($comment->getId(), $form->getComment());
+                $commentId = $comment->getId();
+                $commentText = $form->getComment();
+
+                if ($commentId === null || $commentText === null) {
+                    $form->addError('Comment is empty', ['comment']);
+                    return $this->view->render('comment_form', [
+                        'action' => ['blog/comment/edit', ['comment_id' => $commentId]],
+                        'form' => $form,
+                    ]);
+                }
+
+                $commentService->edit($commentId, $commentText);
             } catch (BlogNotFoundException $exception) {
                 return $this->webService->sessionFlashAndRedirect(
                     $exception->getMessage(),
@@ -132,7 +158,7 @@ final readonly class CommentController
         }
 
         return $this->view->render('comment_form', [
-            'action' => ['blog/comment/edit', ['comment_id' => $commentId]],
+            'comment_id' => $commentId,
             'form' => $form,
         ]);
     }

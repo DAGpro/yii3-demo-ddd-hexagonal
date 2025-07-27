@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App;
 
+use InvalidArgumentException;
+
 final class Timer
 {
+    /** @var array<string, float> */
     private array $timers = [];
 
     public function start(string $name): void
@@ -16,7 +19,7 @@ final class Timer
     public function get(string $name): float
     {
         if (!array_key_exists($name, $this->timers)) {
-            throw new \InvalidArgumentException("There is no \"$name\" timer started");
+            throw new InvalidArgumentException("There is no \"$name\" timer started");
         }
 
         return microtime(true) - $this->timers[$name];

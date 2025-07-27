@@ -6,8 +6,12 @@ namespace App\IdentityAccess\Access\Application\Service;
 
 final readonly class PermissionDTO
 {
-    public function __construct(private string $name, private ?string $description = null, private ?int $created_at = null, private ?int $updated_at = null)
-    {
+    public function __construct(
+        private string $name,
+        private ?string $description = null,
+        private ?int $created_at = null,
+        private ?int $updated_at = null,
+    ) {
     }
 
     public function getName(): string
@@ -17,7 +21,7 @@ final readonly class PermissionDTO
 
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?: '';
     }
 
     public function getCreatedAt(): ?int

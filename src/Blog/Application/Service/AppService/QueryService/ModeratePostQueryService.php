@@ -7,7 +7,7 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 use App\Blog\Application\Service\QueryService\ModeratePostQueryServiceInterface;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
-use Cycle\ORM\Select;
+use Override;
 use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
@@ -23,7 +23,7 @@ final readonly class ModeratePostQueryService implements ModeratePostQueryServic
      *
      * @psalm-return DataReaderInterface<int, Post>
      */
-    #[\Override]
+    #[Override]
     public function findAllPreloaded(): DataReaderInterface
     {
         $query = $this
@@ -33,26 +33,33 @@ final readonly class ModeratePostQueryService implements ModeratePostQueryServic
             ->andWhere('deleted_at', '=', null)
             ->load(['tags']);
 
-        return $this->prepareDataReader($query);
+        /** @var EntityReader<int, Post> $entityReader */
+        $entityReader = new EntityReader($query);
+        
+        /** @var DataReaderInterface<int, Post> $result */
+        $result = $entityReader->withSort(
+            Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
+                ->withOrder(['published_at' => 'desc']),
+        );
+        
+        return $result;
     }
 
-    #[\Override]
+    /**
+     * @psalm-return Post|null
+     */
+    #[Override]
     public function getPost(int $id): ?Post
     {
-        return $this
+        /** @var Post|null $post */
+        $post = $this
             ->repository
             ->select()
             ->scope()
             ->where('id', '=', $id)
             ->andWhere('deleted_at', '=', null)
             ->fetchOne();
-    }
 
-    private function prepareDataReader(Select $query): DataReaderInterface
-    {
-        return new EntityReader($query)->withSort(
-            Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
-                ->withOrder(['published_at' => 'desc']),
-        );
+        return $post;
     }
 }

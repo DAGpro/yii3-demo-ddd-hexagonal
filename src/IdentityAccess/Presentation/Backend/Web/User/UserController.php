@@ -21,7 +21,7 @@ final readonly class UserController
     public function __construct(
         ViewRenderer $viewRenderer,
         private WebControllerService $webService,
-        private UserQueryServiceInterface $userQueryService
+        private UserQueryServiceInterface $userQueryService,
     ) {
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@identityBackendView/user');
@@ -30,12 +30,13 @@ final readonly class UserController
 
     public function index(CurrentRoute $currentRoute): Response
     {
-        $pageNum = (int)$currentRoute->getArgument('page', '1');
+        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
 
         $dataReader = $this->userQueryService
             ->findAllPreloaded()
             ->withSort(Sort::only(['login'])
-            ->withOrderString('login'));
+                ->withOrderString('login'),
+            );
 
         $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::PAGINATION_INDEX)
@@ -52,7 +53,7 @@ final readonly class UserController
                 'User ID not specified',
                 'backend/user',
                 [],
-                'danger'
+                'danger',
             );
         }
 

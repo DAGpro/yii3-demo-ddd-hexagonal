@@ -13,15 +13,24 @@ use Yiisoft\Session\Flash\FlashInterface;
 
 final readonly class WebControllerService
 {
-    public function __construct(private ResponseFactoryInterface $responseFactory, private FlashInterface $flash, private UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private ResponseFactoryInterface $responseFactory,
+        private FlashInterface $flash,
+        private UrlGeneratorInterface $urlGenerator,
+    ) {
     }
 
-    public function redirect(string $url, array $urlArguments = []): ResponseInterface
+    /**
+     * @param array<string, string|int|float|bool|null> $routeArguments
+     */
+    public function redirect(string $route, array $routeArguments = []): ResponseInterface
     {
         return $this->responseFactory
             ->createResponse(Status::FOUND)
-            ->withHeader(Header::LOCATION, $this->urlGenerator->generate($url, $urlArguments));
+            ->withHeader(
+                Header::LOCATION,
+                $this->urlGenerator->generate($route, $routeArguments),
+            );
     }
 
     public function notFound(): ResponseInterface
@@ -30,27 +39,34 @@ final readonly class WebControllerService
             ->createResponse(Status::NOT_FOUND);
     }
 
+    /**
+     * @param array<string, string|int|float|bool|null> $routeArguments
+     */
     public function sessionFlashAndRedirect(
         string $message,
-        string $url,
-        array $urlArguments = [],
+        string $route,
+        array $routeArguments = [],
         string $key = 'success',
-        bool $removeFlashAfterAccess = true
+        bool $removeFlashAfterAccess = true,
     ): ResponseInterface {
         $this->flash->add(
             $key,
             ['body' => $message],
-            $removeFlashAfterAccess
+            $removeFlashAfterAccess,
         );
         return $this->responseFactory
             ->createResponse(Status::FOUND)
-            ->withHeader(Header::LOCATION, $this->urlGenerator->generate($url, $urlArguments));
+            ->withHeader(
+                Header::LOCATION,
+                $this->urlGenerator->generate($route, $routeArguments),
+            );
     }
 
-    public function accessDenied(): ResponseInterface
+    public function accessDenied($reasonPhrase = ''): ResponseInterface
     {
         return $this->responseFactory->createResponse(
-            Status::FORBIDDEN
+            Status::FORBIDDEN,
+            $reasonPhrase,
         );
     }
 }

@@ -19,22 +19,23 @@ final class Installer
         self::chmodRecursive('public/assets', 0777);
     }
 
+    public static function copyEnvFile(): void
+    {
+        if (!file_exists('.env')) {
+            copy('.env.example', '.env');
+        }
+    }
+
     private static function chmodRecursive(string $path, int $mode): void
     {
         chmod($path, $mode);
         $iterator = new RIterator(
             new DirIterator($path, FSIterator::SKIP_DOTS | FSIterator::CURRENT_AS_PATHNAME),
-            RIterator::SELF_FIRST
+            RIterator::SELF_FIRST,
         );
+        /** @var string $item */
         foreach ($iterator as $item) {
             chmod($item, $mode);
-        }
-    }
-
-    public static function copyEnvFile(): void
-    {
-        if (!file_exists('.env')) {
-            copy('.env.example', '.env');
         }
     }
 }

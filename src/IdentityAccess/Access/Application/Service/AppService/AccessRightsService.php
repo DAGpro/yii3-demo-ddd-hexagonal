@@ -7,6 +7,7 @@ namespace App\IdentityAccess\Access\Application\Service\AppService;
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use Override;
 use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
 
@@ -18,13 +19,13 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
     ) {
     }
 
-    #[\Override]
+    #[Override]
     public function existRole(string $roleName): bool
     {
         return $this->storage->getRole($roleName) !== null;
     }
 
-    #[\Override]
+    #[Override]
     public function getRoleByName(string $roleName): ?RoleDTO
     {
         $role = $this->storage->getRole($roleName);
@@ -40,7 +41,7 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
         return null;
     }
 
-    #[\Override]
+    #[Override]
     public function getRoles(): array
     {
         $roles = [];
@@ -56,20 +57,20 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
         return $roles;
     }
 
-    #[\Override]
+    #[Override]
     public function existPermission(string $permissionName): bool
     {
         return $this->getPermissionByName($permissionName) !== null;
     }
 
-    #[\Override]
+    #[Override]
     public function getPermissionByName(string $permissionName): ?PermissionDTO
     {
         $permission = $this->storage->getPermission($permissionName);
         return $permission === null ? null : new PermissionDTO($permission->getName());
     }
 
-    #[\Override]
+    #[Override]
     public function getPermissions(): array
     {
         $permissionDTO = [];
@@ -80,11 +81,14 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
         return $permissionDTO;
     }
 
-    #[\Override]
+    /**
+     * @return array<string, RoleDTO>
+     */
+    #[Override]
     public function getChildRoles(RoleDTO $roleDTO): array
     {
         $roles = [];
-        foreach ($this->storage->getChildren($roleDTO->getName()) as $role) {
+        foreach ($this->storage->getAllChildRoles($roleDTO->getName()) as $role) {
             if ($this->getRoleByName($role->getName())) {
                 if ($roleDTO->getName() === $role->getName()) {
                     continue;
@@ -96,11 +100,11 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
         return $roles;
     }
 
-    #[\Override]
+    #[Override]
     public function getNestedRoles(RoleDTO $roleDTO): array
     {
         $roles = [];
-        $childRoles = $this->storage->getChildren($roleDTO->getName());
+        $childRoles = $this->storage->getAllChildRoles($roleDTO->getName());
         foreach ($this->manager->getChildRoles($roleDTO->getName()) as $role) {
             if (array_key_exists($role->getName(), $childRoles) || $roleDTO->getName() === $role->getName()) {
                 continue;
@@ -111,11 +115,11 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
         return $roles;
     }
 
-    #[\Override]
+    #[Override]
     public function getPermissionsByRole(RoleDTO $roleDTO): array
     {
         $permissions = [];
-        foreach ($this->storage->getChildren($roleDTO->getName()) as $permission) {
+        foreach ($this->storage->getAllChildPermissions($roleDTO->getName()) as $permission) {
             if ($this->getRoleByName($permission->getName())) {
                 continue;
             }
@@ -125,11 +129,14 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
         return $permissions;
     }
 
-    #[\Override]
+    /**
+     * @return array<string, PermissionDTO>
+     */
+    #[Override]
     public function getNestedPermissionsByRole(RoleDTO $roleDTO): array
     {
         $permissions = [];
-        $childPermissions = $this->storage->getChildren($roleDTO->getName());
+        $childPermissions = $this->storage->getAllChildPermissions($roleDTO->getName());
         foreach ($this->manager->getPermissionsByRoleName($roleDTO->getName()) as $permission) {
             if (array_key_exists($permission->getName(), $childPermissions)) {
                 continue;
@@ -140,26 +147,26 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
         return $permissions;
     }
 
-    #[\Override]
+    #[Override]
     public function hasChildren(RoleDTO $parentDTO): bool
     {
         return $this->storage->hasChildren($parentDTO->getName());
     }
 
-    #[\Override]
+    #[Override]
     public function setDefaultRoles(array $roles): self
     {
         $this->manager->setDefaultRoleNames($roles);
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function getDefaultRoleNames(): array
     {
         return $this->manager->getDefaultRoleNames();
     }
 
-    #[\Override]
+    #[Override]
     public function getDefaultRoles(): array
     {
         return $this->manager->getDefaultRoles();

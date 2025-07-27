@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var User $item
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- * @var TranslatorInterface $translator
- */
 
 use App\IdentityAccess\User\Domain\User;
 use Yiisoft\Html\Html;
@@ -15,8 +9,14 @@ use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
-$this->setTitle($item->getLogin());
+/**
+ * @var User $item
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ * @var TranslatorInterface $translator
+ */
 
+$this->setTitle($item->getLogin());
 
 ?>
 <div>

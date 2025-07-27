@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace App\Blog\Presentation\Frontend\Web\Comment;
 
 use App\Blog\Domain\Comment;
+use Override;
 use Yiisoft\FormModel\FormModel;
 use Yiisoft\Validator\Rule\Length;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RulesProviderInterface;
 
-final class CommentForm extends FormModel
+final class CommentForm extends FormModel implements RulesProviderInterface
 {
-    private readonly string $comment;
+    private readonly ?string $comment;
 
     public function __construct(?Comment $comment)
     {
-        $this->comment = $comment ? $comment->getContent() : '';
+        $this->comment = $comment?->getContent();
     }
 
     public function getComment(): ?string
@@ -23,12 +25,13 @@ final class CommentForm extends FormModel
         return $this->comment;
     }
 
-    #[\Override]
+    #[Override]
     public function getFormName(): string
     {
         return '';
     }
 
+    #[Override]
     public function getRules(): array
     {
         return [

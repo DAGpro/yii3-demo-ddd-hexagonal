@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+
+use App\Blog\Domain\Tag;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\Translator;
+use Yiisoft\View\WebView;
+
 /**
  * @var Tag $tag
  * @var WebView $this
@@ -11,12 +18,7 @@ declare(strict_types=1);
  * @var bool $canModerateTag
  */
 
-use App\Blog\Domain\Tag;
-use Yiisoft\Html\Tag\A;
-use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Translator\Translator;
-use Yiisoft\View\WebView;
-
+/** @psalm-scope-this Yiisoft\View\WebView */
 $this->setTitle($title);
 
 ?>

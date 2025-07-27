@@ -16,20 +16,22 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 final readonly class AccessManagementController
 {
-    public function __construct(private AccessManagementServiceInterface $accessManagementService, private WebControllerService $webService)
-    {
+    public function __construct(
+        private AccessManagementServiceInterface $accessManagementService,
+        private WebControllerService $webService,
+    ) {
     }
 
     public function addRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $roleName = !empty($body['role']) ? $body['role'] : null;
+        $roleName = !empty($body['role']) ? (string)$body['role'] : null;
         if ($roleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required role parameter in POST request',
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -39,14 +41,14 @@ final readonly class AccessManagementController
 
             return $this->webService->sessionFlashAndRedirect(
                 'Role successfully added!',
-                'backend/access'
+                'backend/access',
             );
         } catch (ExistItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
     }
@@ -54,13 +56,13 @@ final readonly class AccessManagementController
     public function removeRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $roleName = !empty($body['role']) ? $body['role'] : null;
+        $roleName = !empty($body['role']) ? (string)$body['role'] : null;
         if ($roleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required role parameter in POST request',
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -70,28 +72,28 @@ final readonly class AccessManagementController
 
             return $this->webService->sessionFlashAndRedirect(
                 'Role successfully removed!',
-                'backend/access'
+                'backend/access',
             );
         } catch (NotExistItemException|AssignedItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access',
                 [],
-                'danger'
-        );
+                'danger',
+            );
         }
     }
 
     public function addPermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $permissionName = !empty($body['permission']) ? $body['permission'] : null;
+        $permissionName = !empty($body['permission']) ? (string)$body['permission'] : null;
         if ($permissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required permission parameter in POST request',
                 'backend/access/permissions',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -101,14 +103,14 @@ final readonly class AccessManagementController
 
             return $this->webService->sessionFlashAndRedirect(
                 'Permission successfully added!',
-                'backend/access/permissions'
+                'backend/access/permissions',
             );
         } catch (ExistItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access/permissions',
                 [],
-                'danger'
+                'danger',
             );
         }
     }
@@ -116,13 +118,13 @@ final readonly class AccessManagementController
     public function removePermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $permissionName = !empty($body['permission']) ? $body['permission'] : null;
+        $permissionName = !empty($body['permission']) ? (string)$body['permission'] : null;
         if ($permissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required permission parameter in POST request',
                 'backend/access/permissions',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -132,14 +134,14 @@ final readonly class AccessManagementController
 
             return $this->webService->sessionFlashAndRedirect(
                 'Permission successfully removed!',
-                'backend/access/permissions'
+                'backend/access/permissions',
             );
         } catch (NotExistItemException|AssignedItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access/permissions',
                 [],
-                'danger'
+                'danger',
             );
         }
     }
@@ -147,14 +149,14 @@ final readonly class AccessManagementController
     public function addChildRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
-        $childRoleName = !empty($body['child_role']) ? $body['child_role'] : null;
+        $parentRoleName = !empty($body['parent_role']) ? (string)$body['parent_role'] : null;
+        $childRoleName = !empty($body['child_role']) ? (string)$body['child_role'] : null;
         if ($parentRoleName === null || $childRoleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child role parameters in POST request',
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -166,14 +168,14 @@ final readonly class AccessManagementController
             return $this->webService->sessionFlashAndRedirect(
                 'Child role successfully added!',
                 'backend/access/view-role',
-                ['role_name' => $parentRoleName]
+                ['role_name' => $parentRoleName],
             );
         } catch (ExistItemException|NotExistItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access/view-role',
                 ['role_name' => $parentRoleName],
-                'danger'
+                'danger',
             );
         }
     }
@@ -181,14 +183,14 @@ final readonly class AccessManagementController
     public function removeChildRole(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
-        $childRoleName = !empty($body['child_role']) ? $body['child_role'] : null;
+        $parentRoleName = !empty($body['parent_role']) ? (string)$body['parent_role'] : null;
+        $childRoleName = !empty($body['child_role']) ? (string)$body['child_role'] : null;
         if ($parentRoleName === null || $childRoleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child role parameters in POST request',
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -200,14 +202,14 @@ final readonly class AccessManagementController
             return $this->webService->sessionFlashAndRedirect(
                 'Child Role successfully removed!',
                 'backend/access/view-role',
-                ['role_name' => $parentRoleName]
+                ['role_name' => $parentRoleName],
             );
         } catch (NotExistItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access/view-role',
                 ['role_name' => $parentRoleName],
-                'danger'
+                'danger',
             );
         }
     }
@@ -215,14 +217,14 @@ final readonly class AccessManagementController
     public function addChildPermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
-        $childPermissionName = !empty($body['child_permission']) ? $body['child_permission'] : null;
+        $parentRoleName = !empty($body['parent_role']) ? (string)$body['parent_role'] : null;
+        $childPermissionName = !empty($body['child_permission']) ? (string)$body['child_permission'] : null;
         if ($parentRoleName === null || $childPermissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child permission parameters in POST request',
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -234,14 +236,14 @@ final readonly class AccessManagementController
             return $this->webService->sessionFlashAndRedirect(
                 'Child permission successfully added!',
                 'backend/access/view-role',
-                ['role_name' => $parentRoleName]
+                ['role_name' => $parentRoleName],
             );
         } catch (ExistItemException|NotExistItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access/view-role',
                 ['role_name' => $parentRoleName],
-                'danger'
+                'danger',
             );
         }
     }
@@ -249,14 +251,14 @@ final readonly class AccessManagementController
     public function removeChildPermission(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
-        $childPermissionName = !empty($body['child_permission']) ? $body['child_permission'] : null;
+        $parentRoleName = !empty($body['parent_role']) ? (string)$body['parent_role'] : null;
+        $childPermissionName = !empty($body['child_permission']) ? (string)$body['child_permission'] : null;
         if ($parentRoleName === null || $childPermissionName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role and child permission parameters in POST request',
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -268,14 +270,14 @@ final readonly class AccessManagementController
             return $this->webService->sessionFlashAndRedirect(
                 'Child permission successfully removed!',
                 'backend/access/view-role',
-                ['role_name' => $parentRoleName]
+                ['role_name' => $parentRoleName],
             );
         } catch (NotExistItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
                 $t->getMessage(),
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
     }
@@ -283,13 +285,13 @@ final readonly class AccessManagementController
     public function removeChildren(Request $request): ResponseInterface
     {
         $body = $request->getParsedBody();
-        $parentRoleName = !empty($body['parent_role']) ? $body['parent_role'] : null;
+        $parentRoleName = !empty($body['parent_role']) ? (string)$body['parent_role'] : null;
         if ($parentRoleName === null) {
             return $this->webService->sessionFlashAndRedirect(
                 'No required parent role parameter in POST request',
                 'backend/access',
                 [],
-                'danger'
+                'danger',
             );
         }
 
@@ -300,7 +302,7 @@ final readonly class AccessManagementController
             return $this->webService->sessionFlashAndRedirect(
                 'Children successfully removed!',
                 'backend/access/view-role',
-                ['role_name' => $parentRoleName]
+                ['role_name' => $parentRoleName],
             );
         } catch (NotExistItemException $t) {
             return $this->webService->sessionFlashAndRedirect(
@@ -318,7 +320,7 @@ final readonly class AccessManagementController
 
         return $this->webService->sessionFlashAndRedirect(
             'Clear access rights!',
-            'backend/access'
+            'backend/access',
         );
     }
 }

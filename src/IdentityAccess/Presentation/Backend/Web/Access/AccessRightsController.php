@@ -17,7 +17,7 @@ final readonly class AccessRightsController
     public function __construct(
         ViewRenderer $viewRenderer,
         private WebControllerService $webService,
-        private AccessRightsServiceInterface $accessRightsService
+        private AccessRightsServiceInterface $accessRightsService,
     ) {
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@identityBackendView/access');
@@ -47,17 +47,17 @@ final readonly class AccessRightsController
     public function viewRole(CurrentRoute $currentRoute): ResponseInterface
     {
         $roleName = $currentRoute->getArgument('role_name');
-        if (null === $roleName){
+        if (null === $roleName) {
             return $this->webService->sessionFlashAndRedirect(
                 'The request role name arguments are required!',
                 'backend/access/assignments',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         $role = $this->accessRightsService->getRoleByName($roleName);
-        if (null === $role){
+        if (null === $role) {
             return $this->webService->notFound();
         }
 

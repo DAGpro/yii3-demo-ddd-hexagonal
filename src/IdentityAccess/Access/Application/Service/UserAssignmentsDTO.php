@@ -8,8 +8,17 @@ use App\IdentityAccess\User\Domain\User;
 
 final readonly class UserAssignmentsDTO
 {
-    public function __construct(private User $user, private array $roles = [], private array $permissions = [])
-    {
+    public function __construct(
+        private User $user,
+        /**
+         * @var array<RoleDTO>
+         */
+        private array $roles = [],
+        /**
+         * @var array<PermissionDTO>
+         */
+        private array $permissions = [],
+    ) {
     }
 
     public function getId(): string
@@ -27,6 +36,9 @@ final readonly class UserAssignmentsDTO
         return !empty($this->roles);
     }
 
+    /**
+     * @return RoleDTO[]
+     */
     public function getRoles(): array
     {
         return $this->roles;
@@ -46,7 +58,7 @@ final readonly class UserAssignmentsDTO
     {
         $rolesName = '';
         foreach ($this->roles as $role) {
-            if ($role->getChildRolesName()){
+            if ($role->getChildRolesName()) {
                 $rolesName .= $role->getChildRolesName() . ', ';
             }
         }
@@ -58,7 +70,7 @@ final readonly class UserAssignmentsDTO
     {
         $rolesName = '';
         foreach ($this->roles as $role) {
-            if ($role->getNestedRolesName()){
+            if ($role->getNestedRolesName()) {
                 $rolesName .= $role->getNestedRolesName() . ', ';
             }
         }
@@ -71,6 +83,9 @@ final readonly class UserAssignmentsDTO
         return !empty($this->permissions);
     }
 
+    /**
+     * @return PermissionDTO[]
+     */
     public function getPermissions(): array
     {
         return $this->permissions;
@@ -102,7 +117,7 @@ final readonly class UserAssignmentsDTO
     {
         $permissionsName = '';
         foreach ($this->roles as $role) {
-            if ($role->getNestedPermissonsName()) {
+            if ($role->getNestedPermissionsName()) {
                 $permissionsName .= $role->getNestedPermissionsName() . ', ';
             }
         }

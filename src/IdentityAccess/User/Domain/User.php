@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\User\Domain;
 
+
 use App\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
@@ -12,6 +13,10 @@ use Cycle\ORM\Entity\Behavior;
 use DateTimeImmutable;
 use Yiisoft\Security\PasswordHasher;
 
+
+/**
+ * @psalm-suppress MissingFinalForClass
+ */
 #[Entity(repository: UserRepository::class)]
 #[Index(columns: ['login'], unique: true)]
 #[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
@@ -30,11 +35,14 @@ class User
     #[Column(type: 'datetime')]
     private readonly DateTimeImmutable $updated_at;
 
-    public function __construct(#[Column(type: 'string(48)')]
-    private string $login, string $password)
-    {
+    public function __construct(
+        #[Column(type: 'string(48)')]
+        private string $login,
+        string $password,
+    ) {
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
+        $this->passwordHash = '';
         $this->setPassword($password);
     }
 
@@ -46,11 +54,6 @@ class User
     public function getLogin(): string
     {
         return $this->login;
-    }
-
-    public function setLogin(string $login): void
-    {
-        $this->login = $login;
     }
 
     public function validatePassword(string $password): bool

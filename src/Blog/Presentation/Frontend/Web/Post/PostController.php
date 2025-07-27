@@ -19,18 +19,22 @@ final readonly class PostController
     public function __construct(
         ViewRenderer $viewRenderer,
         private WebControllerService $webService,
-        private IdentityAccessService $identityAccessService
+        private IdentityAccessService $identityAccessService,
     ) {
         $this->view = $viewRenderer->withViewPath('@blogView/post');
     }
 
     public function index(
         CurrentRoute $currentRoute,
-        ReadPostQueryServiceInterface $postQueryService
+        ReadPostQueryServiceInterface $postQueryService,
     ): Response {
-        $slug = $currentRoute->getArgument('slug', '');
+        $slug = $currentRoute->getArgument('slug');
+        if ($slug === null) {
+            return $this->webService->notFound();
+        }
 
-        if (($item = $postQueryService->fullPostPage($slug)) === null) {
+        $item = $postQueryService->fullPostPage($slug);
+        if ($item === null) {
             return $this->webService->notFound();
         }
 
@@ -41,14 +45,18 @@ final readonly class PostController
             'item' => $item,
             'canEdit' => $canEdit,
             'commentator' => $commentator,
-            'slug' => $slug
+            'slug' => $slug,
         ]);
     }
 
     public function findAuthorPosts(Request $request, ReadPostQueryServiceInterface $postQueryService): Response
     {
-        $authorName = $request->getAttribute('author', '');
-        $author = $this->identityAccessService->findAuthor($authorName);
+        $authorName = $request->getAttribute('author');
+        if ($authorName === null) {
+            return $this->webService->notFound();
+        }
+
+        $author = $this->identityAccessService->findAuthor((string)$authorName);
         if ($author === null) {
             return $this->webService->notFound();
         }

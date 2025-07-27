@@ -10,18 +10,30 @@ interface AccessRightsServiceInterface
 
     public function getRoleByName(string $roleName): ?RoleDTO;
 
+    /**
+     * @return array<string, RoleDTO>
+     */
     public function getRoles(): array;
 
     public function existPermission(string $permissionName): bool;
 
     public function getPermissionByName(string $permissionName): ?PermissionDTO;
 
+    /**
+     * @return array<string, PermissionDTO>
+     */
     public function getPermissions(): array;
 
     public function getChildRoles(RoleDTO $roleDTO): array;
 
+    /**
+     * @return array<string, RoleDTO>
+     */
     public function getNestedRoles(RoleDTO $roleDTO): array;
 
+    /**
+     * @return array<string, PermissionDTO>
+     */
     public function getPermissionsByRole(RoleDTO $roleDTO): array;
 
     public function getNestedPermissionsByRole(RoleDTO $roleDTO): array;

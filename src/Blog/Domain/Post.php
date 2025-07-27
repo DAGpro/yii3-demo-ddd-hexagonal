@@ -21,6 +21,9 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Yiisoft\Security\Random;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 #[Entity(
     repository: PostRepository::class,
     scope: PublicAndNotDeletedConstrain::class
@@ -29,14 +32,18 @@ use Yiisoft\Security\Random;
 #[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
 #[Behavior\UpdatedAt(field: 'updated_at', column: 'updated_at')]
 #[Behavior\SoftDelete(field: 'deleted_at', column: 'deleted_at')]
+
 class Post
 {
     #[Column(type: 'primary')]
     private ?int $id = null;
 
     #[Column(type: 'string(128)')]
-    private string $slug;
+    private string $slug = '';
 
+    /**
+     * @var ArrayCollection<array-key, Comment>
+     */
     #[HasMany(target: Comment::class)]
     private readonly ArrayCollection $comments;
 
@@ -66,12 +73,17 @@ class Post
     #[Column(type: 'datetime', nullable: true)]
     private ?DateTimeImmutable $deleted_at = null;
 
-    public function __construct(#[Column(type: 'string(191)', default: '')]
-    private string $title, #[Column(type: 'text')]
-    private string $content, #[Embedded(target: Author::class)]
-    private Author $author)
-    {
-        $this->tags = new PivotedCollection();
+    public function __construct(
+        #[Column(type: 'string(191)', default: '')]
+        private string $title,
+        #[Column(type: 'text')]
+        private string $content,
+        #[Embedded(target: Author::class)]
+        private Author $author,
+    ) {
+        /** @var PivotedCollection<array-key, Tag, PostTag> $tags */
+        $tags = new PivotedCollection();
+        $this->tags = $tags;
         $this->comments = new ArrayCollection();
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
@@ -125,7 +137,7 @@ class Post
     }
 
     /**
-     * @return Comment[]
+     * @return array<array-key, Comment>
      */
     public function getComments(): array
     {
@@ -133,7 +145,7 @@ class Post
     }
 
     /** Getters Setters */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -148,7 +160,7 @@ class Post
         return $this->content;
     }
 
-    public function getSlug(): ?string
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -159,11 +171,14 @@ class Post
     }
 
     /**
-     * @return Tag[]
+     * @return array<array-key, Tag>
+     * @psalm-return Tag[]
      */
     public function getTags(): array
     {
-        return $this->tags->toArray();
+        /** @var Tag[] $tags */
+        $tags = $this->tags->toArray();
+        return $tags;
     }
 
     public function addTag(Tag $post): void
@@ -205,8 +220,6 @@ class Post
     {
         $this->published_at = $date;
     }
-
-    //TODO fixture data
 
     public function getDeletedAt(): ?DateTimeImmutable
     {

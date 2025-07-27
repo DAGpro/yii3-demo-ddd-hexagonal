@@ -8,6 +8,9 @@ use Yiisoft\Data\Reader\DataReaderInterface;
 
 interface ArchivePostQueryServiceInterface
 {
+    /**
+     * @param int<0, max>|null $limit
+     */
     public function getFullArchive(?int $limit = null): DataReaderInterface;
 
     public function getMonthlyArchive(int $year, int $month): DataReaderInterface;

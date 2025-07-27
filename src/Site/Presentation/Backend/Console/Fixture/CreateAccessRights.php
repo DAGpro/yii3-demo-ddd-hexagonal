@@ -8,6 +8,7 @@ use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterfa
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,7 +31,7 @@ final class CreateAccessRights extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -97,7 +98,7 @@ final class CreateAccessRights extends Command
             }
         } catch (Throwable $t) {
             $io->error($t->getMessage());
-            return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
+            return (int)$t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }
         $io->success('Done');
         return ExitCode::OK;

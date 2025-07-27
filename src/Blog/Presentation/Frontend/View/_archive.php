@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var DataReaderInterface|string[][] $archive
- * @var TranslatorInterface $translator
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- */
-
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Tag\A;
 use Yiisoft\Html\Tag\Div;
@@ -19,17 +12,25 @@ use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
+/**
+ * @var DataReaderInterface $archive
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ */
 ?>
 <h4 class="text-muted mb-3"><?= $translator->translate('blog.archive') ?></h4>
 <ul class="list-group mb-3">
     <?php
     if (count($archive) > 0) {
-        $currentYear = null;
-
         $monthList = [];
+        /** @var array{year: string|null, month: string|null, count: int} $item */
         foreach ($archive->read() as $item) {
+            /** @var string|null $year */
             $year = $item['year'];
+            /** @var string|null $month */
             $month = $item['month'];
+            /** @var int $count */
             $count = $item['count'];
 
             if ($year === null || $month === null) {
@@ -55,9 +56,13 @@ use Yiisoft\View\WebView;
                     );
         }
         $monthsPrint = [];
-        foreach ($monthList as $year => $months) {
+        /**
+         * @var int $yearMonths
+         * @var array $months
+         */
+        foreach ($monthList as $yearMonths => $months) {
             $monthsPrint[] = H6::tag()
-                ->content((string)$year)
+                ->content((string)$yearMonths)
                 ->class('me-0');
             $monthsPrint = [...$monthsPrint, ...$months];
         }

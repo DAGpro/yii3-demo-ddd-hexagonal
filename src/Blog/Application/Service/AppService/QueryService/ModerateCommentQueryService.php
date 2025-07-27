@@ -8,6 +8,7 @@ use App\Blog\Application\Service\QueryService\ModerateCommentQueryServiceInterfa
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 use Cycle\ORM\Select;
+use Override;
 use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
@@ -18,8 +19,8 @@ final readonly class ModerateCommentQueryService implements ModerateCommentQuery
     {
     }
 
-    #[\Override]
-    public function findAllPreloaded(): ?DataReaderInterface
+    #[Override]
+    public function findAllPreloaded(): DataReaderInterface
     {
         $sort = $this->getSort()->withOrder(['published_at' => 'desc']);
         return $this->prepareDataReader(
@@ -31,7 +32,7 @@ final readonly class ModerateCommentQueryService implements ModerateCommentQuery
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getComment(int $commentId): ?Comment
     {
         return $this->repository->getComment($commentId);

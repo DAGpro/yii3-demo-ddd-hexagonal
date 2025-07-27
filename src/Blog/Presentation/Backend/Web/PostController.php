@@ -36,7 +36,7 @@ final readonly class PostController
 
     public function index(CurrentRoute $currentRoute): ResponseInterface
     {
-        $pageNum = (int)$currentRoute->getArgument('page', '1');
+        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
 
         $dataReader = $this->postQueryService->findAllPreloaded();
 
@@ -90,7 +90,7 @@ final readonly class PostController
         return $this->webService->sessionFlashAndRedirect(
             'Post moved to draft!',
             'backend/post/view',
-            ['post_id' => $postId],
+            ['post_id' => (int)$postId],
         );
     }
 
@@ -117,7 +117,7 @@ final readonly class PostController
         return $this->webService->sessionFlashAndRedirect(
             'Post published!',
             'backend/post/view',
-            ['post_id' => $postId],
+            ['post_id' => (int)$postId],
         );
     }
 
@@ -127,7 +127,7 @@ final readonly class PostController
         FormHydrator $formHydrator,
     ): ResponseInterface {
         $postId = (int)$currentRoute->getArgument('post_id');
-        if (($post = $this->postQueryService->getPost($postId)) === null) {
+        if (($post = $this->postQueryService->getPost($postId)) === null || ($postId = $post->getId()) === null) {
             return $this->webService->notFound();
         }
 
@@ -137,7 +137,7 @@ final readonly class PostController
         ) {
             try {
                 $this->postService->moderate(
-                    $post->getId(),
+                    $postId,
                     new PostModerateDTO(
                         $form->getTitle(),
                         $form->getContent(),
@@ -153,7 +153,6 @@ final readonly class PostController
         }
 
         return $this->view->render('moderate', [
-            'action' => ['backend/post/moderate', ['post_id' => $post->getId()]],
             'form' => $form,
         ]);
     }

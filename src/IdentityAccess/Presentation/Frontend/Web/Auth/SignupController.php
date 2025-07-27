@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth;
 
+use App\IdentityAccess\AuthService\AuthenticationService;
 use App\IdentityAccess\Presentation\Frontend\Web\Auth\Form\SignupForm;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
-use App\Infrastructure\Authentication\AuthenticationService;
 use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

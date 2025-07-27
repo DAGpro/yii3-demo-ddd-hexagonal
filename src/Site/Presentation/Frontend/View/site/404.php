@@ -26,7 +26,7 @@ $this->setTitle($translator->translate('view-404.not-found'));
         <p class="card-text">
             <?= $translator->translate('view-404.page.not-found', [
                 'url' => Span::tag()
-                    ->content(Html::encode($currentRoute->getUri()->getPath()))
+                    ->content(Html::encode($currentRoute->getUri()?->getPath()))
                     ->class('text-muted')
                     ->render(),
             ])

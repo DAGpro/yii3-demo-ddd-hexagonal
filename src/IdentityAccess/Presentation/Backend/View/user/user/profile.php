@@ -2,21 +2,25 @@
 
 declare(strict_types=1);
 
+
+use App\IdentityAccess\User\Domain\User;
+use Yiisoft\Html\Html;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\Translator;
+use Yiisoft\View\WebView;
+
+
 /**
- * @var \App\IdentityAccess\User\Domain\User $item
- * @var \Yiisoft\Form\Widget\Field $field
- * @var \Yiisoft\Translator\Translator $translator
- * @var \Yiisoft\Router\UrlGeneratorInterface $url
- * @var \Yiisoft\View\WebView $this
+ * @var User $item
+ * @var Translator $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
  * @var string $csrf
  */
-
-use Yiisoft\Html\Html;
-
 $this->setTitle("User: " . Html::encode($item->getLogin()));
 
-echo Html::tag('h1', );
-    echo <<<DELETEUSER
+echo Html::tag('h1');
+echo <<<DELETEUSER
     <div class="border border-3 border-light p-3 mb-3">
         <h1>
             {$this->getTitle()}
@@ -32,11 +36,13 @@ echo Html::tag('h1', );
 
 ?>
 <div class="main">
-    <p class="text-muted"><?=$translator->translate('identityAccess.created.at')?> <?= $item->getCreatedAt()->format('H:i:s d.m.Y') ?></p>
+    <p class="text-muted"><?= $translator->translate('identityAccess.created.at') ?> <?= $item->getCreatedAt(
+        )->format('H:i:s d.m.Y') ?></p>
 
     <p>
-        <a href="<?=$url->generate('backend/access/user-assignments', ['user_id' => $item->getId()])?>" class="fw-bold">
-            <?=$translator->translate('identityAccess.user.assignments')?>
+        <a href="<?= $url->generate('backend/access/user-assignments', ['user_id' => $item->getId()]) ?>"
+           class="fw-bold">
+            <?= $translator->translate('identityAccess.user.assignments') ?>
         </a>
     </p>
 

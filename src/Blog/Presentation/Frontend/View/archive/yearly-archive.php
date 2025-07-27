@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var int $year
- * @var Post[]|DataReaderInterface $items
- * @var TranslatorInterface $translator
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- */
 
 use App\Blog\Domain\Post;
 use Yiisoft\Data\Reader\DataReaderInterface;
@@ -20,6 +13,15 @@ use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
+/**
+ * @var int $year
+ * @var Post[]|DataReaderInterface $items
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ */
+
+/** @psalm-scope-this WebView */
 $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year]));
 
 ?>
@@ -45,7 +47,10 @@ $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year
         $monthName = '';
         /** @var Post $item */
         foreach ($items as $item) {
-            $month = (int)$item->getPublishedAt()->format('m');
+            if ($item->getPublishedAt()) {
+                continue;
+            }
+            $month = (int)$item->getPublishedAt()?->format('m');
 
             if ($currentMonth !== $month) {
                 $currentMonth = $month;

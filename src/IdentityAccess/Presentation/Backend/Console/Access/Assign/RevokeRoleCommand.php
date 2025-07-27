@@ -9,6 +9,7 @@ use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,7 +32,7 @@ final class RevokeRoleCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this
@@ -39,22 +40,22 @@ final class RevokeRoleCommand extends Command
             ->addArgument('role', InputArgument::REQUIRED, 'RBAC role');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = $input->getArgument('role');
-        $userId = $input->getArgument('userId');
+        $roleName = (string)$input->getArgument('role');
+        $userId = (string)$input->getArgument('userId');
 
         try {
             $user = $this->userQueryService->getUser((int)$userId);
-            if ($user === null) {
+            if ($user === null || ($userId = $user->getId()) === null) {
                 throw new IdentityException('User is not found!');
             }
 
             $role = new RoleDTO($roleName);
-            $this->assignAccessService->revokeRole($role, $user->getId());
+            $this->assignAccessService->revokeRole($role, $userId);
 
             $io->success('Role was revoke to given user');
         } catch (AssignedItemException|IdentityException $t) {

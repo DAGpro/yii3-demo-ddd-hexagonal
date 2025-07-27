@@ -16,6 +16,7 @@ use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -52,11 +53,14 @@ final class AssignRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = $input->getArgument('role');
-        $userId = $input->getArgument('userId');
+        $roleName = (string)$input->getArgument('role');
+        $userId = (string)$input->getArgument('userId');
 
         try {
             if (!$this->accessRightsService->existRole($roleName)) {
+                /**
+                 * @var QuestionHelper $helper
+                 */
                 $helper = $this->getHelper('question');
                 $question = new ConfirmationQuestion('Role doesn\'t exist. Create new one? ', false);
 
@@ -69,12 +73,12 @@ final class AssignRoleCommand extends Command
             }
 
             $user = $this->userQueryService->getUser((int)$userId);
-            if ($user === null) {
+            if ($user === null || ($userId = $user->getId()) === null) {
                 throw new IdentityException('This user was not found!');
             }
 
             $role = new RoleDTO($roleName);
-            $this->assignAccessService->assignRole($role, $user->getId());
+            $this->assignAccessService->assignRole($role, $userId);
 
             $io->success('Role was assigned to given user');
         } catch (ExistItemException|NotExistItemException|AssignedItemException|IdentityException $t) {

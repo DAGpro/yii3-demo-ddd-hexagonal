@@ -15,6 +15,9 @@ use Cycle\Annotated\Annotation\Table\Index;
 use Cycle\ORM\Entity\Behavior;
 use DateTimeImmutable;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 #[Entity(
     repository: CommentRepository::class,
     scope: PublicAndNotDeletedConstrain::class
@@ -31,9 +34,11 @@ class Comment
     #[Column(type: 'bool', default: 'false', typecast: 'bool')]
     private bool $public = false;
 
+    /**
+     * @psalm-suppress MissingPropertyNotSetInConstructor
+     */
     #[BelongsTo(target: Post::class, nullable: false)]
-    private readonly Post $post;
-    private int $post_id;
+    private Post $post;
 
     #[Column(type: 'datetime')]
     private readonly DateTimeImmutable $created_at;
@@ -54,7 +59,7 @@ class Comment
         #[Embedded(target: Commentator::class)]
         private Commentator $commentator,
     ) {
-        $this->post_id = $post->getId();
+        $this->post = $post;
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
     }
@@ -79,7 +84,7 @@ class Comment
         $this->content = $content;
 
         if ($post !== null) {
-            $this->post_id = $post->getId();
+            $this->post = $post;
         }
 
         if ($commentator !== null) {
@@ -92,7 +97,7 @@ class Comment
         return $this->public;
     }
 
-    public function isCommentator($commentator): bool
+    public function isCommentator(Commentator $commentator): bool
     {
         return $this->commentator->isEqual($commentator);
     }
@@ -141,8 +146,6 @@ class Comment
     {
         $this->published_at = $date;
     }
-
-    //TODO fixture data
 
     public function getDeletedAt(): ?DateTimeImmutable
     {

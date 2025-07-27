@@ -2,19 +2,14 @@
 
 declare(strict_types=1);
 
-/**
- * @var OffsetPaginator $paginator ;
- * @var TranslatorInterface $translator
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- * @var int $currentRoute
- */
-
+use App\IdentityAccess\User\Domain\User;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\I;
 use Yiisoft\Html\Tag\Input;
 use Yiisoft\Html\Tag\Input\Checkbox;
+use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
@@ -27,6 +22,14 @@ use Yiisoft\Yii\DataView\GridView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\YiiRouter\UrlCreator;
 use Yiisoft\Yii\DataView\YiiRouter\UrlParameterProvider;
+
+/**
+ * @var OffsetPaginator $paginator ;
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ * @var CurrentRoute $currentRoute
+ */
 
 $this->setTitle($translator->translate('menu.users'));
 ?>
@@ -77,7 +80,7 @@ $this->setTitle($translator->translate('menu.users'));
                 property: 'id',
                 header: 'Id',
                 withSorting: true,
-                content: static fn($model): string => $model->getId(),
+                content: static fn(User $model): int => (int)$model->getId(),
                 filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
                 filterEmpty: false,
             ),
@@ -85,7 +88,7 @@ $this->setTitle($translator->translate('menu.users'));
                 property: 'login',
                 header: 'Login',
                 withSorting: true,
-                content: static fn($model): string => $model->getLogin(),
+                content: static fn(User $model): string => $model->getLogin(),
                 filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
                 filterEmpty: false,
             ),
@@ -93,15 +96,7 @@ $this->setTitle($translator->translate('menu.users'));
                 property: 'created_at',
                 header: 'Created At',
                 withSorting: true,
-                content: static fn($model): string => $model->getCreatedAt()->format('r'),
-                filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
-                filterEmpty: false,
-            ),
-            new DataColumn(
-                property: 'created_at',
-                header: 'Created At',
-                withSorting: true,
-                content: static fn($model): string => $model->getCreatedAt()->format('r'),
+                content: static fn(User $model): string => $model->getCreatedAt()->format('r'),
                 filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
                 filterEmpty: false,
             ),
@@ -109,11 +104,12 @@ $this->setTitle($translator->translate('menu.users'));
                 property: 'api',
                 header: 'Api',
                 withSorting: true,
-                content: static fn($model): string => Html::a(
+                content: static fn(User $model): string => Html::a(
                     'API User Data',
                     $url->generate('api/user/profile', ['login' => $model->getLogin()]),
                     ['class' => 'btn btn-link', 'target' => '_blank'],
                 )->render(),
+                encodeContent: false,
                 filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
                 filterEmpty: false,
             ),
@@ -121,14 +117,17 @@ $this->setTitle($translator->translate('menu.users'));
                 property: 'profile',
                 header: 'Profile',
                 withSorting: true,
-                content: static fn($model): string => Html::a(
-                    Html::tag('i', '', [
-                        'class' => 'bi bi-person-fill ms-1',
-                        'style' => 'font-size: 1.5em;',
-                    ]),
-                    $url->generate('user/profile', ['login' => $model->getLogin()]),
-                    ['class' => 'btn btn-link'],
-                )->render(),
+                content: static fn(User $model): string
+                    => A::tag()
+                    ->content(I::tag()
+                        ->class('bi bi-person-fill ms-1')
+                        ->addAttributes(['style' => 'font-size: 1.5em'])->render(),
+                    )
+                    ->url($url->generate('user/profile', ['login' => $model->getLogin()]))
+                    ->class('btn btn-link')
+                    ->encode(false)
+                    ->render(),
+                encodeContent: false,
                 filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
                 filterEmpty: false,
             ),

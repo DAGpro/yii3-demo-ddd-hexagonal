@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Blog\Presentation\Frontend\View\Widget;
 
 use App\Blog\Domain\Post;
+use Override;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\A;
 use Yiisoft\Html\Tag\Div;
@@ -14,14 +15,15 @@ use Yiisoft\Widget\Widget;
 
 final class AuthorPostCard extends Widget
 {
-    private ?Post $post = null;
-
     private array $options = [];
 
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Post $post,
+    ) {
     }
 
+    #[Override]
     public function render(): string
     {
         if (!isset($this->options['id'])) {
@@ -52,17 +54,6 @@ final class AuthorPostCard extends Widget
             )
             ->encode(false)
             ->render();
-    }
-
-    public function post(?Post $post): self
-    {
-        $this->post = $post;
-
-        if ($post !== null) {
-            $this->options['data']['post-slug'] = $post->getSlug();
-        }
-
-        return $this;
     }
 
     /**
@@ -97,9 +88,9 @@ final class AuthorPostCard extends Widget
         return Div::tag()
             ->class('card-text mb-auto')
             ->content(
-                $this->post->getPublishedAt() === null
+                (($publishedAt = $this->post->getPublishedAt()) === null)
                     ? 'not published'
-                    : $this->post->getPublishedAt()->format('M, d'),
+                    : $publishedAt->format('M, d'),
                 ' by ',
                 A::tag()
                     ->class('mb-1 text-muted')

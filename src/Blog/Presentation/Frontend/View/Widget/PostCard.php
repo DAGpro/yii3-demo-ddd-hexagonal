@@ -15,12 +15,12 @@ use Yiisoft\Widget\Widget;
 
 final class PostCard extends Widget
 {
-    private ?Post $post = null;
-
     private array $options = [];
 
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Post $post,
+    ) {
     }
 
     #[Override]
@@ -46,17 +46,6 @@ final class PostCard extends Widget
             ->addAttributes($this->options)
             ->encode(false)
             ->render();
-    }
-
-    public function post(?Post $post): self
-    {
-        $this->post = $post;
-
-        if ($post !== null) {
-            $this->options['data']['post-slug'] = $post->getSlug();
-        }
-
-        return $this;
     }
 
     /**
@@ -90,9 +79,9 @@ final class PostCard extends Widget
     {
         return Div::tag()
             ->content(
-                $this->post->getPublishedAt() === null
+                (($publishedAt = $this->post->getPublishedAt()) === null)
                     ? 'not published'
-                    : $this->post->getPublishedAt()->format('M, d'),
+                    : $publishedAt->format('M, d'),
                 ' by ',
                 A::tag()
                     ->content($this->post->getAuthor()->getName())

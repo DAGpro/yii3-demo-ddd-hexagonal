@@ -2,17 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var View $this
- * @var UrlGeneratorInterface $url
- * @var Translator $translator
- * @var PostForm $form
- * @var array $body
- * @var string $csrf
- * @var array $action
- * @var array $tags
- * @var string $title
- */
 
 use App\Blog\Presentation\Frontend\Web\Author\PostForm;
 use Yiisoft\FormModel\Field;
@@ -23,19 +12,30 @@ use Yiisoft\Html\Tag\Form;
 use Yiisoft\Html\Tag\Input;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\Translator;
-use Yiisoft\View\View;
+use Yiisoft\View\WebView;
 
+/**
+ * @var UrlGeneratorInterface $url
+ * @var Translator $translator
+ * @var PostForm $form
+ * @var array $body
+ * @var string $csrf
+ * @var array{route:string, arguments?:array<string, string>} $action
+ * @var array $tags
+ * @var string $title
+ * @psalm-scope-this WebView
+ */
 ?>
 
 <h1><?= Html::encode($title) ?></h1>
 
 <?php
-$tagListInString = implode(
-    ', ',
-    $form
-        ->getValidationResult()
-        ->getPropertyErrorMessagesIndexedByPath('tags'),
-);
+$validationResult = $form->getValidationResult();
+$tagsErrorMessages = $validationResult->getPropertyErrorMessagesIndexedByPath('tags');
+$tagsErrorsWithString = !empty($tagsErrorMessages) ? implode(', ',
+    /** @return string[] */
+    array_merge(...array_values($tagsErrorMessages)),
+) : '';
 
 $buttonTags = '';
 foreach ($form->getTags() as $tag) {
@@ -56,7 +56,7 @@ foreach ($form->getTags() as $tag) {
 ?>
 
 <?= Form::tag()
-    ->action($url->generate(...$action))
+    ->action($url->generate($action['route'], $action['arguments'] ?? []))
     ->method('post')
     ->attributes(['enctype' => 'multipart/form-data'])
     ->csrf($csrf)
@@ -67,7 +67,7 @@ foreach ($form->getTags() as $tag) {
             ->addInputAttributes(['rows' => 9, 'style' => 'height: 300px;']),
         "<label for='addTag' class='form-label'>{$translator->translate('blog.add.tag')}</label>",
         '<input type="text" class="form-control mb-3" id="addTag" placeholder="Add tag" value="">',
-        "<p class='text-danger'>$tagListInString</p>",
+        "<p class='text-danger'>$tagsErrorsWithString</p>",
         Button::tag()
             ->content($translator->translate('button.add'))
             ->addAttributes(['class' => 'btn btn-primary mb-3', 'id' => 'addTagButton']),

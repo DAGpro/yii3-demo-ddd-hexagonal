@@ -6,16 +6,20 @@ namespace App\Blog\Presentation\Frontend\Web\Author;
 
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
+use Override;
 use Yiisoft\FormModel\FormModel;
 use Yiisoft\Validator\Rule\Each;
 use Yiisoft\Validator\Rule\Length;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RulesProviderInterface;
 
 
-final class PostForm extends FormModel
+final class PostForm extends FormModel implements RulesProviderInterface
 {
     private readonly string $title;
     private readonly string $content;
+
+    /** @var string[] */
     private readonly array $tags;
 
     public function __construct(?Post $post)
@@ -35,17 +39,21 @@ final class PostForm extends FormModel
         return $this->content;
     }
 
+    /**
+     * @return string[]
+     */
     public function getTags(): array
     {
         return $this->tags;
     }
 
-    #[\Override]
+    #[Override]
     public function getFormName(): string
     {
         return '';
     }
 
+    #[Override]
     public function getRules(): array
     {
         return [
@@ -59,7 +67,9 @@ final class PostForm extends FormModel
             ],
             'tags' => [
                 new Each(
-                    new Length(min: 3),
+                    [
+                        new Length(min: 3),
+                    ],
                 ),
             ],
         ];

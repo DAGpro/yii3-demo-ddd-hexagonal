@@ -24,22 +24,31 @@ final readonly class IdentityAccessService
     public function findAuthor(string $authorName): ?Author
     {
         $user = $this->userQueryService->findByLogin($authorName);
-        if ($user === null || !$this->authorizationService->userHasRole($user->getId(), 'author')) {
+        if ($user === null) {
             return null;
         }
 
-        return new Author($user->getId(), $user->getLogin());
+        $userId = $user->getId();
+        if ($userId === null || !$this->authorizationService->userHasRole($userId, 'author')) {
+            return null;
+        }
+
+        return new Author($userId, $user->getLogin());
     }
 
     public function getAuthor(): ?Author
     {
         $user = $this->authenticationService->getUser();
-
-        if ($user === null || !$this->authorizationService->userHasRole($user->getId(), 'author')) {
+        if ($user === null) {
             return null;
         }
 
-        return new Author($user->getId(), $user->getLogin());
+        $userId = $user->getId();
+        if ($userId === null || !$this->authorizationService->userHasRole($userId, 'author')) {
+            return null;
+        }
+
+        return new Author($userId, $user->getLogin());
     }
 
     public function getCommentator(): ?Commentator
@@ -49,7 +58,12 @@ final readonly class IdentityAccessService
             return null;
         }
 
-        return new Commentator($user->getId(), $user->getLogin());
+        $userId = $user->getId();
+        if ($userId === null) {
+            return null;
+        }
+
+        return new Commentator($userId, $user->getLogin());
     }
 
     public function isCommentator(Comment $comment): bool

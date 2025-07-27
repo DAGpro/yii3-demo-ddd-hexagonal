@@ -7,6 +7,7 @@ namespace App\IdentityAccess\Presentation\Backend\Console\User;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,26 +30,26 @@ final class DeleteUserCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this
             ->addArgument('login', InputArgument::REQUIRED, 'Login');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $login = $input->getArgument('login');
+        $login = (string)$input->getArgument('login');
 
         try {
             $user = $this->userQueryService->findByLogin($login);
-            if ($user === null) {
+            if ($user === null || ($userId = $user->getId()) === null) {
                 throw new IdentityException('User is not found!');
             }
-            $this->userService->deleteUser($user->getId());
+            $this->userService->deleteUser($userId);
 
             $io->success('User deleted');
         } catch (IdentityException $t) {

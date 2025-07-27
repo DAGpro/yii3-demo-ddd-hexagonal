@@ -8,9 +8,16 @@ use App\Blog\Domain\Comment;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
+use Override;
 
+/**
+ * @extends Select\Repository<Comment>
+ */
 final class CommentRepository extends Select\Repository implements CommentRepositoryInterface
 {
+    /**
+     * @param Select<Comment> $select
+     */
     public function __construct(
         protected Select $select,
         private readonly EntityManagerInterface $entityManager,
@@ -18,32 +25,53 @@ final class CommentRepository extends Select\Repository implements CommentReposi
         parent::__construct($select);
     }
 
-    #[\Override]
+    #[Override]
     public function getPublicComment(int $commentId): ?Comment
     {
-        return $this->findOne(['id' => $commentId]);
+        /** @var Comment|null $comment */
+        $comment = $this->findOne(['id' => $commentId]);
+        return $comment;
     }
 
-    #[\Override]
+    #[Override]
     public function getComment(int $commentId): ?Comment
     {
-        return $this->select()->scope()->where(['id' => $commentId])->fetchOne();
+        /** @var Comment|null $comment */
+        $comment = $this->select()->scope()->where(['id' => $commentId])->fetchOne();
+        return $comment;
     }
 
-    #[\Override]
-    public function save(array $comments): void
+    #[Override]
+    /**
+     * @param iterable<Comment> $comments
+     */
+    public function save(iterable $comments): void
     {
+        if ($comments === []) {
+            return;
+        }
         foreach ($comments as $entity) {
-            $this->entityManager->persist($entity);
+            if ($entity instanceof Comment) {
+                $this->entityManager->persist($entity);
+            }
         }
         $this->entityManager->run();
     }
 
-    #[\Override]
-    public function delete(array $comments): void
+    #[Override]
+    /**
+     * @param iterable<Comment> $comments
+     */
+    public function delete(iterable $comments): void
     {
+        if ($comments === []) {
+            return;
+        }
+
         foreach ($comments as $entity) {
-            $this->entityManager->delete($entity);
+            if ($entity instanceof Comment) {
+                $this->entityManager->delete($entity);
+            }
         }
         $this->entityManager->run();
     }

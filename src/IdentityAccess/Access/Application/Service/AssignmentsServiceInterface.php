@@ -12,6 +12,9 @@ interface AssignmentsServiceInterface
 
     public function getRolesByUser(string|int $userId): array;
 
+    /**
+     * @return array<string, PermissionDTO>
+     */
     public function getPermissionsByUser(string|int $userId): array;
 
     public function userHasPermission(string|int $userId, string $permissionName): bool;

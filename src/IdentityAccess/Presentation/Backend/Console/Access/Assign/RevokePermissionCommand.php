@@ -9,6 +9,7 @@ use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,7 +32,7 @@ final class RevokePermissionCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this
@@ -39,22 +40,22 @@ final class RevokePermissionCommand extends Command
             ->addArgument('permission', InputArgument::REQUIRED, 'RBAC permission');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $permissionName = $input->getArgument('permission');
-        $userId = $input->getArgument('userId');
+        $permissionName = (string)$input->getArgument('permission');
+        $userId = (string)$input->getArgument('userId');
 
         try {
             $user = $this->userQueryService->getUser((int)$userId);
-            if ($user === null) {
+            if ($user === null || ($userId = $user->getId()) === null) {
                 throw new IdentityException('User is not found!');
             }
 
             $permissionDTO = new PermissionDTO($permissionName);
-            $this->assignAccessService->revokePermission($permissionDTO, $user->getId());
+            $this->assignAccessService->revokePermission($permissionDTO, $userId);
 
             $io->success('Permission was revoke to given user');
         } catch (AssignedItemException|IdentityException $t) {

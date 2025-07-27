@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Backend\Console\Access;
 
 use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
+use App\IdentityAccess\Access\Application\Service\PermissionDTO;
+use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -28,7 +31,7 @@ final class AccessListCommand extends Command
     }
 
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -47,6 +50,9 @@ final class AccessListCommand extends Command
         return ExitCode::OK;
     }
 
+    /**
+     * @param array<RoleDTO> $roles
+     */
     private function getRolesTable(OutputInterface $output, array $roles): void
     {
         $table = new Table($output);
@@ -76,6 +82,9 @@ final class AccessListCommand extends Command
         $table->render();
     }
 
+    /**
+     * @param array<PermissionDTO> $permissions
+     */
     private function getPermissionsTable(OutputInterface $output, array $permissions): void
     {
         $tablePermissions = new Table($output);

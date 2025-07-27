@@ -40,11 +40,17 @@ final readonly class ApiUserController
                 Sort::only(['login'])
                     ->withOrderString('login'),
             );
+        /** @var User[] $users */
         $users = $dataReader->read();
 
         $items = [];
         foreach ($users as $user) {
-            $items[] = ['login' => $user->getLogin(), 'created_at' => $user->getCreatedAt()->format('H:i:s d.m.Y')];
+            $items[] = [
+                'login' => $user->getLogin(),
+                'created_at' => $user
+                    ->getCreatedAt()
+                    ->format('H:i:s d.m.Y'),
+            ];
         }
 
         return $this->responseFactory->createResponse($items);
@@ -66,8 +72,10 @@ final readonly class ApiUserController
     public function profile(UserQueryServiceInterface $userQueryService, CurrentRoute $currentRoute): ResponseInterface
     {
         $login = $currentRoute->getArgument('login');
+        if ($login === null) {
+            return $this->responseFactory->createResponse('Page not found', 404);
+        }
 
-        /** @var User $user */
         $user = $userQueryService->findByLogin($login);
         if ($user === null) {
             return $this->responseFactory->createResponse('Page not found', 404);

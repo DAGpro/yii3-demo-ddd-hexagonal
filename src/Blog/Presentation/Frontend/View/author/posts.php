@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var OffsetPaginator $paginator ;
- * @var DataReaderInterface|string[][] $archive
- * @var DataReaderInterface|string[][] $tags
- * @var UrlGeneratorInterface $url
- * @var TranslatorInterface $translator
- * @var WebView $this
- * @var Author|null $author
- */
 
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
@@ -27,11 +18,23 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
+/**
+ * @var OffsetPaginator $paginator ;
+ * @var DataReaderInterface|string[][] $archive
+ * @var DataReaderInterface|string[][] $tags
+ * @var UrlGeneratorInterface $url
+ * @var TranslatorInterface $translator
+ * @var WebView $this
+ * @var Author $author
+ */
 $this->setTitle('Posts by author ' . $author->getName());
 $pagination = Div::tag()
     ->content(
         new OffsetPagination()
             ->withContext(
+            /**
+             * @psalm-suppress InternalMethod
+             */
                 new PaginationContext(
                     $url->generate('blog/author/posts',
                         ['author' => $author->getName()],
@@ -80,7 +83,7 @@ $pagination = Div::tag()
 
         /** @var Post $item */
         foreach ($paginator->read() as $item) {
-            echo AuthorPostCard::widget()->post($item);
+            echo AuthorPostCard::widget(['post' => $item]);
         }
 
         if ($paginator->getTotalItems() > 0) {
@@ -89,18 +92,12 @@ $pagination = Div::tag()
         ?>
     </div>
     <div class="col-sm-4 col-md-4 col-lg-3">
-        <?php
-        if ($author !== null) {
-            echo A::tag()
-                ->class('btn btn-outline-secondary btn-md-12 mb-3')
-                ->content($translator->translate('blog.add.post'))
-                ->url($url->generate('blog/author/post/add'))
-                ->encode(false)
-                ->render();
-        } ?>
-        <?php
-        //$this->render('_topTags', ['tags' => $tags]) ?>
-        <?php
-        //$this->render('_archive', ['archive' => $archive]) ?>
+        <?= A::tag()
+            ->class('btn btn-outline-secondary btn-md-12 mb-3')
+            ->content($translator->translate('blog.add.post'))
+            ->url($url->generate('blog/author/post/add'))
+            ->encode(false)
+            ->render()
+        ?>
     </div>
 </div>

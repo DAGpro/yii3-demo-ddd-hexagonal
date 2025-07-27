@@ -2,14 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var int $year
- * @var int $month
- * @var OffsetPaginator $paginator
- * @var TranslatorInterface $translator
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- */
 
 use App\Blog\Domain\Post;
 use App\Blog\Presentation\Frontend\View\Widget\PostCard;
@@ -22,13 +14,26 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
+/**
+ * @var int $year
+ * @var int $month
+ * @var OffsetPaginator $paginator
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ */
+
 $monthName = DateTime::createFromFormat('!m', (string)$month)->format('F');
+/** @psalm-scope-this WebView */
 $this->setTitle($translator->translate('blog.archive.for') . "<small class='text-muted'>$monthName $year</small>");
 
 $pagination = Div::tag()
     ->content(
         new OffsetPagination()
             ->withContext(
+            /**
+             * @psalm-suppress InternalMethod
+             */
                 new PaginationContext(
                     $url->generate(
                         'blog/archive/month',
@@ -75,7 +80,7 @@ $pagination = Div::tag()
 
         /** @var Post $item */
         foreach ($paginator->read() as $item) {
-            echo PostCard::widget()->post($item);
+            echo PostCard::widget(['post' => $item]);
         }
 
         if ($paginator->getTotalItems() > 0) {

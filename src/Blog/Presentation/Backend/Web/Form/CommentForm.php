@@ -5,25 +5,32 @@ declare(strict_types=1);
 namespace App\Blog\Presentation\Backend\Web\Form;
 
 use App\Blog\Domain\Comment;
+use InvalidArgumentException;
+use Override;
 use phpDocumentor\Reflection\Types\Boolean;
 use Yiisoft\FormModel\FormModel;
 use Yiisoft\Validator\Rule\Number;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RulesProviderInterface;
 
-final class CommentForm extends FormModel
+final class CommentForm extends FormModel implements RulesProviderInterface
 {
-    private readonly ?int $comment_id;
+    private readonly int $comment_id;
     private readonly string $content;
     private readonly bool $public;
 
-    public function __construct(?Comment $comment)
+    public function __construct(Comment $comment)
     {
-        $this->comment_id = $comment?->getId();
-        $this->content = $comment ? $comment->getContent() : '';
-        $this->public = $comment && $comment->isPublic();
+        $id = $comment->getId();
+        if ($id === null) {
+            throw new InvalidArgumentException('Comment id is null');
+        }
+        $this->comment_id = $id;
+        $this->content = $comment->getContent();
+        $this->public = $comment->isPublic();
     }
 
-    public function getCommentId(): ?int
+    public function getCommentId(): int
     {
         return $this->comment_id;
     }
@@ -38,7 +45,7 @@ final class CommentForm extends FormModel
         return $this->public;
     }
 
-    #[\Override]
+    #[Override]
     public function getPropertyLabels(): array
     {
         return [
@@ -48,12 +55,13 @@ final class CommentForm extends FormModel
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function getFormName(): string
     {
         return '';
     }
 
+    #[Override]
     public function getRules(): array
     {
         return [

@@ -7,6 +7,9 @@ namespace App\Blog\Infrastructure\Persistence\Post;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 #[Entity]
 class PostTag
 {

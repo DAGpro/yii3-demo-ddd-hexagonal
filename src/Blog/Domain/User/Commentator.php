@@ -7,16 +7,18 @@ namespace App\Blog\Domain\User;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Embeddable;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 #[Embeddable]
 class Commentator
 {
     public function __construct(
-        #[Column(type:'integer')]
+        #[Column(type: 'integer')]
         private readonly int $commentatorId,
         #[Column(type: 'string(191)')]
-        private readonly string $commentatorName
-    )
-    {
+        private readonly string $commentatorName,
+    ) {
     }
 
     public function getId(): int

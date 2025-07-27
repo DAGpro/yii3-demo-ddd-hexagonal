@@ -35,7 +35,7 @@ final readonly class TagController
 
     public function index(CurrentRoute $currentRoute): ResponseInterface
     {
-        $pageNum = (int)$currentRoute->getArgument('page', '1');
+        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
 
         $dataReader = $this->tagQueryService->findAllPreloaded();
 
@@ -57,7 +57,7 @@ final readonly class TagController
     ): ResponseInterface {
         $tagId = (int)$currentRoute->getArgument('tag_id');
 
-        if (($tag = $this->tagQueryService->getTag($tagId)) === null) {
+        if (($tag = $this->tagQueryService->getTag($tagId)) === null || ($tagId = $tag->getId()) === null) {
             return $this->webService->notFound();
         }
 
@@ -65,7 +65,7 @@ final readonly class TagController
         if (($request->getMethod() === Method::POST)
             && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
-            $this->tagService->changeTag($tag->getId(), $form->getLabel());
+            $this->tagService->changeTag($tagId, $form->getLabel());
 
             return $this->webService->redirect('backend/tag');
         }
@@ -74,7 +74,6 @@ final readonly class TagController
             'change-tag',
             [
                 'title' => 'Change tag label',
-                'action' => ['backend/tag/change', ['tag_id' => $tagId]],
                 'form' => $form,
             ],
         );

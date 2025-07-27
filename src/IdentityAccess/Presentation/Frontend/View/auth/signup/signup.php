@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Yiisoft\FormModel\Field;
+use Yiisoft\FormModel\FormModelInterface;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\Form;
 use Yiisoft\Router\UrlGeneratorInterface;

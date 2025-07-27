@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+
+use App\Blog\Domain\Post;
+use App\Blog\Domain\User\Author;
+use Yiisoft\Html\Html;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Article;
+use Yiisoft\Html\Tag\Div;
+use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
+use Yiisoft\View\WebView;
+
 /**
  * @var Post $post
  * @var UrlGeneratorInterface $url
@@ -12,33 +23,14 @@ declare(strict_types=1);
  * @var string $csrf
  * @var string $slug
  */
-
-use App\Blog\Domain\Post;
-use App\Blog\Domain\User\Author;
-use Yiisoft\Bootstrap5\Alert;
-use Yiisoft\Html\Html;
-use Yiisoft\Html\Tag\A;
-use Yiisoft\Html\Tag\Article;
-use Yiisoft\Html\Tag\Div;
-use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Translator\TranslatorInterface;
-use Yiisoft\View\WebView;
-
 $this->setTitle($post->getTitle());
-
-if (!empty($errors)) {
-    foreach ($errors as $field => $error) {
-        echo Alert::widget()->addAttributes(['class' => 'alert-danger'])->body(Html::encode($field . ':' . $error));
-    }
-}
-
 ?>
     <h1><?= Html::encode($post->getTitle()) ?></h1>
     <div>
         <span class="text-muted"><?= $post->getPublishedAt() === null
                 ? $translator->translate('blog.not.published.post')
                 : $translator->translate('blog.published.post',
-                    ['date' => $post->getPublishedAt()->format('H:i:s d.m.Y')],
+                    ['date' => $post->getPublishedAt()?->format('H:i:s d.m.Y')],
                 ) ?> by</span>
         <?php
         echo A::tag()

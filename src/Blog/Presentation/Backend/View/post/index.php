@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var OffsetPaginator $paginator ;
- * @var UrlGeneratorInterface $url
- * @var Translator $translator
- * @var WebView $this
- * @var string $csrf
- */
 
 use App\Blog\Domain\Post;
 use Yiisoft\Data\Paginator\OffsetPaginator;
@@ -21,19 +14,29 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
+/**
+ * @var OffsetPaginator $paginator ;
+ * @var UrlGeneratorInterface $url
+ * @var Translator $translator
+ * @var WebView $this
+ * @var string $csrf
+ */
 $this->setTitle($translator->translate('backend.title.posts'));
 $pagination = Div::tag()
     ->content(
         new OffsetPagination()
             ->withContext(
+            /**
+             * @psalm-suppress InternalMethod
+             */
                 new PaginationContext(
                     $url->generate(
-                        'blog/post',
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
+                        'backend/post',
+                    ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
                     $url->generate(
-                        'blog/post',
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('blog/comment'),
+                        'backend/post',
+                    ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
+                    $url->generate('backend/post'),
                 ),
             )
             ->listTag('ul')
@@ -67,8 +70,8 @@ $pagination = Div::tag()
             ->render();
     }
     ?>
-    <div class="m-2">
-        <table class="table mb-5 border border-light border-3">
+    <div class="m-2 table-responsive">
+        <table class="table table-striped mb-5 border">
             <thead>
             <tr>
                 <th scope="col"><?= $translator->translate('blog.id') ?></th>

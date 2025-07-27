@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Blog\Domain\Comment;
 use Yiisoft\Assets\AssetManager;
 use Yiisoft\Data\Paginator\KeysetPaginator;
 use Yiisoft\Html\Html;
@@ -18,6 +19,7 @@ use Yiisoft\Translator\TranslatorInterface;
 ?>
 
 <?php
+/** @var Comment $comment */
 foreach ($data->read() as $comment) { ?>
     <div class="card mb-3" data-id="<?= $comment->getId() ?>">
         <div class="card-header">
@@ -35,7 +37,7 @@ if (!$data->isOnLastPage()) { ?>
     <div class="row load-more-comment-container">
         <div class="col-sm-12">
             <a class="load-more-comment btn btn-primary btn-lg btn-block"
-               href="<?= $url->generate('blog/comment/index', ['next' => $data->getNextToken()->value]) ?>">
+               href="<?= $url->generate('blog/comment/index', ['next' => $data->getNextToken()?->value]) ?>">
                 <?= $translator->translate('view-comment.show-more') ?>
             </a>
         </div>

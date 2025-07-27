@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Backend\Web\User\Forms;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use Yiisoft\Form\FormModel;
+use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
@@ -16,9 +16,10 @@ final class CreateUserForm extends FormModel
     private string $password = '';
     private string $passwordVerify = '';
 
-    public function __construct(private readonly UserQueryServiceInterface $userService, private readonly TranslatorInterface $translator)
-    {
-        parent::__construct();
+    public function __construct(
+        private readonly UserQueryServiceInterface $userService,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function getAttributeLabels(): array
@@ -28,11 +29,6 @@ final class CreateUserForm extends FormModel
             'password' => $this->translator->translate('identityAccess.form.password'),
             'passwordVerify' => $this->translator->translate('identityAccess.form.password-verify'),
         ];
-    }
-
-    public function getFormName(): string
-    {
-        return 'Signup';
     }
 
     public function getLogin(): string
@@ -48,8 +44,8 @@ final class CreateUserForm extends FormModel
     public function getRules(): array
     {
         return [
-            'login' => [Required::rule()],
-            'password' => [Required::rule()],
+            'login' => [new Required()],
+            'password' => [new Required()],
             'passwordVerify' => $this->passwordVerifyRules(),
         ];
     }
@@ -57,7 +53,7 @@ final class CreateUserForm extends FormModel
     private function passwordVerifyRules(): array
     {
         return [
-            Required::rule(),
+            new Required(),
 
             function (): Result {
                 $result = new Result();

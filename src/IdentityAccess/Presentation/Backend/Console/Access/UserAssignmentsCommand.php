@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Backend\Console\Access;
 
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
+use App\IdentityAccess\Access\Application\Service\PermissionDTO;
+use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use Override;
@@ -37,29 +39,6 @@ final class UserAssignmentsCommand extends Command
         $this->addArgument('userId', InputArgument::REQUIRED, 'User id');
     }
 
-    public function getUserPermissionsTable(OutputInterface $output, array $permissions): void
-    {
-        if (empty($permissions)) {
-            $output->writeln('');
-            $output->writeln('User has no assigned permissions!');
-            $output->writeln('');
-            return;
-        }
-
-        $tablePermissions = new Table($output);
-        $tablePermissions->setHeaders(['Permissions']);
-
-        foreach ($permissions as $item) {
-            $tablePermissions->addRow(
-                [
-                    $item->getName(),
-                ],
-            );
-        }
-
-        $tablePermissions->render();
-    }
-
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -90,6 +69,35 @@ final class UserAssignmentsCommand extends Command
         }
     }
 
+    /**
+     * @param array<PermissionDTO> $permissions
+     */
+    private function getUserPermissionsTable(OutputInterface $output, array $permissions): void
+    {
+        if (empty($permissions)) {
+            $output->writeln('');
+            $output->writeln('User has no assigned permissions!');
+            $output->writeln('');
+            return;
+        }
+
+        $tablePermissions = new Table($output);
+        $tablePermissions->setHeaders(['Permissions']);
+
+        foreach ($permissions as $item) {
+            $tablePermissions->addRow(
+                [
+                    $item->getName(),
+                ],
+            );
+        }
+
+        $tablePermissions->render();
+    }
+
+    /**
+     * @param array<RoleDTO> $roles
+     */
     private function getUserRolesTable(OutputInterface $output, array $roles): void
     {
         if (empty($roles)) {

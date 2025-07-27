@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var OffsetPaginator $paginator ;
- * @var DataReaderInterface|string[][] $archive
- * @var DataReaderInterface $tags
- * @var TranslatorInterface $translator
- * @var UrlGeneratorInterface $url
- * @var WebView $this
- * @var Author|null $author
- */
 
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
@@ -27,12 +18,24 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
+/**
+ * @var OffsetPaginator $paginator ;
+ * @var DataReaderInterface|string[][] $archive
+ * @var DataReaderInterface $tags
+ * @var TranslatorInterface $translator
+ * @var UrlGeneratorInterface $url
+ * @var WebView $this
+ * @var Author|null $author
+ */
 $this->setTitle($translator->translate('view-blog.blog'));
 
 $pagination = Div::tag()
     ->content(
         new OffsetPagination()
             ->withContext(
+            /**
+             * @psalm-suppress InternalMethod
+             */
                 new PaginationContext(
                     $url->generate('blog/index') . '/page/' . PaginationContext::URL_PLACEHOLDER,
                     $url->generate('blog/index') . '/page/' . PaginationContext::URL_PLACEHOLDER,
@@ -76,7 +79,7 @@ $pagination = Div::tag()
         }
         /** @var Post $item */
         foreach ($paginator->read() as $item) {
-            echo PostCard::widget()->post($item);
+            echo PostCard::widget(['post' => $item]);
         }
         if ($paginator->getTotalItems() > 0) {
             echo $pagination;

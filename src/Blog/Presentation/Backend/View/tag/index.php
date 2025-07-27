@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @var OffsetPaginator $paginator ;
- * @var UrlGeneratorInterface $url
- * @var Translator $translator
- * @var string $csrf
- * @var WebView $this
- */
 
 use App\Blog\Domain\Tag;
 use Yiisoft\Data\Paginator\OffsetPaginator;
@@ -21,11 +14,21 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
+/**
+ * @var OffsetPaginator $paginator ;
+ * @var UrlGeneratorInterface $url
+ * @var Translator $translator
+ * @var string $csrf
+ * @var WebView $this
+ */
 $this->setTitle($translator->translate('backend.title.tags'));
 $pagination = Div::tag()
     ->content(
         new OffsetPagination()
             ->withContext(
+            /**
+             * @psalm-suppress InternalMethod
+             */
                 new PaginationContext(
                     $url->generate(
                         'backend/tag',
@@ -68,8 +71,8 @@ $pagination = Div::tag()
         }
         ?>
 
-        <div class="m-2">
-            <table class="table mb-5 border border-light border-3">
+        <div class="m-2 table-responsive">
+            <table class="table table-striped mb-5 border">
                 <thead>
                 <tr>
                     <th scope="col"><?= $translator->translate('blog.id') ?></th>

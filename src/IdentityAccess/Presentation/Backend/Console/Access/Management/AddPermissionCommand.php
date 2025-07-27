@@ -7,6 +7,7 @@ namespace App\IdentityAccess\Presentation\Backend\Console\Access\Management;
 use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
 use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Domain\Exception\ExistItemException;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,18 +29,18 @@ final class AddPermissionCommand extends Command
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function configure(): void
     {
         $this->addArgument('permission', InputArgument::REQUIRED, 'RBAC permission');
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $permissionName = $input->getArgument('permission');
+        $permissionName = (string)$input->getArgument('permission');
 
         try {
             $permissionDTO = new PermissionDTO($permissionName);

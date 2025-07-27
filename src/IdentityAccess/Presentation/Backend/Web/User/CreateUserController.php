@@ -12,9 +12,9 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
+use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Translator\TranslatorInterface;
-use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final readonly class CreateUserController
@@ -24,7 +24,7 @@ final readonly class CreateUserController
     public function __construct(
         ViewRenderer $viewRenderer,
         private WebControllerService $webService,
-        private UserServiceInterface $userService
+        private UserServiceInterface $userService,
     ) {
         $viewRenderer = $viewRenderer->withLayout('@backendLayout/main');
         $viewRenderer = $viewRenderer->withViewPath('@identityBackendView/user');
@@ -36,16 +36,14 @@ final readonly class CreateUserController
         UserQueryServiceInterface $userQueryService,
         TranslatorInterface $translator,
         LoggerInterface $logger,
-        ValidatorInterface $validator
+        FormHydrator $formHydrator,
     ): ResponseInterface {
         try {
             $form = new CreateUserForm($userQueryService, $translator);
             if (($request->getMethod() === Method::POST)
-                && $form->load($request->getParsedBody())
-                && $validator->validate($form)->isValid()
+                && $formHydrator->populateFromPostAndValidate($form, $request)
             ) {
                 $this->userService->createUser($form->getLogin(), $form->getPassword());
-
                 return $this->webService->redirect('backend/user');
             }
 
@@ -53,7 +51,7 @@ final readonly class CreateUserController
                 'create',
                 [
                     'form' => $form,
-                ]
+                ],
             );
         } catch (IdentityException $e) {
             $logger->error($e);
@@ -61,7 +59,7 @@ final readonly class CreateUserController
                 $e->getMessage(),
                 'backend/user',
                 [],
-                'danger'
+                'danger',
             );
         }
     }

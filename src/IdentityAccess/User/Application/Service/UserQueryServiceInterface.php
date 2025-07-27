@@ -15,5 +15,9 @@ interface UserQueryServiceInterface
 
     public function findByLogin(string $login): ?User;
 
+    /**
+     * @param array<int, int> $userIds
+     * @return iterable<User>
+     */
     public function getUsers(array $userIds): iterable;
 }

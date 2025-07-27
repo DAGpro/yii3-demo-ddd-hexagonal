@@ -35,7 +35,7 @@ final readonly class CommentController
 
     public function index(CurrentRoute $currentRoute): ResponseInterface
     {
-        $pageNum = (int)$currentRoute->getArgument('page', '1');
+        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
 
         $dataReader = $this->commentQueryService->findAllPreloaded();
 
@@ -89,7 +89,7 @@ final readonly class CommentController
         return $this->webService->sessionFlashAndRedirect(
             'Comment moved to draft!',
             'backend/comment/view',
-            ['comment_id' => $commentId],
+            ['comment_id' => (int)$commentId],
         );
     }
 
@@ -116,7 +116,7 @@ final readonly class CommentController
         return $this->webService->sessionFlashAndRedirect(
             'Comment published!',
             'backend/comment/view',
-            ['comment_id' => $commentId],
+            ['comment_id' => (int)$commentId],
         );
     }
 
@@ -135,7 +135,7 @@ final readonly class CommentController
             && $formHydrator->populateFromPostAndValidate($form, $request)
         ) {
             try {
-                $this->commentService->moderate((int)$form->getCommentId(), $form->getContent(), $form->getPublic());
+                $this->commentService->moderate($form->getCommentId(), $form->getContent(), $form->getPublic());
             } catch (BlogNotFoundException) {
                 return $this->webService->notFound();
             }
@@ -148,7 +148,6 @@ final readonly class CommentController
         return $this->view->render(
             'moderate',
             [
-                'action' => ['backend/comment/moderate', ['comment_id' => $comment->getId()]],
                 'form' => $form,
             ],
         );

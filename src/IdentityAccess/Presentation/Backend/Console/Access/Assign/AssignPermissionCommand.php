@@ -16,6 +16,7 @@ use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -52,11 +53,14 @@ final class AssignPermissionCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $permissionName = $input->getArgument('permission');
-        $userId = $input->getArgument('userId');
+        $permissionName = (string)$input->getArgument('permission');
+        $userId = (string)$input->getArgument('userId');
 
         try {
             if (!$this->accessRightsService->existPermission($permissionName)) {
+                /**
+                 * @var QuestionHelper $helper
+                 **/
                 $helper = $this->getHelper('question');
                 $question = new ConfirmationQuestion('Permission doesn\'t exist. Create new one? ', false);
 
@@ -69,12 +73,12 @@ final class AssignPermissionCommand extends Command
             }
 
             $user = $this->userQueryService->getUser((int)$userId);
-            if ($user === null) {
+            if ($user === null || ($userId = $user->getId()) === null) {
                 throw new IdentityException('User is not found!');
             }
 
             $permission = new PermissionDTO($permissionName);
-            $this->assignAccessService->assignPermission($permission, $user->getId());
+            $this->assignAccessService->assignPermission($permission, $userId);
 
             $io->success('Permission was assigned to given user');
         } catch (ExistItemException|NotExistItemException|AssignedItemException|IdentityException $t) {
