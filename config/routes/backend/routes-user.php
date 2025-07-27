@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\IdentityAccess\Middleware\AccessRoleChecker;
 use App\IdentityAccess\Presentation\Backend\Web\User\CreateUserController;
 use App\IdentityAccess\Presentation\Backend\Web\User\DeleteUserController;
 use App\IdentityAccess\Presentation\Backend\Web\User\UserController;
-use App\Infrastructure\Presentation\Web\Middleware\AccessRoleChecker;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\Group;
@@ -20,34 +20,33 @@ return [
 
                     Route::get('/[page/{page:\d+}]')
                         ->name('backend/user')
-                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->middleware(Authentication::class)
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->action([UserController::class, 'index']),
 
                     Route::get('/profile/{user_id}')
                         ->name('backend/user/profile')
-                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->middleware(Authentication::class)
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->action([UserController::class, 'profile']),
 
                     Route::methods([Method::GET, Method::POST], '/create')
                         ->name('backend/user/create')
-                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->middleware(Authentication::class)
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->action([CreateUserController::class, 'create']),
 
                     Route::post('/delete')
                         ->name('backend/user/delete')
-                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->middleware(Authentication::class)
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->action([DeleteUserController::class, 'remove']),
 
                     Route::post('/clear-users')
                         ->name('backend/user/clear-users')
-                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->middleware(Authentication::class)
+                        ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->action([UserController::class, 'clearUsers']),
                 ),
         ),
 ];
-

@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Authorization;
+namespace App\IdentityAccess\AuthService;
 
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
 
 final readonly class AuthorizationService
 {
-    public function __construct(private AssignmentsServiceInterface $assignmentsService)
-    {
+    public function __construct(
+        private AssignmentsServiceInterface $assignmentsService,
+    ) {
     }
 
     public function userHasPermission(string|int $userId, string $permission): bool
@@ -33,7 +34,7 @@ final readonly class AuthorizationService
 
         $childRoles = [];
         /** @var RoleDTO $role */
-        foreach ($userRoles as $role){
+        foreach ($userRoles as $role) {
             $childRoles[] = array_merge($role->getChildRoles(), $role->getNestedRoles());
         }
         $roles = array_merge([], ...$childRoles);

@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Authentication;
+namespace App\IdentityAccess\User\Infrastructure\Authentication;
 
 use App\IdentityAccess\User\Domain\User;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
+use Override;
 use Yiisoft\Security\Random;
 use Yiisoft\User\Login\Cookie\CookieLoginIdentityInterface;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 #[Entity(repository: IdentityRepository::class)]
 class Identity implements CookieLoginIdentityInterface
 {
@@ -19,21 +23,22 @@ class Identity implements CookieLoginIdentityInterface
 
     #[Column(type: 'string(32)')]
     private string $authKey;
-    private ?int $user_id = null;
 
-    public function __construct(#[BelongsTo(target: User::class, nullable: false, load: 'eager')]
-    private readonly User $user)
-    {
+    public function __construct(
+        #[BelongsTo(target: User::class, nullable: false, load: 'eager')]
+        private readonly User $user,
+    ) {
+        $this->authKey = '';
         $this->regenerateCookieLoginKey();
     }
 
-    #[\Override]
+    #[Override]
     public function getId(): ?string
     {
         return (string)$this->id;
     }
 
-    #[\Override]
+    #[Override]
     public function getCookieLoginKey(): string
     {
         return $this->authKey;
@@ -44,7 +49,7 @@ class Identity implements CookieLoginIdentityInterface
         return $this->user;
     }
 
-    #[\Override]
+    #[Override]
     public function validateCookieLoginKey(string $key): bool
     {
         return $this->authKey === $key;

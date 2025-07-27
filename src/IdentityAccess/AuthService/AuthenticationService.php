@@ -2,21 +2,30 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Authentication;
+namespace App\IdentityAccess\AuthService;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;
+use App\IdentityAccess\User\Infrastructure\Authentication\AuthenticationException;
+use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
+use App\IdentityAccess\User\Infrastructure\Authentication\IdentityRepositoryInterface;
 use Throwable;
 use Yiisoft\Auth\IdentityInterface;
-use Yiisoft\Auth\IdentityRepositoryInterface;
 use Yiisoft\User\CurrentUser;
 
 final readonly class AuthenticationService
 {
-    public function __construct(private CurrentUser $currentUser, private UserQueryServiceInterface $userQueryService, private IdentityRepositoryInterface $identityRepository)
-    {
+    public function __construct(
+        private CurrentUser $currentUser,
+        private UserQueryServiceInterface $userQueryService,
+        private IdentityRepositoryInterface $identityRepository,
+    ) {
     }
 
+    /**
+     * @throws AuthenticationException
+     * @throws Throwable
+     */
     public function login(string $login, string $password): IdentityInterface
     {
         $user = $this->userQueryService->findByLogin($login);

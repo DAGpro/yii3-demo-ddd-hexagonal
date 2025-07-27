@@ -8,9 +8,9 @@ use App\Blog\Domain\Comment;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
+use App\IdentityAccess\AuthService\AuthenticationService;
+use App\IdentityAccess\AuthService\AuthorizationService;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
-use App\Infrastructure\Authentication\AuthenticationService;
-use App\Infrastructure\Authorization\AuthorizationService;
 
 final readonly class IdentityAccessService
 {

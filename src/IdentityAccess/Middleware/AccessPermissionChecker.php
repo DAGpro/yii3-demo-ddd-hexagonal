@@ -2,35 +2,41 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Presentation\Web\Middleware;
+namespace App\IdentityAccess\Middleware;
 
-use App\Infrastructure\Authentication\AuthenticationService;
-use App\Infrastructure\Authorization\AuthorizationService;
+use App\IdentityAccess\AuthService\AuthenticationService;
+use App\IdentityAccess\AuthService\AuthorizationService;
+use InvalidArgumentException;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 use Yiisoft\Http\Status;
 
 final class AccessPermissionChecker implements MiddlewareInterface
 {
     private ?string $permission = null;
 
-    public function __construct(private ResponseFactoryInterface $responseFactory, private AuthenticationService $authenticationService, private AuthorizationService $authorizationService)
-    {
+    public function __construct(
+        private readonly ResponseFactoryInterface $responseFactory,
+        private readonly AuthenticationService $authenticationService,
+        private readonly AuthorizationService $authorizationService,
+    ) {
     }
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $user = $this->authenticationService->getUser();
         if ($user === null) {
-            throw new \Exception('Log in to the site');
+            throw new RuntimeException('Log in to the site');
         }
 
         if ($this->permission === null) {
-            throw new \InvalidArgumentException('Permission not set.');
+            throw new InvalidArgumentException('Permission not set.');
         }
 
         if (!$this->authorizationService->userHasPermission((string)$user->getId(), $this->permission)) {

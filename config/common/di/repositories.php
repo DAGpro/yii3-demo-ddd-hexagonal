@@ -11,27 +11,34 @@ use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
-use App\Infrastructure\Authentication\Identity;
+use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
+use App\IdentityAccess\User\Infrastructure\Authentication\IdentityRepositoryInterface;
 use Cycle\ORM\ORMInterface;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Auth\IdentityRepositoryInterface;
 
 return [
-    TagRepositoryInterface::class => static function (ContainerInterface $container) {
+    TagRepositoryInterface::class => static function (ContainerInterface $container): TagRepositoryInterface {
         return $container->get(ORMInterface::class)->getRepository(Tag::class);
     },
-    PostRepositoryInterface::class => static function (ContainerInterface $container) {
+    PostRepositoryInterface::class => static function (ContainerInterface $container): PostRepositoryInterface {
         return $container->get(ORMInterface::class)->getRepository(Post::class);
     },
-    CommentRepositoryInterface::class => static function (ContainerInterface $container) {
+    CommentRepositoryInterface::class => static function (ContainerInterface $container): CommentRepositoryInterface {
         return $container->get(ORMInterface::class)->getRepository(Comment::class);
     },
 
-    UserRepositoryInterface::class => static function (ContainerInterface $container) {
+    UserRepositoryInterface::class => static function (ContainerInterface $container): UserRepositoryInterface {
         return $container->get(ORMInterface::class)->getRepository(User::class);
     },
 
     IdentityRepositoryInterface::class => static function (ContainerInterface $container): IdentityRepositoryInterface {
         return $container->get(ORMInterface::class)->getRepository(Identity::class);
     },
+
+    \Yiisoft\Auth\IdentityRepositoryInterface::class => static function (ContainerInterface $container,
+    ): IdentityRepositoryInterface {
+        return $container->get(ORMInterface::class)->getRepository(Identity::class);
+    },
+
+
 ];

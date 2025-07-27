@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Presentation\Web\ViewInjection;
 
-use App\Infrastructure\Authentication\AuthenticationService;
-use App\Infrastructure\Authorization\AuthorizationService;
+use App\IdentityAccess\AuthService\AuthenticationService;
+use App\IdentityAccess\AuthService\AuthorizationService;
 use Override;
 use Yiisoft\Yii\View\Renderer\LayoutParametersInjectionInterface;
 

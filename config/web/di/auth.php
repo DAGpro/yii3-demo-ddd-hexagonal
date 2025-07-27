@@ -3,13 +3,8 @@
 declare(strict_types=1);
 
 
-use App\Infrastructure\Authentication\Identity;
-use App\Infrastructure\Authentication\IdentityRepository;
-use Cycle\ORM\ORMInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Access\AccessCheckerInterface;
-use Yiisoft\Auth\IdentityRepositoryInterface;
 use Yiisoft\Cookies\CookieEncryptor;
 use Yiisoft\Cookies\CookieMiddleware;
 use Yiisoft\Cookies\CookieSigner;
@@ -22,7 +17,7 @@ use Yiisoft\User\Login\Cookie\CookieLogin;
 
 return [
 
-    CookieMiddleware::class => static fn (CookieLogin $cookieLogin, LoggerInterface $logger) => new CookieMiddleware(
+    CookieMiddleware::class => static fn(CookieLogin $cookieLogin, LoggerInterface $logger) => new CookieMiddleware(
         $logger,
         new CookieEncryptor($params['yiisoft/cookies']['secretKey']),
         new CookieSigner($params['yiisoft/cookies']['secretKey']),
