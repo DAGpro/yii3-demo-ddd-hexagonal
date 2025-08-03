@@ -13,7 +13,11 @@ use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
+use DateTimeImmutable;
 use Override;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
+use Yiisoft\Data\Reader\DataReaderInterface;
+use Yiisoft\Data\Reader\Sort;
 
 /**
  * @extends Select\Repository<Post>
@@ -31,10 +35,62 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
+    public function getFullArchive(?int $limit = null): DataReaderInterface
+    {
+        $sort = Sort::only(['year', 'month', 'count'])->withOrder(['year' => 'desc', 'month' => 'desc']);
+
+        $query = $this
+            ->select()
+            ->buildQuery()
+            ->columns([
+                'count(id) count',
+                $this->extractFromDateColumn('month'),
+                $this->extractFromDateColumn('year'),
+            ])
+            ->groupBy('year, month');
+
+        $dataReader = new EntityReader($query)->withSort($sort);
+
+        if ($limit !== null) {
+            return $dataReader->withLimit($limit);
+        }
+
+        return $dataReader;
+    }
+
+    #[Override]
+    public function getMonthlyArchive(int $year, int $month): DataReaderInterface
+    {
+        $begin = new DateTimeImmutable()->setDate($year, $month, 1)->setTime(0, 0, 0);
+        $end = $begin->setDate($year, $month + 1, 1)->setTime(0, 0, -1);
+
+        $query = $this
+            ->select()
+            ->andWhere('published_at', 'between', $begin, $end)
+            ->load(['tags']);
+
+        return $this->prepareDataReader($query);
+    }
+
+    #[Override]
+    public function getYearlyArchive(int $year): DataReaderInterface
+    {
+        $begin = new DateTimeImmutable()->setDate($year, 1, 1)->setTime(0, 0, 0);
+        $end = $begin->setDate($year + 1, 1, 1)->setTime(0, 0, -1);
+
+        $query = $this
+            ->select()
+            ->andWhere('published_at', 'between', $begin, $end)
+            ->load('tags')
+            ->orderBy(['published_at' => 'asc']);
+
+        return $this->prepareDataReader($query);
+    }
+
     /**
      * @param iterable<Post> $posts
-     * @psalm-assert-if-true !null $posts
      */
+    #[Override]
     public function save(iterable $posts): void
     {
         if ($posts === []) {
@@ -49,11 +105,10 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
         $this->entityManager->run();
     }
 
-    #[Override]
     /**
      * @param iterable<Post> $posts
-     * @psalm-assert-if-true !null $posts
      */
+    #[Override]
     public function delete(iterable $posts): void
     {
         if ($posts === []) {
@@ -68,12 +123,20 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
         $this->entityManager->run();
     }
 
+    private function prepareDataReader(Select $query): DataReaderInterface
+    {
+        return new EntityReader($query)
+            ->withSort(
+                Sort::only(['published_at'])
+                    ->withOrder(['published_at' => 'desc']),
+            );
+    }
+
     /**
      * @param 'day'|'month'|'year' $attr
      * @return FragmentInterface
      */
-    #[Override]
-    public function extractFromDateColumn(string $attr): FragmentInterface
+    private function extractFromDateColumn(string $attr): FragmentInterface
     {
         $driver = $this->getDriver();
         $wrappedField = $driver->getQueryCompiler()->quoteIdentifier($attr);
@@ -91,9 +154,6 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
         return new Fragment("extract({$attr} from published_at) {$wrappedField}");
     }
 
-    /**
-     * @psalm-suppress UndefinedInterfaceMethod
-     */
     private function getDriver(): DriverInterface
     {
         return $this
