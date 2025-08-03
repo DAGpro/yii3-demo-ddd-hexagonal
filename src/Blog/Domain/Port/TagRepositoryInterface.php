@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Blog\Domain\Port;
 
 use App\Blog\Domain\Tag;
-use Cycle\ORM\Select;
 use Cycle\Database\Query\SelectQuery;
+use Cycle\ORM\Select;
 
 interface TagRepositoryInterface
 {
 
     public function select(): Select;
 
-    public function getTagMentions(int $limit = 0): SelectQuery;
+    public function getTagMentions(): SelectQuery;
 
     public function getOrCreate(string $label): Tag;
 
