@@ -1,4 +1,5 @@
 <?php
+
 return [
     'button.submit' => 'Отправить',
     'button.reset' => 'Сбросить',
@@ -25,9 +26,12 @@ return [
     'validator.password.not.match' => 'Пароли не совпадают',
     'validator.user.exist' => 'Пользователь с таким логином уже существует',
 
-    'view-site.caption.slide1' => '<h5>Всем привет!</h5><p>Отличный день чтобы попробовать Yii 3!</p>',
-    'view-site.caption.slide2' => '<h5>Код ждёт!</h5><p>Изучите код проекта. Он не идеален потому как это ещё и песочница разработчиков, но даёт представление о том, что может Yii 3.</p>',
-    'view-site.caption.slide3' => '<h5>Нам нужна обратная связь!</h5><p>Оствляйте её в Telegram или Slack, которые можно найти в README.</p>',
+    'view-site.caption.slide1' => 'Всем привет!',
+    'view-site.caption.slide1Placeholder' => 'Отличный день чтобы попробовать Yii 3!',
+    'view-site.caption.slide2' => 'Код ждёт!',
+    'view-site.caption.slide2Placeholder' => 'Изучите код проекта. Он не идеален потому как это ещё и песочница разработчиков, но даёт представление о том, что может Yii 3.',
+    'view-site.caption.slide3' => 'Нам нужна обратная связь!',
+    'view-site.caption.slide3Placeholder' => 'Пожалуйста, оставьте свой отзыв в Telegram или Slack, упомянутой в Readme.',
     'view-site.add.random.content' => 'Добавить рандомный контент',
     'view-site.add.demo.access.rights' => 'Добавить демо права доступа',
     'view-site.add.admin.backend' => 'Добавьте пользователю права администратора для доступа к Бэкенду',
@@ -126,7 +130,7 @@ return [
     'identityAccess.form.remember' => 'Запомнить меня',
 
     'blog.add.tag' => 'Добавить тэг ',
-    'blog.tag.change' => 'Изменить тэг ',
+    'blog.tag.change' => 'Изменить тэг: ',
     'blog.add.post' => 'Добавить пост ',
     'blog.comments' => 'Комментарии ',
     'blog.popular.tags' => 'Популярные тэги ',
@@ -143,9 +147,9 @@ return [
     'blog.delete' => 'Удалить ',
     'blog.draft.comment' => 'Черновик комментария ',
     'blog.public.comment' => 'Опубликовать комментарий ',
-    'blog.moderate.comment' => 'Модерировать комментарий ',
+    'blog.moderate.comment' => 'Модерировать комментарий: ',
     'blog.delete.comment' => 'Удалить комментарий ',
-    'blog.view.comment' => 'Просмотр комментария ',
+    'blog.view.comment' => 'Просмотр комментария: ',
     'blog.not.published.comment' => 'Не опубликован ',
     'blog.published.comment' => 'Опубликован ',
     'blog.commentator' => 'Комментатор: ',

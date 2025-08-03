@@ -1,4 +1,5 @@
 <?php
+
 return [
     'button.submit' => 'Submit',
     'button.reset' => 'Reset',
@@ -25,9 +26,12 @@ return [
     'validator.password.not.match' => 'Passwords do not match',
     'validator.user.exist' => 'User with this login already exists',
 
-    'view-site.caption.slide1' => '<h5>Hello, everyone!</h5><p>A great day to try Yii 3, right?</p>',
-    'view-site.caption.slide2' => '<h5>Code awaits!</h5><p>Check the project code. It\'s not ideal since it\'s a development sandbox as well, but gives a so-so overview of Yii 3 capabilities.</p>',
-    'view-site.caption.slide3' => '<h5>We need feedback!</h5><p>Please leave your feedback in either Telegram or Slack mentioned in README.</p>',
+    'view-site.caption.slide1' => 'Hello, everyone!',
+    'view-site.caption.slide1Placeholder' => 'A great day to try Yii 3, right?',
+    'view-site.caption.slide2' => 'Code awaits!',
+    'view-site.caption.slide2Placeholder' => 'Study the project code. It\'s not ideal since it\'s a development sandbox as well, but gives a so-so overview of Yii 3 capabilities.',
+    'view-site.caption.slide3' => 'We need feedback!',
+    'view-site.caption.slide3Placeholder' => 'Please leave your feedback in either Telegram or Slack mentioned in README.',
     'view-site.console' => 'Console',
     'view-site.home' => 'Home',
     'view-site.migrations' => 'Migrations',
@@ -126,7 +130,7 @@ return [
     'identityAccess.form.remember' => 'Remember me',
 
     'blog.add.tag' => 'Add tag',
-    'blog.tag.change' => 'Change tag ',
+    'blog.tag.change' => 'Change tag: ',
     'blog.add.post' => 'Add post',
     'blog.comments' => 'Comments',
     'blog.popular.tags' => 'Popular tags',
@@ -143,9 +147,9 @@ return [
     'blog.delete' => 'Delete ',
     'blog.draft.comment' => 'Draft comment ',
     'blog.public.comment' => 'Public comment ',
-    'blog.moderate.comment' => 'Moderate comment ',
+    'blog.moderate.comment' => 'Moderate comment: №',
     'blog.delete.comment' => 'Delete comment ',
-    'blog.view.comment' => 'View comment ',
+    'blog.view.comment' => 'View comment: №',
     'blog.not.published.comment' => 'Not published ',
     'blog.published.comment' => 'Published by ',
     'blog.commentator' => 'Commentator: ',
@@ -162,7 +166,7 @@ return [
     'blog.not.published.post' => 'Not published Post ',
     'blog.delete.post' => 'Delete post',
     'blog.moderate.post' => 'Moderate post',
-    'blog.view.post' => 'View post',
+    'blog.view.post' => 'View post: №',
     'blog.tag.label' => 'Tag label',
     'blog.label' => 'Label',
     'blog.created.by' => 'Created by',
