@@ -21,13 +21,13 @@ final class RoleDTO
      * @var array<PermissionDTO>
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private array $nestedPermissions;
+    private array $nestedPermissions = [];
 
     /**
      * @var array<RoleDTO>
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private array $nestedRoles;
+    private array $nestedRoles = [];
 
     public function __construct(
         private readonly string $name,

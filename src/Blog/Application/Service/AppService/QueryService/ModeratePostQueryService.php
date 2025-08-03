@@ -29,19 +29,18 @@ final readonly class ModeratePostQueryService implements ModeratePostQueryServic
         $query = $this
             ->repository
             ->select()
-            ->scope()
             ->andWhere('deleted_at', '=', null)
             ->load(['tags']);
 
         /** @var EntityReader<int, Post> $entityReader */
         $entityReader = new EntityReader($query);
-        
+
         /** @var DataReaderInterface<int, Post> $result */
         $result = $entityReader->withSort(
             Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
                 ->withOrder(['published_at' => 'desc']),
         );
-        
+
         return $result;
     }
 
@@ -55,7 +54,6 @@ final readonly class ModeratePostQueryService implements ModeratePostQueryServic
         $post = $this
             ->repository
             ->select()
-            ->scope()
             ->where('id', '=', $id)
             ->andWhere('deleted_at', '=', null)
             ->fetchOne();

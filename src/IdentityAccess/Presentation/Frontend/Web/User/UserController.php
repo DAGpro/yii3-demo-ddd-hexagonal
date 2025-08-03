@@ -17,8 +17,9 @@ final class UserController
 {
     private const int PAGINATION_INDEX = 5;
 
-    public function __construct(private ViewRenderer $viewRenderer)
-    {
+    public function __construct(
+        private ViewRenderer $viewRenderer,
+    ) {
         $this->viewRenderer = $viewRenderer->withViewPath('@identityView/user/user');
     }
 

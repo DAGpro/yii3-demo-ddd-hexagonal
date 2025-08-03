@@ -106,7 +106,7 @@ final readonly class AssignmentsService implements AssignmentsServiceInterface
         $permissionsDTO = [];
         foreach ($userAssignments as $assignment) {
             $permission = $this->accessRightsService->getPermissionByName($assignment->getItemName());
-            $permission === null ?: $permissionsDTO[] = $permission;
+            $permission === null ?: $permissionsDTO[$permission->getName()] = $permission;
         }
 
         return new UserAssignmentsDTO($user, $rolesDTO, $permissionsDTO);

@@ -37,7 +37,7 @@ final class CommentRepository extends Select\Repository implements CommentReposi
     public function getComment(int $commentId): ?Comment
     {
         /** @var Comment|null $comment */
-        $comment = $this->select()->scope()->where(['id' => $commentId])->fetchOne();
+        $comment = $this->select()->where(['id' => $commentId])->fetchOne();
         return $comment;
     }
 

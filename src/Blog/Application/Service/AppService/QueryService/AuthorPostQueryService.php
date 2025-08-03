@@ -16,8 +16,9 @@ use Yiisoft\Data\Reader\Sort;
 
 final readonly class AuthorPostQueryService implements AuthorPostQueryServiceInterface
 {
-    public function __construct(private PostRepositoryInterface $repository)
-    {
+    public function __construct(
+        private PostRepositoryInterface $repository,
+    ) {
     }
 
     /**
@@ -29,7 +30,6 @@ final readonly class AuthorPostQueryService implements AuthorPostQueryServiceInt
     {
         $query = $this->repository
             ->select()
-            ->scope(null)
             ->load(['tags'])
             ->where(['author_id' => $author->getId()])
             ->andWhere('deleted_at', '=', null);
@@ -43,7 +43,6 @@ final readonly class AuthorPostQueryService implements AuthorPostQueryServiceInt
         /** @var Post|null $post */
         $post = $this->repository
             ->select()
-            ->scope(null)
             ->load(['tags'])
             ->andWhere('slug', '=', $slug)
             ->andWhere('deleted_at', '=', null)

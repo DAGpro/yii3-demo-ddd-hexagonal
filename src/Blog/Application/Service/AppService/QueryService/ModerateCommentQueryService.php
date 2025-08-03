@@ -26,7 +26,6 @@ final readonly class ModerateCommentQueryService implements ModerateCommentQuery
         return $this->prepareDataReader(
             $this->repository
                 ->select()
-                ->scope()
                 ->andWhere('deleted_at', '=', null),
             $sort,
         );
