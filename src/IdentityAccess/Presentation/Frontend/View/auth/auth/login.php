@@ -43,6 +43,7 @@ $error ??= null;
                             Field::checkbox($formModel, 'rememberMe')
                                 ->containerClass('form-check form-switch text-start mt-2')
                                 ->inputClass('form-check-input')
+                                ->inputId('login-remember-me')
                                 ->labelClass('form-check-label'),
                             Field::submitButton()
                                 ->addButtonAttributes(['id' => 'login-button'])

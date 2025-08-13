@@ -75,6 +75,7 @@ $pagination = Div::tag()
                 ->render();
         } else {
             echo P::tag()
+                ->class('.empty')
                 ->content($translator->translate('views.no-records'));
         }
         /** @var Post $item */

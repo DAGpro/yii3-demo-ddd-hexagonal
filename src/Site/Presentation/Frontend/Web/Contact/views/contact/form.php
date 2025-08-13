@@ -49,11 +49,11 @@ $this->setTitle($translator->translate('menu.contact'));
                             Field::buttonGroup()
                                 ->buttons(
                                     Button::tag()
-                                        ->type('Reset')
+                                        ->type('reset')
                                         ->class('btn btn-lg btn-danger')
                                         ->content('Reset'),
                                     Button::tag()
-                                        ->type('Submit')
+                                        ->type('submit')
                                         ->class('btn btn-lg btn-primary')
                                         ->addAttributes(['name' => 'contact-button'])
                                         ->content('Submit'),

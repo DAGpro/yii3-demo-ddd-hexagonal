@@ -131,6 +131,6 @@ final class PostCard extends Widget
 
     protected function initOptions(): void
     {
-        Html::addCssClass($this->options, ['class' => 'card mb-4']);
+        Html::addCssClass($this->options, ['class' => 'post-preview card mb-4']);
     }
 }

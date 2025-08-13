@@ -31,6 +31,7 @@ $this->setTitle($translator->translate('Signup'));
                 <div class="card-body p-5 text-center">
                     <?= Form::tag()
                         ->action($url->generate('auth/signup'))
+                        ->method('POST')
                         ->csrf($csrf)
                         ->id('signupForm')
                         ->content(

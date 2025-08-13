@@ -7,12 +7,14 @@ namespace App\Site\Presentation\Frontend\Web\Contact;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Header;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Validator\ValidatorInterface;
+use Yiisoft\View\Exception\ViewNotFoundException;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final readonly class ContactController
@@ -30,6 +32,10 @@ final readonly class ContactController
             ->withViewPath(__DIR__ . '/views');
     }
 
+    /**
+     * @throws Throwable
+     * @throws ViewNotFoundException
+     */
     public function contact(
         ValidatorInterface $validator,
         ServerRequestInterface $request,

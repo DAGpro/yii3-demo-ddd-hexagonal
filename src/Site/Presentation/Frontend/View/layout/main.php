@@ -115,22 +115,6 @@ $this->beginPage();
                         DropdownItem::link($translator->translate('layout.language.russian'),
                             $url->generateFromCurrent(['_language' => 'ru']),
                         ),
-                        DropdownItem::text(
-                            Form::tag()
-                                ->action($url->generate('auth/logout'))
-                                ->csrf($csrf)
-                                ->content(
-                                    Field::submitButton()
-                                        ->addButtonAttributes(['class' => 'dropdown-item'])
-                                        ->containerClass('mb-1')
-                                        ->content(
-                                            $translator->translate('menu.logout',
-                                                ['login' => Html::encode($user?->getLogin())],
-                                            ),
-                                        )
-                                        ->encodeContent(false),
-                                ),
-                        ),
                     ),
                 ...$user === null
                 ?

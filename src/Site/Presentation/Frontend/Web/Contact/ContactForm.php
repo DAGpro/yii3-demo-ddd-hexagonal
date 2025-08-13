@@ -42,6 +42,7 @@ final class ContactForm extends FormModel implements RulesProviderInterface
             'attachFiles' => [
                 new Each(
                     new Image(),
+                    skipOnEmpty: true,
                 ),
             ],
         ];
