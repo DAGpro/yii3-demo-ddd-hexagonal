@@ -22,14 +22,14 @@ final class SignupAcceptanceCest
         $I->amGoingTo('go to the register page.');
         $I->amOnPage('/signup');
 
-        $I->fillField('#signup-login', 'admin');
-        $I->fillField('#signup-password', '123456');
-        $I->fillField('#signup-passwordverify', '123456');
+        $I->fillField('#signupform-login', 'admin');
+        $I->fillField('#signupform-password', '123456');
+        $I->fillField('#signupform-passwordverify', '123456');
 
         $I->click('Submit', '#signupForm');
 
         $I->expectTo('see register success message.');
-        $I->see('Hello, everyone!');
+        $I->see('The user is registered, now you can log in!');
     }
 
     public function testRegisterEmptyData(AcceptanceTester $I): void
@@ -37,17 +37,17 @@ final class SignupAcceptanceCest
         $I->amGoingTo('go to the register page.');
         $I->amOnPage('/signup');
 
-        $I->fillField('#signup-login', '');
-        $I->fillField('#signup-password', '');
-        $I->fillField('#signup-passwordverify', '');
+        $I->fillField('#signupform-login', '');
+        $I->fillField('#signupform-password', '');
+        $I->fillField('#signupform-passwordverify', '');
 
         $I->click('Submit', '#signupForm');
 
         $I->expectTo('see registration register validation.');
-        $I->see('Value cannot be blank');
-        $I->see('Value cannot be blank');
-        $I->see('Value cannot be blank');
-        $I->seeInField('register-button', 'Submit');
+        $I->see('Login cannot be blank.');
+        $I->see('Password cannot be blank.');
+        $I->see('PasswordVerify cannot be blank.');
+        $I->see('Submit', 'button[type="submit"]');
     }
 
     public function testRegisterUsernameExistData(AcceptanceTester $I): void
@@ -55,15 +55,16 @@ final class SignupAcceptanceCest
         $I->amGoingTo('go to the register page.');
         $I->amOnPage('/signup');
 
-        $I->fillField('#signup-login', 'admin');
-        $I->fillField('#signup-password', '123456');
-        $I->fillField('#signup-passwordverify', '123456');
+        $I->fillField('#signupform-login', 'admin');
+        $I->fillField('#signupform-password', '123456');
+        $I->fillField('#signupform-passwordverify', '123456');
 
         $I->click('Submit', '#signupForm');
 
         $I->expectTo('see registration register validation.');
         $I->see('User with this login already exists');
-        $I->seeInField('register-button', 'Submit');
+
+        $I->see('Submit', 'button[type="submit"]');
     }
 
     public function testRegisterWrongPassword(AcceptanceTester $I): void
@@ -71,9 +72,9 @@ final class SignupAcceptanceCest
         $I->amGoingTo('go to the register page.');
         $I->amOnPage('/signup');
 
-        $I->fillField('#signup-login', 'admin1');
-        $I->fillField('#signup-password', '123456');
-        $I->fillField('#signup-passwordverify', '12345');
+        $I->fillField('#signupform-login', 'admin1');
+        $I->fillField('#signupform-password', '123456');
+        $I->fillField('#signupform-passwordverify', '12345');
 
         $I->click('Submit', '#signupForm');
 

@@ -11,7 +11,7 @@ final class UserPageCest
     public function _before(AcceptanceTester $I): void
     {
         $I->wantTo('user page works.');
-        $I->amOnPage('/user');
+        $I->amOnPage('/user/all');
     }
 
     public function testUserPage(AcceptanceTester $I): void

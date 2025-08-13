@@ -8,7 +8,7 @@ use App\Tests\FunctionalTester;
 
 final class IndexCest
 {
-    public function _before(FunctionalTester $I)
+    public function _before(FunctionalTester $I): void
     {
         $I->wantTo('index page works.');
         $I->amOnPage('/');

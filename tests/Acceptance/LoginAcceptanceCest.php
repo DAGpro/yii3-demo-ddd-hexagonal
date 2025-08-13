@@ -28,9 +28,9 @@ final class LoginAcceptanceCest
         $I->click('Submit', '#loginForm');
 
         $I->expectTo('see validations errors.');
-        $I->see('Value cannot be blank');
-        $I->see('Value cannot be blank');
-        $I->seeInField('login-button', 'Submit');
+        $I->see('Login cannot be blank');
+        $I->see('Password cannot be blank');
+        $I->see('Submit', '#login-button');
     }
 
     public function testLoginSubmitFormWrongDataUsername(AcceptanceTester $I): void
@@ -40,13 +40,13 @@ final class LoginAcceptanceCest
 
         $I->fillField('#login-login', 'admin1');
         $I->fillField('#login-password', '123456');
-        $I->checkOption('#login-rememberme');
+        $I->checkOption('#login-remember-me');
 
         $I->click('Submit', '#loginForm');
 
         $I->expectTo('see validations errors.');
         $I->see('Invalid login or password');
-        $I->seeInField('login-button', 'Submit');
+        $I->see('Submit', '#login-button');
     }
 
     public function testLoginSubmitFormWrongDataPassword(AcceptanceTester $I): void
@@ -56,13 +56,14 @@ final class LoginAcceptanceCest
 
         $I->fillField('#login-login', 'admin');
         $I->fillField('#login-password', '1');
-        $I->checkOption('#login-rememberme');
+        $I->checkOption('#login-remember-me');
 
         $I->click('Submit', '#loginForm');
 
         $I->expectTo('see validations errors.');
         $I->see('Invalid login or password');
-        $I->seeInField('login-button', 'Submit');
+
+        $I->see('Submit', '#login-button');
     }
 
     /**
@@ -75,7 +76,7 @@ final class LoginAcceptanceCest
 
         $I->fillField('#login-login', 'admin');
         $I->fillField('#login-password', '123456');
-        $I->checkOption('#login-rememberme');
+        $I->checkOption('#login-remember-me');
 
         $I->click('Submit', '#loginForm');
 
