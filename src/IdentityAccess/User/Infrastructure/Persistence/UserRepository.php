@@ -13,6 +13,8 @@ use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
 use Override;
 use Throwable;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
 /**
  * @extends Repository<User>
@@ -28,6 +30,14 @@ final class UserRepository extends Repository implements UserRepositoryInterface
         private readonly ORMInterface $orm,
     ) {
         parent::__construct($select);
+    }
+
+    #[Override]
+    public function findAllPreloaded(): DataReaderInterface
+    {
+        $select = $this->select();
+
+        return new EntityReader($select);
     }
 
     #[Override]
@@ -62,7 +72,7 @@ final class UserRepository extends Repository implements UserRepositoryInterface
     {
         $source = $this->orm->getSource(User::class);
         $db = $source->getDatabase();
-        $db->execute('DELETE FROM users');
+        $db->execute('DELETE FROM user');
     }
 
     /**

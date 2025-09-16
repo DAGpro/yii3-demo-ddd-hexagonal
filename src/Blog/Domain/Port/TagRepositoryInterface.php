@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Blog\Domain\Port;
 
 use App\Blog\Domain\Tag;
-use Cycle\Database\Query\SelectQuery;
-use Cycle\ORM\Select;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
 interface TagRepositoryInterface
 {
+    public function findAllPreloaded(): DataReaderInterface;
 
-    public function select(): Select;
-
-    public function getTagMentions(): SelectQuery;
+    public function getTagMentions(): DataReaderInterface;
 
     public function getOrCreate(string $label): Tag;
 

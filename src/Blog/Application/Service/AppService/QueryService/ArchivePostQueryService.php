@@ -8,6 +8,7 @@ use App\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use Override;
 use Yiisoft\Data\Reader\DataReaderInterface;
+use Yiisoft\Data\Reader\Sort;
 
 final readonly class ArchivePostQueryService implements ArchivePostQueryServiceInterface
 {
@@ -22,7 +23,18 @@ final readonly class ArchivePostQueryService implements ArchivePostQueryServiceI
     #[Override]
     public function getFullArchive(?int $limit = null): DataReaderInterface
     {
-        return $this->repository->getFullArchive($limit);
+        $dataReader = $this->repository
+            ->getFullArchive()
+            ->withSort(
+                Sort::only(['year', 'month', 'count'])
+                    ->withOrder(['year' => 'desc', 'month' => 'desc']),
+            );
+
+        if ($limit !== null) {
+            return $dataReader->withLimit($limit);
+        }
+
+        return $dataReader;
     }
 
     #[Override]

@@ -8,7 +8,6 @@ use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
 use Override;
-use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 
 final readonly class UserQueryService implements UserQueryServiceInterface
@@ -19,14 +18,9 @@ final readonly class UserQueryService implements UserQueryServiceInterface
     }
 
     #[Override]
-    public function findAllPreloaded(array $scope = [], array $orderBy = []): DataReaderInterface
+    public function findAllPreloaded(): DataReaderInterface
     {
-        $select = $this->repository
-            ->select()
-            ->where($scope)
-            ->orderBy($orderBy);
-
-        return new EntityReader($select);
+        return $this->repository->findAllPreloaded();
     }
 
     #[Override]

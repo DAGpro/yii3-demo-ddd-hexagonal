@@ -9,6 +9,8 @@ use App\Blog\Domain\Port\CommentRepositoryInterface;
 use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
 use Override;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
 /**
  * @extends Select\Repository<Comment>
@@ -23,6 +25,16 @@ final class CommentRepository extends Select\Repository implements CommentReposi
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($select);
+    }
+
+    #[Override]
+    public function findAllNonDeleted(): DataReaderInterface
+    {
+        $query = $this
+            ->select()
+            ->andWhere('deleted_at', '=', null);
+
+        return new EntityReader($query);
     }
 
     #[Override]
@@ -51,9 +63,7 @@ final class CommentRepository extends Select\Repository implements CommentReposi
             return;
         }
         foreach ($comments as $entity) {
-            if ($entity instanceof Comment) {
-                $this->entityManager->persist($entity);
-            }
+            $this->entityManager->persist($entity);
         }
         $this->entityManager->run();
     }
@@ -69,9 +79,7 @@ final class CommentRepository extends Select\Repository implements CommentReposi
         }
 
         foreach ($comments as $entity) {
-            if ($entity instanceof Comment) {
-                $this->entityManager->delete($entity);
-            }
+            $this->entityManager->delete($entity);
         }
         $this->entityManager->run();
     }

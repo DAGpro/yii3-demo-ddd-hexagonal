@@ -9,12 +9,13 @@ use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Infrastructure\Persistence\Post\PostRepository;
 use App\Blog\Infrastructure\Persistence\Post\PostTag;
-use Cycle\Database\Query\SelectQuery;
 use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\Repository;
 use Override;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
 /**
  * @extends Repository<Tag>
@@ -33,6 +34,12 @@ final class TagRepository extends Repository implements TagRepositoryInterface
     }
 
     #[Override]
+    public function findAllPreloaded(): DataReaderInterface
+    {
+        return new EntityReader($this->select());
+    }
+
+    #[Override]
     public function getOrCreate(string $label): Tag
     {
         $tag = $this->findByLabel($label);
@@ -47,6 +54,7 @@ final class TagRepository extends Repository implements TagRepositoryInterface
             ->select()
             ->where(['label' => $label])
             ->fetchOne();
+
         return $tag;
     }
 
@@ -58,6 +66,7 @@ final class TagRepository extends Repository implements TagRepositoryInterface
             ->select()
             ->where(['id' => $tagId])
             ->fetchOne();
+
         return $tag;
     }
 
@@ -67,7 +76,7 @@ final class TagRepository extends Repository implements TagRepositoryInterface
      * All SQL-queries received on mysql database. SQL-queries may vary by driver
      */
     #[Override]
-    public function getTagMentions(): SelectQuery
+    public function getTagMentions(): DataReaderInterface
     {
         /**
          * Case would look like:
@@ -81,17 +90,17 @@ final class TagRepository extends Repository implements TagRepositoryInterface
          * GROUP BY `tag_posts_pivot`.`tag_id`, `tag`.`label`
          * ORDER BY `count` DESC
          */
-        $case3 = $this
+        $tagMentions = $this
             ->select()
-            ->buildQuery()
             ->groupBy('posts.@.tag_id') // relation posts -> pivot (@) -> column
             ->groupBy('label')
+            ->buildQuery()
             ->columns(['label', 'count(*) count']);
 
-        return $case3;
+        return new EntityReader($tagMentions);
     }
 
-    public function getTagMentionsV2(): SelectQuery
+    public function getTagMentionsV2(): DataReaderInterface
     {
         /** @var Repository $postTagRepo */
         $postTagRepo = $this->orm->getRepository(PostTag::class);
@@ -107,16 +116,21 @@ final class TagRepository extends Repository implements TagRepositoryInterface
          * GROUP BY `t`.`label`, `tag_id`
          * ORDER BY `count` DESC
          */
-        return $postTagRepo
+        $tagMentions = $postTagRepo
             ->select()
             ->buildQuery()
             ->columns(['t.label', 'count(*) count'])
-            ->innerJoin('post', 'p')->on('p.id', 'postTag.post_id')->onWhere(['p.public' => true])
-            ->innerJoin('tag', 't')->on('t.id', 'postTag.tag_id')
+            ->innerJoin('post', 'p')
+            ->on('p.id', 'postTag.post_id')
+            ->onWhere(['p.public' => true])
+            ->innerJoin('tag', 't')
+            ->on('t.id', 'postTag.tag_id')
             ->groupBy('t.label, tag_id');
+
+        return new EntityReader($tagMentions);
     }
 
-    public function getTagMentionsV3(): SelectQuery
+    public function getTagMentionsV3(): DataReaderInterface
     {
         /**
          * Case 3 would look like:
@@ -130,15 +144,17 @@ final class TagRepository extends Repository implements TagRepositoryInterface
          * GROUP BY `tag`.`label`, `tag_id`
          * ORDER BY `count` DESC
          */
-        return $this
+        $tagMentions = $this
             ->select()
             ->with('posts')
             ->buildQuery()
             ->columns(['label', 'count(*) count'])
             ->groupBy('tag.label, tag_id');
+
+        return new EntityReader($tagMentions);
     }
 
-    public function getTagMentionsV4(): SelectQuery
+    public function getTagMentionsV4(): DataReaderInterface
     {
         /** @var PostRepository $postRepo */
         $postRepo = $this->orm->getRepository(Post::class);
@@ -154,14 +170,14 @@ final class TagRepository extends Repository implements TagRepositoryInterface
          * WHERE `post`.`public` = TRUE
          * GROUP BY `post_tags_pivot`.`tag_id`, `tag`.`label`
          */
-        $case4 = $postRepo
+        $tagMentions = $postRepo
             ->select()
-            ->buildQuery()
             ->groupBy('tags.@.tag_id') // relation tags -> pivot (@) -> column
             ->groupBy('tags.label')
+            ->buildQuery()
             ->columns(['label', 'count(*) count']);
 
-        return $case4;
+        return new EntityReader($tagMentions);
     }
 
     #[Override]

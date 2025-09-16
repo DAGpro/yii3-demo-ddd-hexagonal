@@ -7,37 +7,46 @@ namespace App\Blog\Application\Service\AppService\QueryService;
 use App\Blog\Application\Service\QueryService\TagQueryServiceInterface;
 use App\Blog\Domain\Port\TagRepositoryInterface;
 use App\Blog\Domain\Tag;
-use Cycle\ORM\Select;
 use Override;
-use Yiisoft\Data\Cycle\Reader\EntityReader;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Sort;
 
 final readonly class TagQueryService implements TagQueryServiceInterface
 {
-    public function __construct(private TagRepositoryInterface $tagRepository)
-    {
+    public function __construct(
+        private TagRepositoryInterface $tagRepository,
+    ) {
     }
 
     #[Override]
     public function findAllPreloaded(): DataReaderInterface
     {
-        $query = $this->tagRepository->select();
-        return $this->prepareDataReader($query);
+        return $this->tagRepository
+            ->findAllPreloaded()
+            ->withSort(
+                Sort::only(['id', 'label', 'created_at'])
+                    ->withOrder(['created_at' => 'desc']),
+            );
     }
 
+    /**
+     * @param int<0,max>|null $limit
+     */
     #[Override]
     public function getTagMentions(?int $limit = null): DataReaderInterface
     {
-        $select = $this->tagRepository->getTagMentions();
+        $dataReader = $this->tagRepository
+            ->getTagMentions()
+            ->withSort(
+                Sort::only(['count', 'label'])
+                    ->withOrder(['count' => 'desc']),
+            );
 
-        $sort = Sort::only(['count', 'label'])->withOrder(['count' => 'desc']);
-        $dataReader = new EntityReader($select)->withSort($sort);
-
-        if (!$limit) {
+        if ($limit !== null) {
             return $dataReader->withLimit($limit);
         }
 
+        /** @var DataReaderInterface $dataReader */
         return $dataReader;
     }
 
@@ -52,13 +61,4 @@ final readonly class TagQueryService implements TagQueryServiceInterface
     {
         return $this->tagRepository->getTag($tagId);
     }
-
-    private function prepareDataReader(Select $query): EntityReader
-    {
-        return new EntityReader($query)->withSort(
-            Sort::only(['id', 'label', 'created_at'])
-                ->withOrder(['created_at' => 'desc']),
-        );
-    }
-
 }

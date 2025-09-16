@@ -18,7 +18,13 @@ interface IdentityRepositoryInterface extends \Yiisoft\Auth\IdentityRepositoryIn
     public function findByUserId(int $userId): ?Identity;
 
     /**
+     * @param array<Identity> $identities
      * @throws Throwable
      */
-    public function save(Identity $identity): void;
+    public function save(array $identities): void;
+
+    /**
+     * @param array<Identity> $identities
+     */
+    public function delete(array $identities): void;
 }

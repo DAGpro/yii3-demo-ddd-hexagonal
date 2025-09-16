@@ -79,16 +79,11 @@ class Comment
     public function change(
         string $content,
         ?Post $post = null,
-        ?Commentator $commentator = null,
     ): void {
         $this->content = $content;
 
         if ($post !== null) {
             $this->post = $post;
-        }
-
-        if ($commentator !== null) {
-            $this->commentator = $commentator;
         }
     }
 

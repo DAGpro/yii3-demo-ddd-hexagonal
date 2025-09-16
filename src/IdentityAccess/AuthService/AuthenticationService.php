@@ -52,7 +52,7 @@ final readonly class AuthenticationService
 
         if ($identity instanceof Identity) {
             $identity->regenerateCookieLoginKey();
-            $this->identityRepository->save($identity);
+            $this->identityRepository->save([$identity]);
         }
 
         return $this->currentUser->logout();

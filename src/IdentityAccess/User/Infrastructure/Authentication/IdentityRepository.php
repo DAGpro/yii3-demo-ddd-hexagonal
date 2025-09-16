@@ -12,7 +12,6 @@ use Override;
 use RuntimeException;
 use Throwable;
 
-
 /**
  * @template-extends Repository<Identity>
  */
@@ -40,7 +39,7 @@ final class IdentityRepository extends Repository implements IdentityRepositoryI
         }
         $identity = $this->findByUserId($id);
         if ($identity === null) {
-            $this->save(new Identity($user));
+            $this->save([new Identity($user)]);
             $identity = $this->findByUserId($id);
             if ($identity === null) {
                 throw new RuntimeException('Identity not found');
@@ -48,7 +47,6 @@ final class IdentityRepository extends Repository implements IdentityRepositoryI
         }
         return $identity;
     }
-
 
     #[Override]
     public function findIdentity(string $id): ?Identity
@@ -69,12 +67,35 @@ final class IdentityRepository extends Repository implements IdentityRepositoryI
     }
 
     /**
+     * @param array<array-key, Identity> $identities
      * @throws Throwable
      */
     #[Override]
-    public function save(Identity $identity): void
+    public function save(array $identities): void
     {
-        $this->entityManager->persist($identity);
+        if (empty($identities)) {
+            return;
+        }
+
+        foreach ($identities as $identity) {
+            $this->entityManager->persist($identity);
+        }
+        $this->entityManager->run();
+    }
+
+    /**
+     * @param array<array-key, Identity> $identities
+     * @throws Throwable
+     */
+    public function delete(array $identities): void
+    {
+        if (empty($identities)) {
+            return;
+        }
+
+        foreach ($identities as $identity) {
+            $this->entityManager->delete($identity);
+        }
         $this->entityManager->run();
     }
 }

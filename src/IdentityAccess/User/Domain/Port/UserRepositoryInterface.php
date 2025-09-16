@@ -6,6 +6,7 @@ namespace App\IdentityAccess\User\Domain\Port;
 
 use App\IdentityAccess\User\Domain\User;
 use Cycle\ORM\Select;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
 interface UserRepositoryInterface
 {
@@ -22,6 +23,8 @@ interface UserRepositoryInterface
     public function getUsers(array $userIds): iterable;
 
     public function removeAll(): void;
+
+    public function findAllPreloaded(): DataReaderInterface;
 
     /**
      * @param array<int, User> $users
