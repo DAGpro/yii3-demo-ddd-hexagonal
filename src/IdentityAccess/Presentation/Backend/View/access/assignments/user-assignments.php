@@ -59,8 +59,8 @@ use Yiisoft\View\WebView;
                             <th scope="col"><?= $translator->translate('identityAccess.role') ?></th>
                             <th scope="col"><?= $translator->translate('identityAccess.child.roles') ?></th>
                             <th scope="col"><?= $translator->translate('identityAccess.nested.roles') ?></th>
-                            <th scope="col"><?= $translator->translate('identityAccess.nested.permissions') ?></th>
                             <th scope="col"><?= $translator->translate('identityAccess.child.permissions') ?></th>
+                            <th scope="col"><?= $translator->translate('identityAccess.nested.permissions') ?></th>
                             <th scope="col"><?= $translator->translate('identityAccess.action') ?></th>
                         </tr>
                         </thead>
@@ -77,8 +77,8 @@ use Yiisoft\View\WebView;
                                     <td>{$role->getName()}</td>
                                     <td>{$role->getChildRolesName()}</td>
                                     <td>{$role->getNestedRolesName()}</td>
-                                    <td>{$role->getNestedPermissionsName()}</td>
                                     <td>{$role->getChildPermissionsName()}</td>
+                                    <td>{$role->getNestedPermissionsName()}</td>
                                     <td>
                                         <form id="revokeIdentityRole"
                                             action="$link"
@@ -102,7 +102,9 @@ use Yiisoft\View\WebView;
                 </div>
             <?php
             else: ?>
-                <p><?= $translator->translate('identityAccess.no.roles.assigned') ?></p>
+                <p class="bg-danger text-light p-3">
+                    <?= $translator->translate('identityAccess.no.roles.assigned') ?>
+                </p>
             <?php
             endif; ?>
         </div>
@@ -175,7 +177,9 @@ use Yiisoft\View\WebView;
                 </table>
             <?php
             else: ?>
-                <p><?= $translator->translate('identityAccess.no.permissions.assigned') ?></p>
+                <p class="bg-danger text-light p-3">
+                    <?= $translator->translate('identityAccess.no.permissions.assigned') ?>
+                </p>
             <?php
             endif; ?>
         </div>

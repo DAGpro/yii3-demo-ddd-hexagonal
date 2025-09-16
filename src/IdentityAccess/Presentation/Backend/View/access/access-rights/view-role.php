@@ -91,7 +91,9 @@ use Yiisoft\View\WebView;
                 </div>
             <?php
             else: ?>
-                <h4 class="mb-4"><?= $translator->translate('identityAccess.no.add.roles') ?></h4>
+                <h4 class="mb-4 bg-danger text-light p-3">
+                    <?= $translator->translate('identityAccess.no.add.roles') ?>
+                </h4>
             <?php
             endif; ?>
             <?php
@@ -162,7 +164,9 @@ use Yiisoft\View\WebView;
                 </div>
             <?php
             else: ?>
-                <h4><?= $translator->translate('identityAccess.no.add.permissions') ?></h4>
+                <h4 class="bg-danger text-light p-3">
+                    <?= $translator->translate('identityAccess.no.add.permissions') ?>
+                </h4>
             <?php
             endif; ?>
             <?php
