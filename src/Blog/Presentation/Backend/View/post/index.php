@@ -24,31 +24,11 @@ use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 $this->setTitle($translator->translate('backend.title.posts'));
 $pagination = Div::tag()
     ->content(
-        new OffsetPagination()
-            ->withContext(
-            /**
-             * @psalm-suppress InternalMethod
-             */
-                new PaginationContext(
-                    $url->generate(
-                        'backend/post',
-                    ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate(
-                        'backend/post',
-                    ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('backend/post'),
-                ),
-            )
-            ->listTag('ul')
-            ->listAttributes(['class' => 'pagination width-auto'])
-            ->itemTag('li')
-            ->itemAttributes(['class' => 'page-item'])
-            ->linkAttributes(['class' => 'page-link'])
-            ->currentItemClass('active')
-            ->currentLinkClass('page-link')
-            ->disabledItemClass('disabled')
-            ->disabledLinkClass('disabled')
-            ->withPaginator($paginator),
+        OffsetPagination::create(
+            $paginator,
+            $url->generate('backend/post'),
+            $url->generate('backend/post') . 'page/' . PaginationContext::URL_PLACEHOLDER,
+        ),
     )
     ->class('table-responsive')
     ->encode(false)

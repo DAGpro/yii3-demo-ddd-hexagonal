@@ -29,37 +29,15 @@ $this->setTitle($translator->translate('blog.archive.for') . "<small class='text
 
 $pagination = Div::tag()
     ->content(
-        new OffsetPagination()
-            ->withContext(
-            /**
-             * @psalm-suppress InternalMethod
-             */
-                new PaginationContext(
-                    $url->generate(
-                        'blog/archive/month',
-                        ['year' => $year, 'month' => $month],
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate(
-                        'blog/archive/month',
-                        ['year' => $year, 'month' => $month],
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('blog/archive/month', ['year' => $year, 'month' => $month]),
-                ),
-            )
-            ->listTag('ul')
-            ->listAttributes(['class' => 'pagination width-auto'])
-            ->itemTag('li')
-            ->itemAttributes(['class' => 'page-item'])
-            ->linkAttributes(['class' => 'page-link'])
-            ->currentItemClass('active')
-            ->currentLinkClass('page-link')
-            ->disabledItemClass('disabled')
-            ->disabledLinkClass('disabled')
-            ->withPaginator($paginator),
-    )
-    ->class('table-responsive')
-    ->encode(false)
-    ->render();
+        OffsetPagination::create(
+            $paginator,
+            $url->generate(
+                'blog/archive/month',
+                ['year' => $year, 'month' => $month],
+            ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
+            $url->generate('blog/archive/month', ['year' => $year, 'month' => $month]),
+        ),
+    );
 ?>
 <h1><?= $this->getTitle() ?></h1>
 <div class="row">

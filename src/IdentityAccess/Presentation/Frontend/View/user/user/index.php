@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\IdentityAccess\User\Domain\User;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Data\Paginator\PaginatorInterface;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\A;
 use Yiisoft\Html\Tag\I;
@@ -13,18 +14,20 @@ use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
-use Yiisoft\Yii\DataView\Column\Base\DataContext;
-use Yiisoft\Yii\DataView\Column\CheckboxColumn;
-use Yiisoft\Yii\DataView\Column\DataColumn;
-use Yiisoft\Yii\DataView\Column\SerialColumn;
 use Yiisoft\Yii\DataView\Filter\Widget\TextInputFilter;
-use Yiisoft\Yii\DataView\GridView;
+use Yiisoft\Yii\DataView\GridView\Column\Base\DataContext;
+use Yiisoft\Yii\DataView\GridView\Column\CheckboxColumn;
+use Yiisoft\Yii\DataView\GridView\Column\DataColumn;
+use Yiisoft\Yii\DataView\GridView\Column\SerialColumn;
+use Yiisoft\Yii\DataView\GridView\GridView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
+use Yiisoft\Yii\DataView\Pagination\PaginationContext;
+use Yiisoft\Yii\DataView\Pagination\PaginationWidgetInterface;
 use Yiisoft\Yii\DataView\YiiRouter\UrlCreator;
 use Yiisoft\Yii\DataView\YiiRouter\UrlParameterProvider;
 
 /**
- * @var OffsetPaginator $paginator ;
+ * @var OffsetPaginator $paginator
  * @var TranslatorInterface $translator
  * @var UrlGeneratorInterface $url
  * @var WebView $this
@@ -132,40 +135,35 @@ $this->setTitle($translator->translate('menu.users'));
                 filterEmpty: false,
             ),
         ];
+        /** @var PaginationWidgetInterface<PaginatorInterface> $pagination */
+        $pagination = OffsetPagination::create(
+            $paginator,
+            $url->generate('user/index'),
+            $url->generate('user/index') . 'page/' . PaginationContext::URL_PLACEHOLDER,
+        );
         echo GridView::widget()
             ->dataReader($paginator)
             ->tableAttributes([
                 'class' => 'table table-striped text-center h-75',
                 'id' => 'table-tariffs-group',
             ])
-            ->sortableHeaderPrepend('<div class="float-start text-secondary text-opacity-50 me-1">⭥</div>')
-            ->sortableHeaderAscPrepend('<div class="float-start fw-bold me-1">⭡</div>')
-            ->sortableHeaderDescPrepend('<div class="float-start fw-bold me-1">⭣</div>')
+            ->sortableHeaderPrepend('<div class="text-secondary text-opacity-50 me-1">⭥</div>')
+            ->sortableHeaderAscPrepend('<div class="fw-bold me-1">⭡</div>')
+            ->sortableHeaderDescPrepend('<div class="fw-bold me-1">⭣</div>')
             ->enableHeader(true)
             ->containerAttributes(['class' => 'table-responsive'])
             ->headerCellAttributes(['class' => 'table-dark'])
             ->headerRowAttributes(['class' => 'card-header bg-dark text-white'])
             ->emptyCellAttributes(['style' => 'color:red'])
             ->summaryAttributes(['class' => 'mt-3 me-3 summary text-end'])
-            ->emptyTextAttributes(['class' => 'card-header bg-danger text-black'])
-            ->summaryTemplate('Показано {begin}-{end} из {totalCount} записей')
-            ->emptyText('Записи не найдены')
+            ->noResultsCellAttributes(['class' => 'card-header bg-danger text-black'])
+            ->summaryTemplate($translator->translate('how.many.records.shown'))
+            ->noResultsText($translator->translate('views.no-records'))
             ->enableFooter(true)
             ->emptyCell('-')
             ->urlParameterProvider(new UrlParameterProvider($currentRoute))
             ->urlCreator(new UrlCreator($url))
-            ->paginationWidget(
-                OffsetPagination::widget()
-                    ->listTag('ul')
-                    ->listAttributes(['class' => 'pagination width-auto'])
-                    ->itemTag('li')
-                    ->itemAttributes(['class' => 'page-item'])
-                    ->linkAttributes(['class' => 'page-link'])
-                    ->currentItemClass('active')
-                    ->currentLinkClass('page-link')
-                    ->disabledItemClass('disabled')
-                    ->disabledLinkClass('disabled'),
-            )
+            ->paginationWidget($pagination)
             ->columns(...$columns); ?>
     </div>
 </div>

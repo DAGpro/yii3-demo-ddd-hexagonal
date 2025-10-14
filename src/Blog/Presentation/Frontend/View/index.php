@@ -31,27 +31,11 @@ $this->setTitle($translator->translate('view-blog.blog'));
 
 $pagination = Div::tag()
     ->content(
-        new OffsetPagination()
-            ->withContext(
-            /**
-             * @psalm-suppress InternalMethod
-             */
-                new PaginationContext(
-                    $url->generate('blog/index') . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('blog/index') . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('blog/index'),
-                ),
-            )
-            ->listTag('ul')
-            ->listAttributes(['class' => 'pagination width-auto'])
-            ->itemTag('li')
-            ->itemAttributes(['class' => 'page-item'])
-            ->linkAttributes(['class' => 'page-link'])
-            ->currentItemClass('active')
-            ->currentLinkClass('page-link')
-            ->disabledItemClass('disabled')
-            ->disabledLinkClass('disabled')
-            ->withPaginator($paginator),
+        OffsetPagination::create(
+            $paginator,
+            $url->generate('blog/index') . '/page/' . PaginationContext::URL_PLACEHOLDER,
+            $url->generate('blog/index'),
+        ),
     )
     ->class('table-responsive')
     ->encode(false)

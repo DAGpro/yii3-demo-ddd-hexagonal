@@ -30,31 +30,12 @@ use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 $this->setTitle('Posts by author ' . $author->getName());
 $pagination = Div::tag()
     ->content(
-        new OffsetPagination()
-            ->withContext(
-            /**
-             * @psalm-suppress InternalMethod
-             */
-                new PaginationContext(
-                    $url->generate('blog/author/posts',
-                        ['author' => $author->getName()],
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('blog/author/posts',
-                        ['author' => $author->getName()],
-                    ) . '/page/' . PaginationContext::URL_PLACEHOLDER,
-                    $url->generate('blog/author/posts', ['author' => $author->getName()]),
-                ),
-            )
-            ->listTag('ul')
-            ->listAttributes(['class' => 'pagination width-auto'])
-            ->itemTag('li')
-            ->itemAttributes(['class' => 'page-item'])
-            ->linkAttributes(['class' => 'page-link'])
-            ->currentItemClass('active')
-            ->currentLinkClass('page-link')
-            ->disabledItemClass('disabled')
-            ->disabledLinkClass('disabled')
-            ->withPaginator($paginator),
+        OffsetPagination::create(
+            $paginator,
+            $url->generate('blog/author/posts', ['author' => $author->getName()]),
+            $url->generate('blog/author/posts', ['author' => $author->getName()],
+            ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
+        ),
     )
     ->class('table-responsive')
     ->encode(false)
