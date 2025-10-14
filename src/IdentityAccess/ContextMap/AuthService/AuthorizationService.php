@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\IdentityAccess\AuthService;
+namespace App\IdentityAccess\ContextMap\AuthService;
 
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\IdentityAccess\Middleware\AccessRoleChecker;
+use App\IdentityAccess\ContextMap\Middleware\AccessRoleChecker;
 use App\IdentityAccess\Presentation\Backend\Web\User\CreateUserController;
 use App\IdentityAccess\Presentation\Backend\Web\User\DeleteUserController;
 use App\IdentityAccess\Presentation\Backend\Web\User\UserController;

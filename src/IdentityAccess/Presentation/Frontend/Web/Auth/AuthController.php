@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth;
 
-use App\IdentityAccess\AuthService\AuthenticationService;
+use App\IdentityAccess\ContextMap\AuthService\AuthenticationService;
 use App\IdentityAccess\Presentation\Frontend\Web\Auth\Form\LoginForm;
 use App\IdentityAccess\User\Infrastructure\Authentication\AuthenticationException;
 use App\Infrastructure\Presentation\Web\Service\WebControllerService;

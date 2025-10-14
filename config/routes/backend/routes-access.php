@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\IdentityAccess\Middleware\AccessRoleChecker;
+use App\IdentityAccess\ContextMap\Middleware\AccessRoleChecker;
 use App\IdentityAccess\Presentation\Backend\Web\Access\AccessManagementController;
 use App\IdentityAccess\Presentation\Backend\Web\Access\AccessRightsController;
 use App\IdentityAccess\Presentation\Backend\Web\Access\AssignAccessController;

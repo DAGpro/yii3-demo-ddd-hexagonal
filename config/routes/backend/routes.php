@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\IdentityAccess\Middleware\AccessPermissionChecker;
+use App\IdentityAccess\ContextMap\Middleware\AccessPermissionChecker;
 use App\Site\Presentation\Backend\Web\SiteController;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Router\Group;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Blog\Presentation\Backend\Web\CommentController;
 use App\Blog\Presentation\Backend\Web\PostController;
 use App\Blog\Presentation\Backend\Web\TagController;
-use App\IdentityAccess\Middleware\AccessPermissionChecker;
+use App\IdentityAccess\ContextMap\Middleware\AccessPermissionChecker;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\Group;

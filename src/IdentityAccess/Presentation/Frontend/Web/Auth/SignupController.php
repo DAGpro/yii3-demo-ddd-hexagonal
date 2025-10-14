@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\Presentation\Frontend\Web\Auth;
 
-use App\IdentityAccess\AuthService\AuthenticationService;
+use App\IdentityAccess\ContextMap\AuthService\AuthenticationService;
 use App\IdentityAccess\Presentation\Frontend\Web\Auth\Form\SignupForm;
 use App\IdentityAccess\User\Application\Service\UserServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;

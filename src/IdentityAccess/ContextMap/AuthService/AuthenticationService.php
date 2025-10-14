@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\IdentityAccess\AuthService;
+namespace App\IdentityAccess\ContextMap\AuthService;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\IdentityAccess\Middleware;
+namespace App\IdentityAccess\ContextMap\Middleware;
 
-use App\IdentityAccess\AuthService\AuthenticationService;
-use App\IdentityAccess\AuthService\AuthorizationService;
+use App\IdentityAccess\ContextMap\AuthService\AuthenticationService;
+use App\IdentityAccess\ContextMap\AuthService\AuthorizationService;
 use InvalidArgumentException;
 use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -16,9 +16,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 use Yiisoft\Http\Status;
 
-final class AccessPermissionChecker implements MiddlewareInterface
+final class AccessRoleChecker implements MiddlewareInterface
 {
-    private ?string $permission = null;
+    private ?string $role = null;
 
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
@@ -35,21 +35,21 @@ final class AccessPermissionChecker implements MiddlewareInterface
             throw new RuntimeException('Log in to the site');
         }
 
-        if ($this->permission === null) {
-            throw new InvalidArgumentException('Permission not set.');
+        if ($this->role === null) {
+            throw new InvalidArgumentException('Role not set.');
         }
 
-        if (!$this->authorizationService->userHasPermission((string)$user->getId(), $this->permission)) {
+        if (!$this->authorizationService->userHasRole((string)$user->getId(), $this->role)) {
             return $this->responseFactory->createResponse(Status::FORBIDDEN);
         }
 
         return $handler->handle($request);
     }
 
-    public function withPermission(string $permission): self
+    public function withRole(string $role): self
     {
         $new = clone $this;
-        $new->permission = $permission;
+        $new->role = $role;
         return $new;
     }
 }
