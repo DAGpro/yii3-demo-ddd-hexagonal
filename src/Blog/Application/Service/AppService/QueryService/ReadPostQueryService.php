@@ -32,7 +32,7 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
     public function findAllPreloaded(): DataReaderInterface
     {
         return $this->repository
-            ->findAllWithTags()
+            ->findAllWithPreloadedTags()
             ->withSort(
                 Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
                     ->withOrder(['published_at' => 'desc']),
@@ -48,7 +48,7 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
     public function findByTag(Tag $tag): DataReaderInterface
     {
         return $this->repository
-            ->findByTag($tag)
+            ->findByTagWithPreloadedTags($tag)
             ->withSort(
                 Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
                     ->withOrder(['published_at' => 'desc']),
@@ -64,7 +64,7 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
     public function findByAuthor(Author $author): DataReaderInterface
     {
         return $this->repository
-            ->findByAuthor($author)
+            ->findByAuthorWithPreloadedTags($author)
             ->withSort(
                 Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
                     ->withOrder(['published_at' => 'desc']),
@@ -74,7 +74,7 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
     #[Override]
     public function getPostBySlug(string $slug): ?Post
     {
-        return $this->repository->findBySlug($slug);
+        return $this->repository->findBySlugWithPreloadedTags($slug);
     }
 
     /**
@@ -83,13 +83,13 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
     #[Override]
     public function getPost(int $id): ?Post
     {
-        return $this->repository->findById($id);
+        return $this->repository->findByIdWithPreloadedTags($id);
     }
 
     #[Override]
     public function fullPostPage(string $slug): ?Post
     {
-        return $this->repository->findFullPostBySlugWithPreloadedTagsAndComments($slug);
+        return $this->repository->findBySlugWithPreloadedTagsAndComments($slug);
     }
 
     /**

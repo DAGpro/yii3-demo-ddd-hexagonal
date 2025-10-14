@@ -14,15 +14,11 @@ use Yiisoft\Data\Reader\DataReaderInterface;
 interface PostRepositoryInterface
 {
     /**
-     * Get a full archive of posts
-     *
      * @return DataReaderInterface array with archive data (year, month, number of posts)
      */
     public function getFullArchive(): DataReaderInterface;
 
     /**
-     * Get the archive of posts for the specified month
-     *
      * @param int $year year
      * @param int $month month (1-12)
      * @return DataReaderInterface List of posts for the specified month
@@ -30,8 +26,6 @@ interface PostRepositoryInterface
     public function getMonthlyArchive(int $year, int $month): DataReaderInterface;
 
     /**
-     * Get the archive of posts for the specified year
-     *
      * @param int $year year
      * @return DataReaderInterface List of posts for the specified year
      */
@@ -40,44 +34,41 @@ interface PostRepositoryInterface
     /**
      * @return DataReaderInterface<int, Post>
      */
-    public function findAllWithTags(): DataReaderInterface;
+    public function findAllWithPreloadedTags(): DataReaderInterface;
 
     /**
      * @return DataReaderInterface<int, Post>
      */
-    public function findByTag(Tag $tag): DataReaderInterface;
+    public function findByTagWithPreloadedTags(Tag $tag): DataReaderInterface;
 
     /**
      * @return DataReaderInterface<int, Post>
      */
-    public function findByAuthor(Author $author): DataReaderInterface;
+    public function findByAuthorNotDeletedPostWithPreloadedTags(Author $author): DataReaderInterface;
 
     /**
-     * Find post by slug
+     * @return DataReaderInterface<int, Post>
      */
-    public function findBySlug(string $slug): ?Post;
+    public function findByAuthorWithPreloadedTags(Author $author): DataReaderInterface;
 
-    public function findById(int $id): ?Post;
+    public function findBySlugWithPreloadedTags(string $slug): ?Post;
 
-    public function findFullPostBySlugWithPreloadedTagsAndComments(string $slug): ?Post;
+    public function findBySlugWithPreloadedTagsAndComments(string $slug): ?Post;
 
-    public function getMaxUpdatedAt(): DateTimeImmutable;
+    public function findBySlugNotDeletedPostWithPreloadedTags(string $slug): ?Post;
 
     /**
      * @return DataReaderInterface<int, Post>
      */
     public function findAllForModerationWithPreloadedTags(): DataReaderInterface;
 
-    public function findForModeration(int $id): ?Post;
+    public function findByIdWithPreloadedTags(int $id): ?Post;
 
-    /**
-     * @return DataReaderInterface<int, Post>
-     */
-    public function findAuthorPostsWithPreloadedTags(Author $author): DataReaderInterface;
-
-    public function findPostBySlugWithPreloadedTags(string $slug): ?Post;
+    public function findByIdForModeration(int $id): ?Post;
 
     public function select(): Select;
+
+    public function getMaxUpdatedAt(): DateTimeImmutable;
 
     /**
      * @param iterable<Post> $posts

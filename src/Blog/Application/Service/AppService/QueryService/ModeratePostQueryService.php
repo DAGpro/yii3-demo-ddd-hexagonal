@@ -40,6 +40,6 @@ final readonly class ModeratePostQueryService implements ModeratePostQueryServic
     #[Override]
     public function getPost(int $id): ?Post
     {
-        return $this->repository->findForModeration($id);
+        return $this->repository->findByIdForModeration($id);
     }
 }

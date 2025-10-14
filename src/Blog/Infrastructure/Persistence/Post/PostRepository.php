@@ -98,7 +98,7 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findAllWithTags(): DataReaderInterface
+    public function findAllWithPreloadedTags(): DataReaderInterface
     {
         $query = $this->select()->load(['tags']);
         /** @var DataReaderInterface<int, Post> $reader */
@@ -107,7 +107,7 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findByTag(Tag $tag): DataReaderInterface
+    public function findByTagWithPreloadedTags(Tag $tag): DataReaderInterface
     {
         $query = $this
             ->select()
@@ -120,7 +120,21 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findByAuthor(Author $author): DataReaderInterface
+    public function findByAuthorNotDeletedPostWithPreloadedTags(Author $author): DataReaderInterface
+    {
+        $query = $this
+            ->select()
+            ->load(['tags'])
+            ->where(['author_id' => $author->getId()])
+            ->andWhere('deleted_at', '=', null);
+
+        /** @var DataReaderInterface<int, Post> $reader */
+        $reader = new EntityReader($query);
+        return $reader;
+    }
+
+    #[Override]
+    public function findByAuthorWithPreloadedTags(Author $author): DataReaderInterface
     {
         $query = $this
             ->select()
@@ -130,40 +144,6 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
         /** @var DataReaderInterface<int, Post> $reader */
         $reader = new EntityReader($query);
         return $reader;
-    }
-
-    #[Override]
-    public function findBySlug(string $slug): ?Post
-    {
-        return $this
-            ->select()
-            ->where(['slug' => $slug])
-            ->load(['tags'])
-            ->fetchOne();
-    }
-
-    #[Override]
-    public function findById(int $id): ?Post
-    {
-        return $this
-            ->select()
-            ->where(['id' => $id])
-            ->load(['tags'])
-            ->fetchOne();
-    }
-
-    #[Override]
-    public function findFullPostBySlugWithPreloadedTagsAndComments(string $slug): ?Post
-    {
-        return $this
-            ->select()
-            ->where(['slug' => $slug])
-            ->load(['tags'])
-            ->load('comments', [
-                'method' => Select::OUTER_QUERY,
-                'where' => ['public' => true],
-            ])
-            ->fetchOne();
     }
 
     #[Override]
@@ -180,36 +160,56 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findForModeration(int $id): ?Post
+    public function findBySlugWithPreloadedTags(string $slug): ?Post
     {
         return $this
             ->select()
-            ->where('id', '=', $id)
-            ->andWhere('deleted_at', '=', null)
+            ->where(['slug' => $slug])
+            ->load(['tags'])
             ->fetchOne();
     }
 
     #[Override]
-    public function findAuthorPostsWithPreloadedTags(Author $author): DataReaderInterface
-    {
-        $query = $this
-            ->select()
-            ->load(['tags'])
-            ->where(['author_id' => $author->getId()])
-            ->andWhere('deleted_at', '=', null);
-
-        /** @var DataReaderInterface<int, Post> $reader */
-        $reader = new EntityReader($query);
-        return $reader;
-    }
-
-    #[Override]
-    public function findPostBySlugWithPreloadedTags(string $slug): ?Post
+    public function findBySlugNotDeletedPostWithPreloadedTags(string $slug): ?Post
     {
         return $this
             ->select()
             ->load(['tags'])
             ->andWhere('slug', '=', $slug)
+            ->andWhere('deleted_at', '=', null)
+            ->fetchOne();
+    }
+
+    #[Override]
+    public function findBySlugWithPreloadedTagsAndComments(string $slug): ?Post
+    {
+        return $this
+            ->select()
+            ->where(['slug' => $slug])
+            ->load(['tags'])
+            ->load('comments', [
+                'method' => Select::OUTER_QUERY,
+                'where' => ['public' => true],
+            ])
+            ->fetchOne();
+    }
+
+    #[Override]
+    public function findByIdWithPreloadedTags(int $id): ?Post
+    {
+        return $this
+            ->select()
+            ->where(['id' => $id])
+            ->load(['tags'])
+            ->fetchOne();
+    }
+
+    #[Override]
+    public function findByIdForModeration(int $id): ?Post
+    {
+        return $this
+            ->select()
+            ->where('id', '=', $id)
             ->andWhere('deleted_at', '=', null)
             ->fetchOne();
     }

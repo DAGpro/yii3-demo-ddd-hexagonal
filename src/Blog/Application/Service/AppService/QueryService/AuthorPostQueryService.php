@@ -27,7 +27,7 @@ final readonly class AuthorPostQueryService implements AuthorPostQueryServiceInt
     public function getAuthorPosts(Author $author): DataReaderInterface
     {
         return $this->repository
-            ->findAuthorPostsWithPreloadedTags($author)
+            ->findByAuthorNotDeletedPostWithPreloadedTags($author)
             ->withSort(
                 Sort::only(['published_at'])
                     ->withOrder(['published_at' => 'desc']),
@@ -37,6 +37,6 @@ final readonly class AuthorPostQueryService implements AuthorPostQueryServiceInt
     #[Override]
     public function getPostBySlug(string $slug): ?Post
     {
-        return $this->repository->findPostBySlugWithPreloadedTags($slug);
+        return $this->repository->findBySlugNotDeletedPostWithPreloadedTags($slug);
     }
 }

@@ -16,6 +16,7 @@
             <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
+
     <issueHandlers>
         <MixedAssignment errorLevel="suppress"/>
         <RiskyTruthyFalsyComparison errorLevel="suppress"/>
