@@ -15,7 +15,7 @@ use Yiisoft\Security\PasswordHasher;
 
 
 /**
- * @psalm-suppress MissingFinalForClass
+ * @psalm-suppress ClassMustBeFinal
  */
 #[Entity(repository: UserRepository::class)]
 #[Index(columns: ['login'], unique: true)]
@@ -37,7 +37,7 @@ class User
 
     public function __construct(
         #[Column(type: 'string(48)')]
-        private string $login,
+        private readonly string $login,
         string $password,
     ) {
         $this->created_at = new DateTimeImmutable();

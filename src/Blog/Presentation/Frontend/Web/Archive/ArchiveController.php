@@ -15,8 +15,6 @@ use Yiisoft\Yii\View\Renderer\ViewRenderer;
 final readonly class ArchiveController
 {
     private const int POSTS_PER_PAGE = 3;
-    private const int POPULAR_TAGS_COUNT = 10;
-    private const int ARCHIVE_MONTHS_COUNT = 12;
 
     private ViewRenderer $view;
 

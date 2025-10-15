@@ -69,7 +69,7 @@ $this->beginPage();
             ->begin() ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()?->getPath())
+            ->currentPath($currentRoute->getUri()?->getPath() ?? '/')
             ->addAttributes(['class' => 'navbar-nav mx-auto'])
             ->items(
                 Dropdown::widget()
@@ -109,7 +109,7 @@ $this->beginPage();
             ) ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()?->getPath())
+            ->currentPath($currentRoute->getUri()?->getPath() ?? '/')
             ->addAttributes(['class' => 'navbar-nav me-2'])
             ->items(
                 ...$user?->getId() === null

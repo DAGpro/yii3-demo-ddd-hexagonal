@@ -87,6 +87,7 @@ final class IdentityRepository extends Repository implements IdentityRepositoryI
      * @param array<array-key, Identity> $identities
      * @throws Throwable
      */
+    #[Override]
     public function delete(array $identities): void
     {
         if (empty($identities)) {

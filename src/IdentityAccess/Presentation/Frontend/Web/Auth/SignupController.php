@@ -44,7 +44,7 @@ final readonly class SignupController
             && $formHydrator->populateFromPostAndValidate($signupForm, $request)
         ) {
             try {
-                $userService->createUser($signupForm->getLogin(), $signupForm->getPassword());
+                $userService->createUser($signupForm->login, $signupForm->password);
                 return $this->webService->sessionFlashAndRedirect(
                     $translator->translate('IdentityAccess.user.registered'),
                     'site/index',

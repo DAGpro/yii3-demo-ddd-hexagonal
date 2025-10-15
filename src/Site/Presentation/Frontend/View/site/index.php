@@ -20,19 +20,16 @@ echo Carousel::widget()
             content: '<div class="d-block w-100 bg-primary" style="height: 200px"></div>',
             caption: $translator->translate('view-site.caption.slide1'),
             captionPlaceholder: $translator->translate('view-site.caption.slide1Placeholder'),
-            captionAttributes: ['class' => 'd-none d-md-block'],
         ),
         CarouselItem::to(
             content: '<div class="d-block w-100 bg-danger" style="height: 200px"></div>',
             caption: $translator->translate('view-site.caption.slide2'),
             captionPlaceholder: $translator->translate('view-site.caption.slide2Placeholder'),
-            captionAttributes: ['class' => 'd-none d-md-block'],
         ),
         CarouselItem::to(
             content: '<div class="d-block w-100 bg-warning" style="height: 200px"></div>',
             caption: $translator->translate('view-site.caption.slide3'),
             captionPlaceholder: $translator->translate('view-site.caption.slide3Placeholder'),
-            captionAttributes: ['class' => 'd-none d-md-block'],
         ),
     );
 ?>

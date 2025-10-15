@@ -10,6 +10,7 @@ use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RuleInterface;
 use Yiisoft\Validator\RulesProviderInterface;
 
 final class LoginForm extends FormModel implements RulesProviderInterface
@@ -51,7 +52,7 @@ final class LoginForm extends FormModel implements RulesProviderInterface
     }
 
     #[Override]
-    public function getRules(): array
+    public function getRules(): iterable
     {
         return [
             'login' => [new Required()],
@@ -59,7 +60,10 @@ final class LoginForm extends FormModel implements RulesProviderInterface
         ];
     }
 
-    private function passwordRules(): array
+    /**
+     * @return iterable<int, RuleInterface|callable>
+     */
+    private function passwordRules(): iterable
     {
         return [
             new Required(),

@@ -47,7 +47,7 @@ $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year
         $monthName = '';
         /** @var Post $item */
         foreach ($items as $item) {
-            if ($item->getPublishedAt()) {
+            if (!$item->getPublishedAt()) {
                 continue;
             }
             $month = (int)$item->getPublishedAt()?->format('m');

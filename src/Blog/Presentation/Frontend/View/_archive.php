@@ -58,7 +58,7 @@ use Yiisoft\View\WebView;
         $monthsPrint = [];
         /**
          * @var int $yearMonths
-         * @var array $months
+         * @var array<string> $months
          */
         foreach ($monthList as $yearMonths => $months) {
             $monthsPrint[] = H6::tag()

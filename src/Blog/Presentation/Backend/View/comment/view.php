@@ -33,10 +33,10 @@ $this->setTitle(
             </div>
             <p>
                 <span class="text-muted">
-                    <?= $comment->getPublishedAt() === null
+                    <?= ($publishedAt = $comment->getPublishedAt()) === null
                         ? $translator->translate('blog.not.published.comment')
                         : $translator->translate('blog.published.comment')
-                        . $comment->getPublishedAt()->format('H:i:s d.m.Y')
+                        . $publishedAt->format('H:i:s d.m.Y')
                     ?>
                 </span>
                 <?php

@@ -8,6 +8,7 @@ use App\Infrastructure\Presentation\Web\Widget\FlashMessage;
 use App\Infrastructure\Presentation\Web\Widget\PerformanceMetrics;
 use Yiisoft\Assets\AssetManager;
 use Yiisoft\Bootstrap5\Dropdown;
+use Yiisoft\Bootstrap5\DropdownAlignment;
 use Yiisoft\Bootstrap5\DropdownItem;
 use Yiisoft\Bootstrap5\Nav;
 use Yiisoft\Bootstrap5\NavBar;
@@ -71,7 +72,7 @@ $this->beginPage();
             ->begin() ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()?->getPath())
+            ->currentPath($currentRoute->getUri()?->getPath() ?? '/')
             ->addAttributes(['class' => 'navbar-nav mx-auto'])
             ->items(
                 NavLink::to(
@@ -103,7 +104,7 @@ $this->beginPage();
             ) ?>
 
         <?= Nav::widget()
-            ->currentPath($currentRoute->getUri()?->getPath())
+            ->currentPath($currentRoute->getUri()?->getPath() ?? '/')
             ->addAttributes(['class' => 'navbar-nav'])
             ->items(
                 Dropdown::widget()
@@ -133,12 +134,25 @@ $this->beginPage();
                 :
                 [
                     Dropdown::widget()
+                        ->alignment(DropdownAlignment::END)
                         ->togglerContent(Html::encode($user->getLogin()))
                         ->items(
-                            DropdownItem::link(
-                                Html::encode($user->getLogin()),
-                                $url->generate('blog/author/posts', ['author' => $user->getLogin()]),
-                            //visible: $isGuest,
+                            DropdownItem::text(
+                                Form::tag()
+                                    ->action($url->generate('auth/logout'))
+                                    ->method('post')
+                                    ->csrf($csrf)
+                                    ->content(
+                                        Field::submitButton()
+                                            ->addButtonAttributes(['class' => 'dropdown-item'])
+                                            ->containerClass('mb-1')
+                                            ->content(
+                                                $translator->translate('menu.logout',
+                                                    ['login' => Html::encode($user->getLogin())],
+                                                ),
+                                            )
+                                            ->encodeContent(false),
+                                    ),
                             ),
                             ...$canAddPost ?
                             [
@@ -150,6 +164,7 @@ $this->beginPage();
                                 DropdownItem::text(
                                     Form::tag()
                                         ->action($url->generate('auth/logout'))
+                                        ->method('post')
                                         ->csrf($csrf)
                                         ->content(
                                             Field::submitButton()

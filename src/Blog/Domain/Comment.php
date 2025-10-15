@@ -34,12 +34,6 @@ class Comment
     #[Column(type: 'bool', default: 'false', typecast: 'bool')]
     private bool $public = false;
 
-    /**
-     * @psalm-suppress MissingPropertyNotSetInConstructor
-     */
-    #[BelongsTo(target: Post::class, nullable: false)]
-    private Post $post;
-
     #[Column(type: 'datetime')]
     private readonly DateTimeImmutable $created_at;
 
@@ -55,11 +49,13 @@ class Comment
     public function __construct(
         #[Column(type: 'text')]
         private string $content,
-        Post $post,
+
+        #[BelongsTo(target: Post::class, nullable: false)]
+        private Post $post,
+
         #[Embedded(target: Commentator::class)]
         private Commentator $commentator,
     ) {
-        $this->post = $post;
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTimeImmutable();
     }

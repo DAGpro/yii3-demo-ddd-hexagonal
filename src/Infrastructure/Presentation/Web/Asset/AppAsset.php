@@ -20,12 +20,10 @@ final class AppAsset extends AssetBundle
 
     public ?string $sourcePath = '@resources/asset';
 
-    /** @var string[]|CssFile[] */
     public array $css = [
         'css/site.css',
     ];
 
-    /** @var string[]|JsFile[] */
     public array $js = [
         'js/app.js',
     ];

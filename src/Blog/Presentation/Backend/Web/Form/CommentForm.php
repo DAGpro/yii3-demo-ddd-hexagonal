@@ -7,8 +7,8 @@ namespace App\Blog\Presentation\Backend\Web\Form;
 use App\Blog\Domain\Comment;
 use InvalidArgumentException;
 use Override;
-use phpDocumentor\Reflection\Types\Boolean;
 use Yiisoft\FormModel\FormModel;
+use Yiisoft\Validator\Rule\BooleanValue;
 use Yiisoft\Validator\Rule\Number;
 use Yiisoft\Validator\Rule\Required;
 use Yiisoft\Validator\RulesProviderInterface;
@@ -62,7 +62,7 @@ final class CommentForm extends FormModel implements RulesProviderInterface
     }
 
     #[Override]
-    public function getRules(): array
+    public function getRules(): iterable
     {
         return [
             'content' => [
@@ -73,7 +73,7 @@ final class CommentForm extends FormModel implements RulesProviderInterface
                 new Number(),
             ],
             'public' => [
-                new Boolean(),
+                new BooleanValue(),
             ],
         ];
     }

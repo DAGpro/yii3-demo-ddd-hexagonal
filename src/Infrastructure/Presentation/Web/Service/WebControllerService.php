@@ -62,7 +62,7 @@ final readonly class WebControllerService
             );
     }
 
-    public function accessDenied($reasonPhrase = ''): ResponseInterface
+    public function accessDenied(string $reasonPhrase = ''): ResponseInterface
     {
         return $this->responseFactory->createResponse(
             Status::FORBIDDEN,

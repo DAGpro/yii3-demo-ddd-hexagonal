@@ -10,13 +10,40 @@ use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RuleInterface;
 use Yiisoft\Validator\RulesProviderInterface;
+use Yiisoft\Validator\ValidatorInterface;
 
+/**
+ * @psalm-import-type RawRules from ValidatorInterface
+ */
 final class SignupForm extends FormModel implements RulesProviderInterface
 {
-    private string $login = '';
-    private string $password = '';
-    private string $passwordVerify = '';
+    /**
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    public string $login = '' {
+        get {
+            return $this->login;
+        }
+    }
+
+    /**
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    public string $password = '' {
+        get {
+            return $this->password;
+        }
+    }
+    /**
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    public string $passwordVerify = '' {
+        get {
+            return $this->passwordVerify;
+        }
+    }
 
     public function __construct(
         private readonly UserQueryServiceInterface $userService,
@@ -34,18 +61,8 @@ final class SignupForm extends FormModel implements RulesProviderInterface
         ];
     }
 
-    public function getLogin(): string
-    {
-        return $this->login;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
     #[Override]
-    public function getRules(): array
+    public function getRules(): iterable
     {
         return [
             'login' => [new Required()],
@@ -54,11 +71,13 @@ final class SignupForm extends FormModel implements RulesProviderInterface
         ];
     }
 
-    private function passwordVerifyRules(): array
+    /**
+     * @return iterable<int, RuleInterface|callable>
+     */
+    private function passwordVerifyRules(): iterable
     {
         return [
             new Required(),
-
             function (): Result {
                 $result = new Result();
                 if ($this->password !== $this->passwordVerify) {

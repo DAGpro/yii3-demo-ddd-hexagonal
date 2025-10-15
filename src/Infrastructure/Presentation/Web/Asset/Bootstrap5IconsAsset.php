@@ -14,7 +14,6 @@ final class Bootstrap5IconsAsset extends AssetBundle
 {
     public bool $cdn = true;
 
-    /** @var string[]|CssFile[] */
     public array $css = [
         'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css',
     ];

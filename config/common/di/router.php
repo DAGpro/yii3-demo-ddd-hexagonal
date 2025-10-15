@@ -12,7 +12,10 @@ use Yiisoft\Router\RouteCollectionInterface;
 use Yiisoft\Router\RouteCollectorInterface;
 use Yiisoft\Router\UrlGeneratorInterface;
 
-/** @var Config $config */
+/**
+ * @var Config $config
+ * @var array $params
+ */
 
 return [
     RouteCollectionInterface::class => static function (RouteCollectorInterface $collector) use ($config) {

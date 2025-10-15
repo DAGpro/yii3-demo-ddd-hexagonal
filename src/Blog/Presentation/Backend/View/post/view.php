@@ -66,7 +66,7 @@ $this->setTitle(
                         ? $translator->translate('blog.draft.post')
                         : $translator->translate(
                             'blog.published.post',
-                            ['date' => $post->getPublishedAt()->format('d.m.Y')],
+                            ['date' => $post->getPublishedAt()?->format('d.m.Y')],
                         )
                     ?>
                 </span>

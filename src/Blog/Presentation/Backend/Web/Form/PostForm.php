@@ -21,7 +21,7 @@ final class PostForm extends FormModel implements RulesProviderInterface
     private readonly bool $public;
     /** @var string[] */
     private readonly array $tags;
-    private int $id;
+    private readonly int $id;
 
     public function __construct(Post $post)
     {
