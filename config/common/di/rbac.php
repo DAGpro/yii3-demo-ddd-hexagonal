@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Yiisoft\Access\AccessCheckerInterface;
+use Yiisoft\Definitions\Reference;
 use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
@@ -12,6 +13,14 @@ use Yiisoft\Rbac\Php\ItemsStorage;
 /** @var array $params */
 
 return [
+    Manager::class => [
+        'class' => Manager::class,
+        '__construct()' => [
+            'itemsStorage' => Reference::to(ItemsStorageInterface::class),
+            'assignmentsStorage' => Reference::to(AssignmentsStorageInterface::class),
+            'enableDirectPermissions' => true,
+        ],
+    ],
     ItemsStorageInterface::class => [
         'class' => ItemsStorage::class,
         '__construct()' => [
