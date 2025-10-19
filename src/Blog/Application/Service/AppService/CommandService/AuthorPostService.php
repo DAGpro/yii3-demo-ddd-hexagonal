@@ -55,7 +55,7 @@ final readonly class AuthorPostService implements AuthorPostServiceInterface
             throw new BlogNotFoundException('This post does not exist!');
         }
 
-        if ($post->getAuthor() !== $author) {
+        if (!$post->getAuthor()->isEqual($author)) {
             throw new BlogAccessDeniedException('You are not the author of this post!');
         }
 
