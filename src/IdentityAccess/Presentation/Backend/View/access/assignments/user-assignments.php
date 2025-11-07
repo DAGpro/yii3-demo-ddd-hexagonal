@@ -69,7 +69,7 @@ use Yiisoft\View\WebView;
                         /** @var RoleDTO $role */
                         foreach ($user->getRoles() as $role) {
                             $link = $url->generate(
-                                'backend/access/view-role',
+                                'backend/access/revoke-role',
                                 ['user_id' => $user->getId(), 'role' => $role->getName()],
                             );
                             echo <<<REVOKEROLE

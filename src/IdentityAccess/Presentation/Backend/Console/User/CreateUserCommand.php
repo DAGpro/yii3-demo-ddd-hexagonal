@@ -18,6 +18,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
+use Yiisoft\Validator\Rule\Length;
+use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\Validator;
 use Yiisoft\Yii\Console\ExitCode;
 
 #[AsCommand(
@@ -32,6 +35,7 @@ final class CreateUserCommand extends Command
         private readonly AccessRightsServiceInterface $accessRightsService,
         private readonly UserServiceInterface $userService,
         private readonly UserQueryServiceInterface $userQueryService,
+        private readonly Validator $validator,
     ) {
         parent::__construct();
     }
@@ -55,6 +59,25 @@ final class CreateUserCommand extends Command
         $isAdmin = (bool)$input->getArgument('isAdmin');
 
         try {
+            $result = $this->validator->validate(
+                ['login' => $login, 'password' => $password],
+                [
+                    'login' => [
+                        new Required(),
+                        new Length(min: 3),
+                    ],
+                    'password' => [
+                        new Required(),
+                        new Length(min: 3),
+                    ],
+                ],
+            );
+
+            if (!$result->isValid()) {
+                $io->error(implode(', ', $result->getErrorMessages()));
+                return ExitCode::DATAERR;
+            }
+
             $this->userService->createUser($login, $password);
 
             if ($isAdmin) {

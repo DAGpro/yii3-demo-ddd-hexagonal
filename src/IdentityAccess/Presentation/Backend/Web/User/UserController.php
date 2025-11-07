@@ -34,8 +34,8 @@ final readonly class UserController
 
         $dataReader = $this->userQueryService
             ->findAllPreloaded()
-            ->withSort(Sort::only(['login'])
-                ->withOrderString('login'),
+            ->withSort(Sort::only(['login', 'id'])
+                ->withOrderString('id'),
             );
 
         $paginator = new OffsetPaginator($dataReader)

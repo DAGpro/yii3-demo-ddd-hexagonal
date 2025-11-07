@@ -6,17 +6,13 @@ namespace App\IdentityAccess\Presentation\Frontend\Api\User;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;
 use Yiisoft\Router\CurrentRoute;
 
-/**
- * @OA\Tag(
- *     name="user",
- *     description="User"
- * )
- */
+#[OA\Tag(name: 'user', description: 'User')]
 final readonly class ApiUserController
 {
 
@@ -25,13 +21,13 @@ final readonly class ApiUserController
     ) {
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/user",
-     *     tags={"user"},
-     *     @OA\Response(response="200", description="Get users list")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/user',
+        tags: ['user'],
+        responses: [
+            new OA\Response(response: 200, description: 'Get users list')
+        ]
+    )]
     public function index(UserQueryServiceInterface $userQueryService): ResponseInterface
     {
         $dataReader = $userQueryService
@@ -56,19 +52,21 @@ final readonly class ApiUserController
         return $this->responseFactory->createResponse($items);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/user/{login}",
-     *     tags={"user"},
-     *     @OA\Parameter(
-     *     @OA\Schema(type="string"),
-     *     in="path",
-     *     name="login",
-     *     parameter="login"
-     *     ),
-     *     @OA\Response(response="200", description="Get user info")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/user/{login}',
+        tags: ['user'],
+        parameters: [
+            new OA\Parameter(
+                name: 'login',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'string')
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Get user info')
+        ]
+    )]
     public function profile(UserQueryServiceInterface $userQueryService, CurrentRoute $currentRoute): ResponseInterface
     {
         $login = $currentRoute->getArgument('login');

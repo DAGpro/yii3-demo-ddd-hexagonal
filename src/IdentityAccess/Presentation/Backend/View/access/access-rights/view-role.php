@@ -14,14 +14,13 @@ use Yiisoft\View\WebView;
  * @var UrlGeneratorInterface $url
  * @var Translator $translator
  * @var RoleDTO $role
- * @var string|null $currentUrl
  * @var string $title
  * @var string $csrf
  */
 
 ?>
     <div class="main">
-        <?= $this->render('../__access_menu', ['currentUrl' => $currentUrl]) ?>
+        <?= $this->render('../__access_menu', ['currentUrl' => null]) ?>
         <div class="role m-2">
             <?php
             echo <<<REMOVEROLE

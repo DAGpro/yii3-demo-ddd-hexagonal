@@ -30,7 +30,6 @@ final readonly class AccessRightsController
 
         return $this->viewRenderer->render('index', [
             'roles' => $rolesWithChildren,
-            'currentUrl' => 'roles',
         ]);
     }
 
@@ -40,7 +39,6 @@ final readonly class AccessRightsController
 
         return $this->viewRenderer->render('permissions-list', [
             'permissions' => $permissions,
-            'currentUrl' => 'permissions',
         ]);
     }
 
@@ -63,7 +61,6 @@ final readonly class AccessRightsController
 
         return $this->viewRenderer->render('view-role', [
             'role' => $role,
-            'currentUrl' => null,
         ]);
     }
 }

@@ -35,7 +35,8 @@ use Yiisoft\View\WebView;
                 <div class="card-body p-5 text-center">
                     <?= Form::tag()
                         ->action($url->generate('backend/user/create'))
-                        ->attributes(['enctype' => 'multipart/form-data'])
+                        ->method('post')
+                        ->addAttributes(['enctype' => 'multipart/form-data'])
                         ->csrf($csrf)
                         ->id('signupForm')
                         ->content(

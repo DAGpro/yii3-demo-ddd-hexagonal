@@ -13,12 +13,11 @@ use Yiisoft\View\WebView;
  * @var UrlGeneratorInterface $url
  * @var Translator $translator
  * @var string $csrf
- * @var string|null $currentUrl
  * @var array $permissions
  */
 ?>
     <div class="main">
-        <?= $this->render('../__access_menu', ['currentUrl' => $currentUrl]) ?>
+        <?= $this->render('../__access_menu', ['currentUrl' => 'permissions']) ?>
 
         <h2><?= $translator->translate('identityAccess.permissions') ?></h2>
 

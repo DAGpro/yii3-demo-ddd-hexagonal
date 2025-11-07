@@ -13,14 +13,13 @@ use Yiisoft\View\WebView;
  * @var UrlGeneratorInterface $url
  * @var Translator $translator
  * @var string $csrf
- * @var string|null $currentUrl
  * @var array $roles
  */
 
 
 ?>
     <div class="main">
-        <?= $this->render('../__access_menu', ['currentUrl' => $currentUrl]) ?>
+        <?= $this->render('../__access_menu', ['currentUrl' => 'roles']) ?>
 
         <?php
         echo <<<CLEARACCESS

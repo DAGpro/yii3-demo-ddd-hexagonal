@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\IdentityAccess\Presentation\Backend\Web\User\Forms;
 
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use Override;
 use Yiisoft\FormModel\FormModel;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Validator\Result;
+use Yiisoft\Validator\Rule\Length;
 use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\RuleInterface;
+use Yiisoft\Validator\RulesProviderInterface;
 
-final class CreateUserForm extends FormModel
+final class CreateUserForm extends FormModel implements RulesProviderInterface
 {
     private string $login = '';
     private string $password = '';
@@ -41,20 +45,29 @@ final class CreateUserForm extends FormModel
         return $this->password;
     }
 
-    public function getRules(): array
+    #[Override]
+    public function getRules(): iterable
     {
         return [
-            'login' => [new Required()],
-            'password' => [new Required()],
+            'login' => [
+                new Required(),
+                new Length(min: 3),
+            ],
+            'password' => [
+                new Required(),
+                new Length(min: 3),
+            ],
             'passwordVerify' => $this->passwordVerifyRules(),
         ];
     }
 
-    private function passwordVerifyRules(): array
+    /**
+     * @return iterable<int, RuleInterface|callable>
+     */
+    private function passwordVerifyRules(): iterable
     {
         return [
             new Required(),
-
             function (): Result {
                 $result = new Result();
                 if ($this->password !== $this->passwordVerify) {
