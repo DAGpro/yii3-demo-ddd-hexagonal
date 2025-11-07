@@ -23,7 +23,7 @@ use Yiisoft\View\WebView;
  * @var string $title
  */
 $this->setTitle(
-    $translator->translate('blog.moderate.comment') . $form->getCommentId(),
+    $translator->translate('blog.moderate.comment', ['itemId' => $form->getCommentId()]),
 );
 
 ?>
@@ -39,7 +39,7 @@ $this->setTitle(
                     ),
                 )
                 ->method('post')
-                ->attributes(['enctype' => 'multipart/form-data'])
+                ->addAttributes(['enctype' => 'multipart/form-data'])
                 ->csrf($csrf)
                 ->id('form-moderate-comment')
                 ->content(

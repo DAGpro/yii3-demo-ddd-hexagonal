@@ -98,9 +98,10 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findAllWithPreloadedTags(): DataReaderInterface
+    public function getAllWithPreloadedTags(): DataReaderInterface
     {
         $query = $this->select()->load(['tags']);
+
         /** @var DataReaderInterface<int, Post> $reader */
         $reader = new EntityReader($query);
         return $reader;
@@ -124,9 +125,10 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     {
         $query = $this
             ->select()
+            ->scope()
             ->load(['tags'])
-            ->where(['author_id' => $author->getId()])
-            ->andWhere('deleted_at', '=', null);
+            ->where('author_id', $author->getId())
+            ->andWhere('deleted_at', null);
 
         /** @var DataReaderInterface<int, Post> $reader */
         $reader = new EntityReader($query);
@@ -134,23 +136,11 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findByAuthorWithPreloadedTags(Author $author): DataReaderInterface
+    public function getAllForModerationWithPreloadedTags(): DataReaderInterface
     {
         $query = $this
             ->select()
-            ->load(['tags'])
-            ->where(['author_id' => $author->getId()]);
-
-        /** @var DataReaderInterface<int, Post> $reader */
-        $reader = new EntityReader($query);
-        return $reader;
-    }
-
-    #[Override]
-    public function findAllForModerationWithPreloadedTags(): DataReaderInterface
-    {
-        $query = $this
-            ->select()
+            ->scope()
             ->andWhere('deleted_at', '=', null)
             ->load(['tags']);
 
@@ -160,12 +150,11 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findBySlugWithPreloadedTags(string $slug): ?Post
+    public function findBySlug(string $slug): ?Post
     {
         return $this
             ->select()
             ->where(['slug' => $slug])
-            ->load(['tags'])
             ->fetchOne();
     }
 
@@ -174,6 +163,7 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     {
         return $this
             ->select()
+            ->scope()
             ->load(['tags'])
             ->andWhere('slug', '=', $slug)
             ->andWhere('deleted_at', '=', null)
@@ -181,7 +171,7 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     }
 
     #[Override]
-    public function findBySlugWithPreloadedTagsAndComments(string $slug): ?Post
+    public function fullPostBySlug(string $slug): ?Post
     {
         return $this
             ->select()
@@ -189,18 +179,16 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
             ->load(['tags'])
             ->load('comments', [
                 'method' => Select::OUTER_QUERY,
-                'where' => ['public' => true],
             ])
             ->fetchOne();
     }
 
     #[Override]
-    public function findByIdWithPreloadedTags(int $id): ?Post
+    public function findById(int $id): ?Post
     {
         return $this
             ->select()
             ->where(['id' => $id])
-            ->load(['tags'])
             ->fetchOne();
     }
 
@@ -209,6 +197,7 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     {
         return $this
             ->select()
+            ->scope()
             ->where('id', '=', $id)
             ->andWhere('deleted_at', '=', null)
             ->fetchOne();

@@ -8,6 +8,7 @@ use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\Div;
 use Yiisoft\Html\Tag\P;
+use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\Translator;
 use Yiisoft\View\WebView;
@@ -18,17 +19,20 @@ use Yiisoft\Yii\DataView\Pagination\PaginationContext;
  * @var OffsetPaginator $paginator ;
  * @var UrlGeneratorInterface $url
  * @var Translator $translator
+ * @var CurrentRoute $currentRoute
  * @var WebView $this
  * @var string $csrf
  * @var bool $canPublicPost
  */
 $this->setTitle($translator->translate('backend.title.comments'));
+
+$queryUrl = $currentRoute->getUri()?->getQuery() ? '?' . $currentRoute->getUri()->getQuery() : '';
 $pagination = Div::tag()
     ->content(
         OffsetPagination::create(
             $paginator,
-            $url->generate('backend/comment'),
-            $url->generate('backend/comment') . 'page/' . PaginationContext::URL_PLACEHOLDER,
+            $url->generate('backend/comment') . 'page/' . PaginationContext::URL_PLACEHOLDER . $queryUrl,
+            $url->generate('backend/comment') . $queryUrl,
         ),
     )
     ->class('table-responsive')
@@ -36,13 +40,49 @@ $pagination = Div::tag()
     ->render();
 ?>
 <h1><?= Html::encode($this->getTitle()) ?></h1>
+
+<?php
+$sort = $paginator->getSort();
+$currentSort = $sort?->getOrder();
+?>
+
+<div class="mb-3">
+    <form method="get" action="<?= $url->generate('backend/comment') ?>" class="row g-3">
+        <div class="col-md-6">
+            <label for="sort" class="form-label"><?= $translator->translate('Sort by') ?>:</label>
+            <select name="sort" id="sort" class="form-select" onchange="this.form.submit()">
+                <option value="id" <?= ($currentSort === ['id' => 'asc']) ? 'selected' : '' ?>>
+                    <?= $translator->translate('Sort by id ⬆️') ?>
+                </option>
+                <option value="-id" <?= ($currentSort === ['id' => 'desc']) ? 'selected' : '' ?>>
+                    <?= $translator->translate('Sort by id ⬇️') ?>
+                </option>
+                <option value="public" <?= ($currentSort === ['public' => 'asc']) ? 'selected' : '' ?>>
+                    <?= $translator->translate('Draft first') ?>
+                </option>
+                <option value="-public" <?= ($currentSort === ['public' => 'desc']) ? 'selected' : '' ?>>
+                    <?= $translator->translate('Public first ') ?>
+                </option>
+            </select>
+        </div>
+    </form>
+</div>
+
 <div class="row">
     <div class="col-sm-12 col-md-10 col-lg-8">
         <?php
         $pageSize = $paginator->getCurrentPageSize();
         if ($pageSize > 0) {
             echo P::tag()
-                ->content(sprintf('Showing %s out of %s comments', $pageSize, $paginator->getTotalItems()))
+                ->content(
+                    $translator->translate(
+                        'pagination-summary',
+                        [
+                            'pageSize' => $pageSize,
+                            'total' => $paginator->getTotalItems(),
+                        ],
+                    ),
+                )
                 ->class('text-muted')
                 ->render();
         } else {
@@ -86,6 +126,7 @@ $pagination = Div::tag()
                 </div>
                 COMMENT;
         }
+
         if ($paginator->getTotalItems() > 0) {
             echo $pagination;
         }

@@ -20,7 +20,7 @@ use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final readonly class PostController
 {
-    private const int POSTS_PER_PAGE = 3;
+    private const int POSTS_PER_PAGE = 10;
     private ViewRenderer $view;
 
     public function __construct(

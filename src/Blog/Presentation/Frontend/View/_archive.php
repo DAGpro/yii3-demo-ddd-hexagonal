@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\LocaleDateFormatter;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Tag\A;
 use Yiisoft\Html\Tag\Div;
@@ -44,7 +45,10 @@ use Yiisoft\View\WebView;
                         A::tag()
                             ->class('text-muted overflow-hidden')
                             ->content(
-                                Date('F', mktime(0, 0, 0, (int)$month, 1, (int)$year)),
+                                LocaleDateFormatter::format(
+                                    mktime(0, 0, 0, (int)$month, 1, (int)$year),
+                                    $translator->getLocale(),
+                                ),
                             )
                             ->url(
                                 $url->generate(
@@ -68,7 +72,7 @@ use Yiisoft\View\WebView;
         }
 
         $monthsPrint[] = A::tag()
-            ->content('Open archive')
+            ->content($translator->translate('blog.open.archive'))
             ->url($url->generate('blog/archive/index'))
             ->class('mt-2');
 

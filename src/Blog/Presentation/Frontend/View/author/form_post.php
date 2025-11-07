@@ -30,8 +30,9 @@ use Yiisoft\View\WebView;
 <h1><?= Html::encode($title) ?></h1>
 
 <?php
-$validationResult = $form->getValidationResult();
-$tagsErrorMessages = $validationResult->getPropertyErrorMessagesIndexedByPath('tags');
+$tagsErrorMessages = $form->isValidated()
+    ? $form->getValidationResult()->getPropertyErrorMessagesIndexedByPath('tags')
+    : null;
 $tagsErrorsWithString = !empty($tagsErrorMessages) ? implode(', ',
     /** @return string[] */
     array_merge(...array_values($tagsErrorMessages)),
@@ -40,7 +41,9 @@ $tagsErrorsWithString = !empty($tagsErrorMessages) ? implode(', ',
 $buttonTags = '';
 foreach ($form->getTags() as $tag) {
     $buttonTags .= Button::tag()
-        ->class('btn btn-sm btn-info mb-2 me-2 remove-tag')
+        ->type('button')
+        ->class('btn btn-sm btn-info mt-3 me-2 remove-tag')
+        ->encode(false)
         ->content(
             Input::tag()
                 ->type('hidden')
@@ -58,9 +61,10 @@ foreach ($form->getTags() as $tag) {
 <?= Form::tag()
     ->action($url->generate($action['route'], $action['arguments'] ?? []))
     ->method('post')
-    ->attributes(['enctype' => 'multipart/form-data'])
+    ->addAttributes(['enctype' => 'multipart/form-data'])
     ->csrf($csrf)
     ->id('form-author-post')
+    ->encode(false)
     ->content(
         Field::text($form, 'title'),
         Field::textArea($form, 'content')
@@ -69,9 +73,13 @@ foreach ($form->getTags() as $tag) {
         '<input type="text" class="form-control mb-3" id="addTag" placeholder="Add tag" value="">',
         "<p class='text-danger'>$tagsErrorsWithString</p>",
         Button::tag()
-            ->content($translator->translate('button.add'))
+            ->type('button')
+            ->content($translator->translate('blog.add.tag'))
             ->addAttributes(['class' => 'btn btn-primary mb-3', 'id' => 'addTagButton']),
-        Div::tag()->content($buttonTags),
+        Div::tag()
+            ->id('tags')
+            ->encode(false)
+            ->content($buttonTags),
         Field::submitButton()
             ->content($translator->translate('button.submit'))
             ->addButtonAttributes(['class' => 'btn btn-primary btn-lg mt-3', 'id' => 'author-post-button']),

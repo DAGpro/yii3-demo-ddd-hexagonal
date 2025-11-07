@@ -11,6 +11,7 @@ use Yiisoft\Html\Tag\A;
 use Yiisoft\Html\Tag\Div;
 use Yiisoft\Html\Tag\P;
 use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Widget\Widget;
 
 final class AuthorPostCard extends Widget
@@ -19,6 +20,7 @@ final class AuthorPostCard extends Widget
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly TranslatorInterface $translator,
         private readonly Post $post,
     ) {
     }
@@ -33,9 +35,12 @@ final class AuthorPostCard extends Widget
         $this->initOptions();
 
         return Div::tag()
+            ->encode(false)
+            ->class('card mb-3')
             ->content(
                 Div::tag()
                     ->class('card-body d-flex flex-column align-items-start')
+                    ->encode(false)
                     ->content(
                         $this->renderHead(),
                         $this->renderBody(),
@@ -52,7 +57,6 @@ final class AuthorPostCard extends Widget
                             ->render(),
                     ),
             )
-            ->encode(false)
             ->render();
     }
 
@@ -79,7 +83,7 @@ final class AuthorPostCard extends Widget
                 ),
             )
             ->encode(false)
-            ->class('mb-0 h4 text-decoration-none stretched-link')
+            ->class('mb-0 h4 text-decoration-none')
             ->render();
     }
 
@@ -89,8 +93,10 @@ final class AuthorPostCard extends Widget
             ->class('card-text mb-auto')
             ->content(
                 (($publishedAt = $this->post->getPublishedAt()) === null)
-                    ? 'not published'
-                    : $publishedAt->format('M, d'),
+                    ? $this->translator->translate('blog.not.published.post')
+                    : $this->translator->translate('blog.published.post',
+                    ['date' => $publishedAt->format('M, d')],
+                ),
                 ' by ',
                 A::tag()
                     ->class('mb-1 text-muted')
@@ -102,6 +108,7 @@ final class AuthorPostCard extends Widget
                         ),
                     ),
                 P::tag()
+                    ->class('mt-3')
                     ->content(
                         mb_substr($this->post->getContent(), 0, 400)
                         . (mb_strlen($this->post->getContent()) > 400 ? '…' : ''),

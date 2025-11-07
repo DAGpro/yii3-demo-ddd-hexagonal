@@ -32,6 +32,7 @@ final class CommentRepository extends Select\Repository implements CommentReposi
     {
         $query = $this
             ->select()
+            ->scope()
             ->andWhere('deleted_at', '=', null);
 
         return new EntityReader($query);
@@ -41,7 +42,9 @@ final class CommentRepository extends Select\Repository implements CommentReposi
     public function getPublicComment(int $commentId): ?Comment
     {
         /** @var Comment|null $comment */
-        $comment = $this->findOne(['id' => $commentId]);
+        $comment = $this
+            ->select()
+            ->fetchOne(['id' => $commentId]);
         return $comment;
     }
 
@@ -49,7 +52,10 @@ final class CommentRepository extends Select\Repository implements CommentReposi
     public function getComment(int $commentId): ?Comment
     {
         /** @var Comment|null $comment */
-        $comment = $this->select()->where(['id' => $commentId])->fetchOne();
+        $comment = $this
+            ->select()
+            ->scope()
+            ->fetchOne(['id' => $commentId]);
         return $comment;
     }
 

@@ -67,13 +67,14 @@ $this->setTitle($translator->translate('blog.moderate.post'));
 
         <div class="card-body">
             <?= Form::tag()
-                ->action($url->generate(
-                    'backend/post/moderate',
-                    ['post_id' => $form->getId()],
-                ),
+                ->action(
+                    $url->generate(
+                        'backend/post/moderate',
+                        ['post_id' => $form->getId()],
+                    ),
                 )
                 ->method('post')
-                ->attributes(['enctype' => 'multipart/form-data'])
+                ->addAttributes(['enctype' => 'multipart/form-data'])
                 ->csrf($csrf)
                 ->id('form-moderate-post')
                 ->encode(false)
@@ -90,7 +91,7 @@ $this->setTitle($translator->translate('blog.moderate.post'));
                         ->content($translator->translate('button.submit'))
                         ->addButtonAttributes(
                             [
-                                'class' => 'btn btn-primary btn-lg mt-3',
+                                'class' => 'btn btn-danger btn-lg mt-3',
                                 'id' => 'login-button',
                             ],
                         ),

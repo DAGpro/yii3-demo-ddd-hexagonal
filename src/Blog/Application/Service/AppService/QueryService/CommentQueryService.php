@@ -13,7 +13,7 @@ use Yiisoft\Data\Reader\Sort;
 
 final readonly class CommentQueryService implements CommentQueryServiceInterface
 {
-    private const int COMMENTS_FEED_PER_PAGE = 10;
+    private const int COMMENTS_FEED_PER_PAGE = 20;
 
     public function __construct(
         private CommentRepositoryInterface $repository,
@@ -27,7 +27,7 @@ final readonly class CommentQueryService implements CommentQueryServiceInterface
             ->findAllNonDeleted()
             ->withSort(
                 Sort::only(['id', 'public', 'updated_at', 'published_at', 'post_id'])
-                    ->withOrder(['id' => 'asc']),
+                    ->withOrder(['id' => 'desc']),
             );
 
         return new KeysetPaginator($dataReader)

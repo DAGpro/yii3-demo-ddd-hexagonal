@@ -9,6 +9,8 @@ use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\A;
 use Yiisoft\Html\Tag\Article;
 use Yiisoft\Html\Tag\Div;
+use Yiisoft\Html\Tag\H1;
+use Yiisoft\Html\Tag\Span;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
@@ -24,35 +26,58 @@ use Yiisoft\View\WebView;
  * @var string $slug
  */
 $this->setTitle($post->getTitle());
-?>
-    <h1><?= Html::encode($post->getTitle()) ?></h1>
-    <div>
-        <span class="text-muted"><?= $post->getPublishedAt() === null
-                ? $translator->translate('blog.not.published.post')
-                : $translator->translate('blog.published.post',
-                    ['date' => $post->getPublishedAt()?->format('H:i:s d.m.Y')],
-                ) ?> by</span>
-        <?php
-        echo A::tag()
-            ->class('mr-3')
-            ->content($post->getAuthor()->getName())
-            ->url($url->generate('user/profile', ['login' => $post->getAuthor()->getName()]))
-            ->encode(false)
-            ->render();
-
-        echo A::tag()
-            ->class('btn btn-outline-secondary btn-sm ms-2')
-            ->content('Edit')
-            ->url($url->generate('blog/author/post/edit', ['slug' => $post->getSlug()]))
-            ->encode(false)
-            ->render();
-        ?>
-    </div>
-<?php
 
 echo Article::tag()
-    ->content($post->getContent())
-    ->class('text-justify')
+    ->class('card mb-3 text-justify')
+    ->content(
+        Div::tag()
+            ->class('card-header')
+            ->encode(false)
+            ->content(
+                H1::tag()->content($post->getTitle()),
+                Div::tag()
+                    ->class('mb-1')
+                    ->content(
+                        Span::tag()
+                            ->class('text-muted')
+                            ->content(
+                                $post->getPublishedAt() === null
+                                    ? $translator->translate('blog.not.published.post')
+                                    : $translator->translate('blog.published.post',
+                                    ['date' => $post->getPublishedAt()?->format('H:i:s d.m.Y')],
+                                ),
+                            ),
+                        A::tag()
+                            ->class('mr-3')
+                            ->content($post->getAuthor()->getName())
+                            ->url($url->generate('user/profile', ['login' => $post->getAuthor()->getName()]))
+                            ->encode(false)
+                            ->render(),
+                    )
+                    ->encode(false)
+                    ->render(),
+            ),
+        Div::tag()
+            ->class('card-body')
+            ->content(
+                Div::tag()
+                    ->class('mb-3')
+                    ->content($post->getContent()),
+            )
+            ->encode(false)
+            ->render(),
+        Div::tag()
+            ->class('card-footer')
+            ->encode(false)
+            ->content(
+                A::tag()
+                    ->class('btn btn-outline-secondary')
+                    ->content('Edit')
+                    ->url($url->generate('blog/author/post/edit', ['slug' => $post->getSlug()]))
+                    ->encode(false)
+                    ->render(),
+            ),
+    )
     ->encode(false)
     ->render();
 
@@ -68,7 +93,7 @@ if ($post->getTags()) {
     }
 
     echo Div::tag()
-        ->class('mt-3 mb-3')
+        ->class('mb-3')
         ->content($tagLinks)
         ->encode(false)
         ->render();

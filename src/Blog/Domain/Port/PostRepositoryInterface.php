@@ -34,7 +34,7 @@ interface PostRepositoryInterface
     /**
      * @return DataReaderInterface<int, Post>
      */
-    public function findAllWithPreloadedTags(): DataReaderInterface;
+    public function getAllWithPreloadedTags(): DataReaderInterface;
 
     /**
      * @return DataReaderInterface<int, Post>
@@ -46,23 +46,18 @@ interface PostRepositoryInterface
      */
     public function findByAuthorNotDeletedPostWithPreloadedTags(Author $author): DataReaderInterface;
 
-    /**
-     * @return DataReaderInterface<int, Post>
-     */
-    public function findByAuthorWithPreloadedTags(Author $author): DataReaderInterface;
+    public function findBySlug(string $slug): ?Post;
 
-    public function findBySlugWithPreloadedTags(string $slug): ?Post;
-
-    public function findBySlugWithPreloadedTagsAndComments(string $slug): ?Post;
+    public function fullPostBySlug(string $slug): ?Post;
 
     public function findBySlugNotDeletedPostWithPreloadedTags(string $slug): ?Post;
 
     /**
      * @return DataReaderInterface<int, Post>
      */
-    public function findAllForModerationWithPreloadedTags(): DataReaderInterface;
+    public function getAllForModerationWithPreloadedTags(): DataReaderInterface;
 
-    public function findByIdWithPreloadedTags(int $id): ?Post;
+    public function findById(int $id): ?Post;
 
     public function findByIdForModeration(int $id): ?Post;
 

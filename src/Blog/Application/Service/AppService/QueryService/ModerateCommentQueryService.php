@@ -25,7 +25,7 @@ final readonly class ModerateCommentQueryService implements ModerateCommentQuery
             ->findAllNonDeleted()
             ->withSort(
                 Sort::only(['id', 'public', 'updated_at', 'published_at', 'post_id'])
-                    ->withOrder(['published_at' => 'desc']),
+                    ->withOrder(['id' => 'desc']),
             );
     }
 

@@ -5,107 +5,162 @@ declare(strict_types=1);
 
 use App\Blog\Domain\Post;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Data\Paginator\PaginatorInterface;
 use Yiisoft\Html\Html;
-use Yiisoft\Html\Tag\Div;
-use Yiisoft\Html\Tag\P;
+use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Button;
+use Yiisoft\Html\Tag\Form;
+use Yiisoft\Html\Tag\Input;
+use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\Translator;
 use Yiisoft\View\WebView;
+use Yiisoft\Yii\DataView\Filter\Widget\TextInputFilter;
+use Yiisoft\Yii\DataView\GridView\Column\DataColumn;
+use Yiisoft\Yii\DataView\GridView\GridView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
+use Yiisoft\Yii\DataView\Pagination\PaginationWidgetInterface;
+use Yiisoft\Yii\DataView\YiiRouter\UrlCreator;
+use Yiisoft\Yii\DataView\YiiRouter\UrlParameterProvider;
 
 /**
  * @var OffsetPaginator $paginator ;
  * @var UrlGeneratorInterface $url
+ * @var CurrentRoute $currentRoute
  * @var Translator $translator
  * @var WebView $this
  * @var string $csrf
  */
 $this->setTitle($translator->translate('backend.title.posts'));
-$pagination = Div::tag()
-    ->content(
-        OffsetPagination::create(
-            $paginator,
-            $url->generate('backend/post'),
-            $url->generate('backend/post') . 'page/' . PaginationContext::URL_PLACEHOLDER,
-        ),
-    )
-    ->class('table-responsive')
-    ->encode(false)
-    ->render();
 ?>
-<h1><?= Html::encode($this->getTitle()) ?></h1>
+
+<h1 class="mb-4"><?= Html::encode($this->getTitle()) ?></h1>
 <div class="roles">
     <?php
-    $pageSize = $paginator->getCurrentPageSize();
-    if ($pageSize > 0) {
-        echo P::tag()
-            ->content(sprintf('Showing %s out of %s posts', $pageSize, $paginator->getTotalItems()))
-            ->class('text-muted')
-            ->render();
-    } else {
-        echo P::tag()
-            ->content($translator->translate('no.records'))
-            ->class('text-muted')
-            ->render();
-    }
-    ?>
-    <div class="m-2 table-responsive">
-        <table class="table table-striped mb-5 border">
-            <thead>
-            <tr>
-                <th scope="col"><?= $translator->translate('blog.id') ?></th>
-                <th scope="col"><?= $translator->translate('blog.title') ?></th>
-                <th scope="col"><?= $translator->translate('blog.author') ?></th>
-                <th scope="col"><?= $translator->translate('blog.status') ?></th>
-                <th scope="col"><?= $translator->translate('blog.action') ?></th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            /** @var Post $post */
-            foreach ($paginator->read() as $post) {
-                $status = $post->isPublic()
+    $columns = [
+        new DataColumn(
+            property: 'id',
+            header: 'Id',
+            withSorting: true,
+            content: static fn(Post $model): int => (int)$model->getId(),
+            filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+            filterEmpty: false,
+        ),
+        new DataColumn(
+            property: 'title',
+            header: 'Title',
+            withSorting: true,
+            content: static function (Post $model) use ($url): string {
+                return A::tag()
+                    ->class('fw-bold')
+                    ->href($url->generate('backend/post/view', ['post_id' => $model->getId()]))
+                    ->content($model->getTitle())->render();
+            },
+            encodeContent: false,
+            filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+            filterEmpty: false,
+        ),
+        new DataColumn(
+            property: 'author_name',
+            header: 'Author',
+            withSorting: true,
+            content: static fn(Post $model): string => $model->getAuthor()->getName(),
+            filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+            filterEmpty: false,
+        ),
+        new DataColumn(
+            property: 'created_at',
+            header: 'Created At',
+            withSorting: true,
+            content: static function (Post $model) use ($translator): string {
+                return mb_convert_case(
+                    new IntlDateFormatter(
+                        $translator->getLocale(),
+                        IntlDateFormatter::NONE,
+                        IntlDateFormatter::NONE,
+                        null,
+                        null,
+                        'd MMMM yyyy HH:mm',
+                    )->format($model->getCreatedAt()),
+                    MB_CASE_TITLE,
+                );
+            },
+            filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+            filterEmpty: false,
+        ),
+        new DataColumn(
+            property: 'public',
+            header: 'Status',
+            withSorting: true,
+            content: static function (Post $model) use ($translator): string {
+                return $model->isPublic()
                     ? "<button class='btn btn-success btn-sm'>{$translator->translate('blog.public')}</button>"
                     : "<button class='btn btn-danger btn-sm'>{$translator->translate('blog.draft')}</button>";
-                echo <<<ROLE
-                    <tr>
-                        <td>{$post->getId()}</td>
-                        <td>
-                            <a href="{$url->generate('backend/post/view', ['post_id' => $post->getId()])}"
-                                class="fw-bold"
-                            >
-                                {$post->getTitle()}
-                            </a>
-                        </td>
-                        <td>{$post->getAuthor()->getName()}</td>
-                        <td>$status</td>
-                        <td>
-                            <form
-                                id="removeRole"
-                                action="{$url->generate('backend/post/delete', ['post_id' => $post->getId()])}"
-                                method="post"
-                            >
-                                <input type="hidden" name="_csrf" value="$csrf">
-                                <input type="hidden" name="post_id" value="{$post->getId()}">
-
-                                <button type="submit"
-                                 class="btn btn-sm btn-danger">
-                                    {$translator->translate('blog.delete')}
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    ROLE;
-            }
-            ?>
-            </tbody>
-        </table>
-    </div>
-
-    <?php
-    if ($paginator->getTotalItems() > 0) {
-        echo $pagination;
-    }
+            },
+            encodeContent: false,
+            filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+            filterEmpty: false,
+        ),
+        new DataColumn(
+            header: 'Action',
+            withSorting: true,
+            content: static function (Post $model) use ($translator, $url, $csrf): string {
+                return Form::tag()
+                    ->method('post')
+                    ->action($url->generate('backend/post/delete', ['post_id' => $model->getId()]))
+                    ->addAttributes(['id' => 'removeRole'])
+                    ->encode(false)
+                    ->content(
+                        Input::tag()
+                            ->type('hidden')
+                            ->name('_csrf')
+                            ->value($csrf)
+                            ->render(),
+                        Input::tag()
+                            ->type('hidden')
+                            ->name('post_id')
+                            ->value($model->getId())
+                            ->render(),
+                        Button::tag()
+                            ->class('btn btn-sm btn-danger')
+                            ->content($translator->translate('blog.delete'))
+                            ->render(),
+                    )
+                    ->render();
+            },
+            encodeContent: false,
+            filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
+            filterEmpty: false,
+        ),
+    ];
+    /** @var PaginationWidgetInterface<PaginatorInterface> $pagination */
+    $pagination = OffsetPagination::create(
+        $paginator,
+        $url->generate('backend/post') . 'page/' . PaginationContext::URL_PLACEHOLDER,
+        $url->generate('backend/post'),
+    );
+    echo GridView::widget()
+        ->dataReader($paginator)
+        ->tableAttributes([
+            'class' => 'table table-striped text-center h-75',
+            'id' => 'table-tariffs-group',
+        ])
+        ->sortableHeaderPrepend('<div class="text-secondary float-end text-opacity-50 me-1">⭥</div>')
+        ->sortableHeaderAscPrepend('<div class="fw-bold float-end me-1">⭡</div>')
+        ->sortableHeaderDescPrepend('<div class="fw-bold float-end me-1">⭣</div>')
+        ->containerAttributes(['class' => 'table-responsive'])
+        ->headerCellAttributes(['class' => 'table-dark'])
+        ->headerRowAttributes(['class' => 'card-header bg-dark text-white'])
+        ->emptyCellAttributes(['style' => 'color:red'])
+        ->summaryAttributes(['class' => 'mt-3 me-3 summary text-end'])
+        ->noResultsCellAttributes(['class' => 'card-header bg-danger text-black'])
+        ->summaryTemplate($translator->translate('how.many.records.shown'))
+        ->noResultsText($translator->translate('views.no-records'))
+        ->emptyCell('-')
+        ->urlParameterProvider(new UrlParameterProvider($currentRoute))
+        ->urlCreator(new UrlCreator($url))
+        ->paginationWidget($pagination)
+        ->columns(...$columns);
     ?>
 </div>

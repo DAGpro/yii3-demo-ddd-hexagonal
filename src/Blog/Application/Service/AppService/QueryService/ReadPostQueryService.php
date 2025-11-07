@@ -8,7 +8,6 @@ use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
-use App\Blog\Domain\User\Author;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Exception;
@@ -32,7 +31,7 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
     public function findAllPreloaded(): DataReaderInterface
     {
         return $this->repository
-            ->findAllWithPreloadedTags()
+            ->getAllWithPreloadedTags()
             ->withSort(
                 Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
                     ->withOrder(['published_at' => 'desc']),
@@ -55,26 +54,10 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
             );
     }
 
-    /**
-     * Get posts without filter with preloaded Users and Tags
-     *
-     * @psalm-return DataReaderInterface<int, Post>
-     */
-    #[Override]
-    public function findByAuthor(Author $author): DataReaderInterface
-    {
-        return $this->repository
-            ->findByAuthorWithPreloadedTags($author)
-            ->withSort(
-                Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
-                    ->withOrder(['published_at' => 'desc']),
-            );
-    }
-
     #[Override]
     public function getPostBySlug(string $slug): ?Post
     {
-        return $this->repository->findBySlugWithPreloadedTags($slug);
+        return $this->repository->findBySlug($slug);
     }
 
     /**
@@ -83,13 +66,13 @@ final readonly class ReadPostQueryService implements ReadPostQueryServiceInterfa
     #[Override]
     public function getPost(int $id): ?Post
     {
-        return $this->repository->findByIdWithPreloadedTags($id);
+        return $this->repository->findById($id);
     }
 
     #[Override]
     public function fullPostPage(string $slug): ?Post
     {
-        return $this->repository->findBySlugWithPreloadedTagsAndComments($slug);
+        return $this->repository->fullPostBySlug($slug);
     }
 
     /**

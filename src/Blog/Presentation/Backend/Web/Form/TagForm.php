@@ -15,8 +15,8 @@ use Yiisoft\Validator\RulesProviderInterface;
 
 final class TagForm extends FormModel implements RulesProviderInterface
 {
-    private readonly int $id;
-    private readonly string $label;
+    private int $id;
+    private string $label;
 
     public function __construct(Tag $tag)
     {

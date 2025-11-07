@@ -71,7 +71,7 @@ final class PostCard extends Widget
                 ),
             )
             ->encode(false)
-            ->class('mb-0 h4 text-decoration-none stretched-link')
+            ->class('mb-0 h4 text-decoration-none')
             ->render();
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 
 use App\Blog\Domain\Post;
+use App\Infrastructure\LocaleDateFormatter;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\A;
@@ -54,7 +55,10 @@ $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year
 
             if ($currentMonth !== $month) {
                 $currentMonth = $month;
-                $monthName = DateTime::createFromFormat('!m', (string)$month)->format('F');
+                $monthName = LocaleDateFormatter::format(
+                    DateTime::createFromFormat('!m', (string)$month)->getTimestamp(),
+                    $translator->getLocale(),
+                );
                 echo Div::tag()
                     ->content("{$year} {$monthName}")
                     ->class('lead');

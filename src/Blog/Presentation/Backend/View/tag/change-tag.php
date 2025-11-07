@@ -39,7 +39,7 @@ $this->setTitle($title);
                     ->id('form-moderate-tag')
                     ->content(
                         Field::text($form, 'label'),
-                        Field::text($form, 'id')->addInputAttributes(['disabled' => 'disabled']),
+                        Field::number($form, 'id')->addInputAttributes(['disabled' => 'disabled']),
                         Field::submitButton()
                             ->content($translator->translate('button.submit'))
                             ->addButtonAttributes(

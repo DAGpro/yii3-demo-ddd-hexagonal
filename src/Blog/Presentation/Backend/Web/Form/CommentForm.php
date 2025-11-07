@@ -15,9 +15,9 @@ use Yiisoft\Validator\RulesProviderInterface;
 
 final class CommentForm extends FormModel implements RulesProviderInterface
 {
-    private readonly int $comment_id;
-    private readonly string $content;
-    private readonly bool $public;
+    private int $comment_id;
+    private string $content;
+    private bool $public;
 
     public function __construct(Comment $comment)
     {

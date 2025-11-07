@@ -31,15 +31,15 @@ $pagination = Div::tag()
     ->content(
         OffsetPagination::create(
             $paginator,
+            $url->generate('blog/tag', ['label' => $item->getLabel()]) . '/page/' . PaginationContext::URL_PLACEHOLDER,
             $url->generate('blog/tag', ['label' => $item->getLabel()]),
-            $url->generate('blog/tag', ['label' => $item->getLabel()]) . 'page/' . PaginationContext::URL_PLACEHOLDER,
         ),
     )
     ->class('table-responsive')
     ->encode(false)
     ->render();
 
-H1::tag()->content(Html::encode($item->getLabel()))->render();
+echo H1::tag()->content(Html::encode($item->getLabel()));
 
 $liList = [];
 /** @var Post $post */

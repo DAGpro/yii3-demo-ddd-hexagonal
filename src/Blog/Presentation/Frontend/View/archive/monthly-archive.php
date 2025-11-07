@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 use App\Blog\Domain\Post;
 use App\Blog\Presentation\Frontend\View\Widget\PostCard;
+use App\Infrastructure\LocaleDateFormatter;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Html\Tag\Div;
 use Yiisoft\Html\Tag\P;
@@ -23,7 +24,10 @@ use Yiisoft\Yii\DataView\Pagination\PaginationContext;
  * @var WebView $this
  */
 
-$monthName = DateTime::createFromFormat('!m', (string)$month)->format('F');
+$monthName = LocaleDateFormatter::format(
+    DateTime::createFromFormat('!m', (string)$month),
+    $translator->getLocale(),
+);
 /** @psalm-scope-this WebView */
 $this->setTitle($translator->translate('blog.archive.for') . "<small class='text-muted'>$monthName $year</small>");
 

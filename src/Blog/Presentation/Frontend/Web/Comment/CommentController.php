@@ -16,6 +16,7 @@ use Yiisoft\Data\Paginator\PageToken;
 use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
+use Yiisoft\Translator\Translator;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final readonly class CommentController
@@ -27,6 +28,7 @@ final readonly class CommentController
         private WebControllerService $webService,
         private ReadPostQueryService $postQueryService,
         private IdentityAccessService $identityAccessService,
+        private Translator $translator,
     ) {
         $this->view = $viewRenderer->withViewPath('@blogView/comment');
     }
@@ -94,6 +96,12 @@ final readonly class CommentController
                     $commentText,
                     $commentator,
                 );
+
+                return $this->webService->sessionFlashAndRedirect(
+                    'Message sent successfully, will be published after moderation',
+                    'blog/post',
+                    ['slug' => $postSlug],
+                );
             } catch (BlogNotFoundException $exception) {
                 return $this->webService->sessionFlashAndRedirect(
                     $exception->getMessage(),
@@ -104,9 +112,11 @@ final readonly class CommentController
             }
         }
         return $this->webService->sessionFlashAndRedirect(
-            'Message sent successfully, will be published after moderation',
+            $this->translator->translate('blog.comment.add.error')
+            . implode(', ', $form->getValidationResult()->getErrorMessages()),
             'blog/post',
             ['slug' => $postSlug],
+            'danger',
         );
     }
 
@@ -158,7 +168,7 @@ final readonly class CommentController
         }
 
         return $this->view->render('comment_form', [
-            'comment_id' => $commentId,
+            'commentId' => $commentId,
             'form' => $form,
         ]);
     }

@@ -16,9 +16,9 @@ use Yiisoft\Validator\RulesProviderInterface;
 
 final class PostForm extends FormModel implements RulesProviderInterface
 {
-    private readonly string $title;
-    private readonly string $content;
-    private readonly bool $public;
+    private string $title;
+    private string $content;
+    private bool $public;
     /** @var string[] */
     private readonly array $tags;
     private readonly int $id;

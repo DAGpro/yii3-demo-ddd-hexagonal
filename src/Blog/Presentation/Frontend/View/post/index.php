@@ -30,7 +30,7 @@ $this->setTitle($item->getTitle());
     <h1><?= Html::encode($item->getTitle()) ?></h1>
     <div>
         <span class="text-muted"><?= $item->getPublishedAt() === null
-                ? 'not published'
+                ? $translator->translate('blog.not.published.post')
                 : $translator->translate('blog.published.post',
                     ['date' => $item->getPublishedAt()?->format('H:i:s d.m.Y')],
                 ) ?> by</span>

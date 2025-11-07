@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 
+use App\Infrastructure\LocaleDateFormatter;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\A;
@@ -61,7 +62,10 @@ $this->setTitle($translator->translate('blog.archive'));
                                 A::tag()
                                     ->class('text-muted')
                                     ->content(
-                                        Date('F', mktime(0, 0, 0, (int)$month, 1, (int)$year)),
+                                        LocaleDateFormatter::format(
+                                            mktime(0, 0, 0, (int)$month, 1, (int)$year),
+                                            $translator->getLocale(),
+                                        ),
                                     )
                                     ->url(
                                         $url->generate(

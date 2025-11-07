@@ -19,7 +19,7 @@ use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final readonly class TagController
 {
-    private const int POSTS_PER_PAGE = 3;
+    private const int POSTS_PER_PAGE = 10;
     private ViewRenderer $view;
 
     public function __construct(
@@ -43,11 +43,10 @@ final readonly class TagController
             ->withPageSize(self::POSTS_PER_PAGE)
             ->withCurrentPage($pageNum);
 
-        $data = [
-            'paginator' => $paginator,
-        ];
-
-        return $this->view->render('index', $data);
+        return $this->view->render(
+            'index',
+            ['paginator' => $paginator],
+        );
     }
 
     public function changeTag(

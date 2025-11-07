@@ -5,6 +5,9 @@ declare(strict_types=1);
 
 use App\Blog\Domain\Comment;
 use Yiisoft\Html\Tag\A;
+use Yiisoft\Html\Tag\Button;
+use Yiisoft\Html\Tag\Form;
+use Yiisoft\Html\Tag\Input;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\Translator;
 use Yiisoft\View\WebView;
@@ -58,56 +61,75 @@ $this->setTitle(
             <div class="btn-group mb-3" role="group">
                 <?php
                 if ($comment->isPublic()) {
-                    echo <<<FORM
-                        <form id="draftComment"
-                            method="POST"
-                            action="{$url->generate('backend/comment/draft', ['comment_id' => $comment->getId()])}"
-                            enctype="multipart/form-data"
-                        >
-                            <input type="hidden" name="_csrf" value="$csrf">
-                            <input name="comment_id" type="hidden" value="{$comment->getId()}">
-                            <button type="submit" class="btn btn-sm btn-primary">
-                                {$translator->translate('blog.draft.comment')}
-                            </button>
-                        </form>
-                        FORM;
+                    echo Form::tag()
+                        ->action($url->generate('backend/comment/draft', ['comment_id' => $comment->getId()]))
+                        ->method('POST')
+                        ->addAttributes(['id' => 'draftComment'])
+                        ->enctype('multipart/form-data')
+                        ->encode(false)
+                        ->content(
+                            Input::tag()
+                                ->type('hidden')
+                                ->name('_csrf')
+                                ->value($csrf),
+                            Input::tag()
+                                ->type('hidden')
+                                ->name('comment_id')
+                                ->value($comment->getId()),
+                            Button::tag()
+                                ->type('submit')
+                                ->class('btn btn-sm btn-primary')
+                                ->content($translator->translate('blog.draft.comment')),
+                        );
                 } else {
-                    echo <<<FORM
-                        <form id="publicComment"
-                            method="POST"
-                            action="{$url->generate('backend/comment/public', ['comment_id' => $comment->getId()])}"
-                            enctype="multipart/form-data"
-                        >
-                            <input type="hidden" name="_csrf" value="$csrf">
-                            <input name="comment_id" type="hidden" value="{$comment->getId()}">
-                            <button type="submit" class="btn btn-sm btn-success">
-                                {$translator->translate('blog.public.comment')}
-                            </button>
-                        </form>
-                        FORM;
+                    echo Form::tag()
+                        ->action($url->generate('backend/comment/public', ['comment_id' => $comment->getId()]))
+                        ->method('POST')
+                        ->addAttributes(['id' => 'publicComment'])
+                        ->enctype('multipart/form-data')
+                        ->encode(false)
+                        ->content(
+                            Input::tag()
+                                ->type('hidden')
+                                ->name('_csrf')
+                                ->value($csrf),
+                            Input::tag()
+                                ->type('hidden')
+                                ->name('comment_id')
+                                ->value($comment->getId()),
+                            Button::tag()
+                                ->type('submit')
+                                ->class('btn btn-sm btn-success')
+                                ->content($translator->translate('blog.public.comment')),
+                        );
                 }
                 echo A::tag()
-                    ->content($translator->translate('blog.moderate.comment'))
+                    ->content($translator->translate('blog.moderate.comment', ['itemId' => $comment->getId()]))
                     ->url($url->generate('backend/comment/moderate', ['comment_id' => $comment->getId()]))
                     ->class('btn btn-sm btn-warning')
                     ->render();
-                echo <<<FORM
-                    <form id="deleteComment"
-                        method="POST"
-                        action="{$url->generate('backend/comment/delete', ['comment_id' => $comment->getId()])}"
-                        enctype="multipart/form-data"
-                    >
-                        <input type="hidden" name="_csrf" value="$csrf">
-                        <input name="comment_id" type="hidden" value="{$comment->getId()}">
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            {$translator->translate('blog.delete.comment')}
-                        </button>
-                    </form>
-                    FORM;
-
+                echo Form::tag()
+                    ->action($url->generate('backend/comment/delete', ['comment_id' => $comment->getId()]))
+                    ->method('POST')
+                    ->addAttributes(['id' => 'deleteComment'])
+                    ->enctype('multipart/form-data')
+                    ->encode(false)
+                    ->content(
+                        Input::tag()
+                            ->type('hidden')
+                            ->name('_csrf')
+                            ->value($csrf),
+                        Input::tag()
+                            ->type('hidden')
+                            ->name('comment_id')
+                            ->value($comment->getId()),
+                        Button::tag()
+                            ->type('submit')
+                            ->class('btn btn-sm btn-danger')
+                            ->content($translator->translate('blog.delete.comment')),
+                    );
                 ?>
             </div>
         </div>
-
     </div>
 </div>

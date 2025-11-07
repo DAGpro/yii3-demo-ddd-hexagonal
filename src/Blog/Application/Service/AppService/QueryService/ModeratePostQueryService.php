@@ -27,9 +27,9 @@ final readonly class ModeratePostQueryService implements ModeratePostQueryServic
     public function findAllPreloaded(): DataReaderInterface
     {
         return $this->repository
-            ->findAllForModerationWithPreloadedTags()
+            ->getAllForModerationWithPreloadedTags()
             ->withSort(
-                Sort::only(['id', 'title', 'public', 'updated_at', 'published_at'])
+                Sort::only(['id', 'title', 'public', 'author_name', 'public'])
                     ->withOrder(['published_at' => 'desc']),
             );
     }

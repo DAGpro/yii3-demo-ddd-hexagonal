@@ -12,6 +12,7 @@ use App\Infrastructure\Presentation\Web\Service\WebControllerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Data\Reader\OrderHelper;
 use Yiisoft\FormModel\FormHydrator;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
@@ -19,7 +20,8 @@ use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final readonly class CommentController
 {
-    private const int COMMENT_PER_PAGE = 3;
+    private const int COMMENT_PER_PAGE = 10;
+    
     private ViewRenderer $view;
 
     public function __construct(
@@ -33,11 +35,19 @@ final readonly class CommentController
         $this->view = $viewRenderer->withControllerName('comment');
     }
 
-    public function index(CurrentRoute $currentRoute): ResponseInterface
+    public function index(Request $request, CurrentRoute $currentRoute): ResponseInterface
     {
         $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $queryParams = $request->getQueryParams();
+        $sort = (string)($queryParams['sort'] ?? 'id');
+        $order = OrderHelper::stringToArray($sort);
 
         $dataReader = $this->commentQueryService->findAllPreloaded();
+        $dataReader = $dataReader->withSort(
+            $dataReader
+                ->getSort()
+                ?->withOrder($order),
+        );
 
         $paginator = new OffsetPaginator($dataReader)
             ->withPageSize(self::COMMENT_PER_PAGE)

@@ -16,13 +16,13 @@ use Yiisoft\Validator\RulesProviderInterface;
 
 final class PostForm extends FormModel implements RulesProviderInterface
 {
-    private readonly string $title;
-    private readonly string $content;
+    private string $title;
+    private string $content;
 
     /** @var string[] */
-    private readonly array $tags;
+    private array $tags;
 
-    public function __construct(?Post $post)
+    public function __construct(?Post $post = null)
     {
         $this->title = $post ? $post->getTitle() : '';
         $this->content = $post ? $post->getContent() : '';

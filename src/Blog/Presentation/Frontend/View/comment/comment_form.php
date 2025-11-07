@@ -24,7 +24,7 @@ use Yiisoft\View\WebView;
  */
 
 
-$this->setTitle('Edit Comment');
+$this->setTitle($translator->translate('blog.edit.comment'));
 
 echo "<h1 class='mb-3'>{$this->getTitle()}</h1>";
 
@@ -34,7 +34,7 @@ echo "<h1 class='mb-3'>{$this->getTitle()}</h1>";
 <?= Form::tag()
     ->action($url->generate('blog/comment/edit', ['comment_id' => $commentId]))
     ->method('post')
-    ->attributes(['enctype' => 'multipart/form-data'])
+    ->addAttributes(['enctype' => 'multipart/form-data'])
     ->csrf($csrf)
     ->id('form-comment')
     ->content(

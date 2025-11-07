@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace App\Blog\Presentation\Frontend\Web\Archive;
 
 use App\Blog\Application\Service\QueryService\ArchivePostQueryServiceInterface;
-use App\Blog\Application\Service\QueryService\TagQueryServiceInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Router\CurrentRoute;
@@ -32,7 +31,6 @@ final readonly class ArchiveController
 
     public function monthlyArchive(
         CurrentRoute $currentRoute,
-        TagQueryServiceInterface $tagQueryService,
         ArchivePostQueryServiceInterface $archivePostQueryService,
     ): Response {
         $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
