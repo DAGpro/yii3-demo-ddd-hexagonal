@@ -13,7 +13,6 @@ use Yiisoft\Http\Header;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\View\Exception\ViewNotFoundException;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
@@ -37,7 +36,6 @@ final readonly class ContactController
      * @throws ViewNotFoundException
      */
     public function contact(
-        ValidatorInterface $validator,
         ServerRequestInterface $request,
         FormHydrator $formHydrator,
     ): ResponseInterface {

@@ -39,24 +39,26 @@ $this->setTitle($translator->translate('menu.contact'));
                         ->id('form-contact')
                         ->content(
 
-                            Field::text($form, 'name'),
-                            Field::email($form, 'email'),
-                            Field::text($form, 'subject'),
-                            Field::textArea($form, 'body')->addInputAttributes(['style' => 'height: 100px']),
+                            Field::text($form, 'name')->label($translator->translate('site.form.name')),
+                            Field::email($form, 'email')->label($translator->translate('site.form.email')),
+                            Field::text($form, 'subject')->label($translator->translate('site.form.subject')),
+                            Field::textArea($form, 'body')
+                                ->label($translator->translate('site.form.body'))
+                                ->addInputAttributes(['style' => 'height: 100px']),
                             Field::file($form, 'attachFiles', ['multiple()' => [true]])
                                 ->containerClass('mb-3')
-                                ->label(null),
+                                ->label($translator->translate('site.form.attachFiles')),
                             Field::buttonGroup()
                                 ->buttons(
                                     Button::tag()
                                         ->type('reset')
                                         ->class('btn btn-lg btn-danger')
-                                        ->content('Reset'),
+                                        ->content($translator->translate('button.reset')),
                                     Button::tag()
                                         ->type('submit')
                                         ->class('btn btn-lg btn-primary')
                                         ->addAttributes(['name' => 'contact-button'])
-                                        ->content('Submit'),
+                                        ->content($translator->translate('button.submit')),
                                 )
                                 ->containerClass('btn-group btn-toolbar float-end'),
                         )

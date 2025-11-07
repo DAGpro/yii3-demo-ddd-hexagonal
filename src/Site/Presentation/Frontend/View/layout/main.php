@@ -144,7 +144,7 @@ $this->beginPage();
                                     ->csrf($csrf)
                                     ->content(
                                         Field::submitButton()
-                                            ->addButtonAttributes(['class' => 'dropdown-item'])
+                                            ->addButtonAttributes(['class' => 'btn btn-sm btn-outline-danger'])
                                             ->containerClass('mb-1')
                                             ->content(
                                                 $translator->translate('menu.logout',
@@ -161,23 +161,6 @@ $this->beginPage();
                                     $url->generate('blog/author/posts', ['author' => $user->getLogin()]),
                                 ),
                                 DropdownItem::link('Cabinet', $url->generate('user/cabinet')),
-                                DropdownItem::text(
-                                    Form::tag()
-                                        ->action($url->generate('auth/logout'))
-                                        ->method('post')
-                                        ->csrf($csrf)
-                                        ->content(
-                                            Field::submitButton()
-                                                ->addButtonAttributes(['class' => 'dropdown-item'])
-                                                ->containerClass('mb-1')
-                                                ->content(
-                                                    $translator->translate('menu.logout',
-                                                        ['login' => Html::encode($user->getLogin())],
-                                                    ),
-                                                )
-                                                ->encodeContent(false),
-                                        ),
-                                ),
                             ] : [],
                         ),
                 ],
