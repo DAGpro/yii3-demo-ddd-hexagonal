@@ -9,8 +9,8 @@ use Yiisoft\DataResponse\Middleware\FormatDataResponseAsJson;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
-use Yiisoft\Swagger\Middleware\SwaggerJson;
-use Yiisoft\Swagger\Middleware\SwaggerUi;
+use Yiisoft\Swagger\Action\SwaggerJson;
+use Yiisoft\Swagger\Action\SwaggerUi;
 
 return [
     // Lonely pages of site
