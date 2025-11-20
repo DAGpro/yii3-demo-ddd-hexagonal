@@ -10,25 +10,19 @@
 
 It's intended to show and test all Yii features.
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/demo/v/stable.png)](https://packagist.org/packages/yiisoft/demo)
-[![Total Downloads](https://poser.pugx.org/yiisoft/demo/downloads.png)](https://packagist.org/packages/yiisoft/demo)
-[![build](https://github.com/yiisoft/demo/workflows/build/badge.svg)](https://github.com/yiisoft/demo/actions)
-[![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/demo/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/demo/?branch=master)
-[![static analysis](https://github.com/yiisoft/demo/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/demo/actions?query=workflow%3A%22static+analysis%22)
-[![type-coverage](https://shepherd.dev/github/yiisoft/demo/coverage.svg)](https://shepherd.dev/github/yiisoft/demo)
-
 ## Installation
 
-You'll need at least PHP 8.0.
+You'll need at least PHP 8.4.
 
 1. Clone this repository.
 2. Run `composer install` in project root directory.
 3. Run `./yii serve` (on Windows `yii serve`). The application will be started on http://localhost:8080/.
 4. Go to index page. Cycle ORM will create tables, indexes and relations automatically in the configured DB.
-   If you want to disable this behavior then comment out line with `Generator\SyncTables::class` in the `config/packges/yiisoft/yii-cycle/params.php`.
+   If you want to disable this behavior then comment out line with `Generator\SyncTables::class` in the
+   `config/packges/yiisoft/yii-cycle/params.php`.
    In this case you should create migrations to sync changes of entities with DB.
 5. Run `./yii fixture/addAccess` to create demo access rights
-6. Run `./yii fixture/add 20` to create some random data.
+6. Run `./yii fixture/add <count>` to create some random data.
 7. Run `./yii assign/assignRole <userId> admin` add admin rights to the user to access the backend
 
 ## Console
@@ -48,8 +42,6 @@ In order to register your own commands, add them to `console/params.php`, `conso
 
 In order to run web application either built-in web server could be used by running `./yii serve` or a
 real web server could be pointed to `/public/index.php`.
-
-More routes could be added by editing `src/Factory/AppRouterFactory`.
 
 ## Testing
 
