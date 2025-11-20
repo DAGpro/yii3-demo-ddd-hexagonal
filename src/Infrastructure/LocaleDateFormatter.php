@@ -7,6 +7,9 @@ namespace App\Infrastructure;
 use DateTimeInterface;
 use IntlDateFormatter;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class LocaleDateFormatter
 {
     public static function format(

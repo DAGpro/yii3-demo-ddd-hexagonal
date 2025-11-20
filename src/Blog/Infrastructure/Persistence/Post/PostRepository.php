@@ -270,12 +270,13 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
 
     private function getDriver(): DriverInterface
     {
-        return $this
-            ->select()
+        $loader = $this->select
             ->getBuilder()
-            ->getLoader()
-            /** @psalm-suppress InternalMethod */
-            ->getSource()
+            ->getLoader();
+
+        /** @psalm-suppress InternalMethod */
+        $source = $loader->getSource();
+        return $source
             ->getDatabase()
             ->getDriver(DatabaseInterface::READ);
     }
