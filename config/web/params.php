@@ -24,7 +24,15 @@ return [
     ],
 
     'locale' => [
-        'locales' => ['en' => 'en-US', 'ru' => 'ru-RU', 'id' => 'id-ID', 'sk' => 'sk-SK', 'de' => 'de-DE'],
+        'locales' => [
+            'en' => 'en-US',    // English
+            'zh' => 'zh-CN',    // Chinese (simplified)
+            'es' => 'es-ES',    // Spanish
+            'hi' => 'hi-IN',    // Hindi
+            'ar' => 'ar-SA',    // Arabic
+            'pt' => 'pt-BR',    // Portuguese (Brazil)
+            'ru' => 'ru-RU',    // Russian
+        ],
         'ignoredRequests' => [
             '/gii**',
             '/debug**',
