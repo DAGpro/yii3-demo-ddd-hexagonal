@@ -52,12 +52,10 @@ $this->setTitle($translator->translate('backend.title.tags'));
                 property: 'label',
                 header: $translator->translate('blog.tag.label'),
                 withSorting: true,
-                content: static function (Tag $model) use ($url): string {
-                    return A::tag()
-                        ->class('fw-bold')
-                        ->href($url->generate('backend/tag/change', ['tag_id' => $model->getId()]))
-                        ->content($model->getLabel())->render();
-                },
+                content: static fn(Tag $model): string => A::tag()
+                    ->class('fw-bold')
+                    ->href($url->generate('backend/tag/change', ['tag_id' => $model->getId()]))
+                    ->content($model->getLabel())->render(),
                 encodeContent: false,
                 filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
                 filterEmpty: false,
@@ -65,30 +63,28 @@ $this->setTitle($translator->translate('backend.title.tags'));
             new DataColumn(
                 header: $translator->translate('blog.action'),
                 withSorting: true,
-                content: static function (Tag $model) use ($translator, $url, $csrf): string {
-                    return Form::tag()
-                        ->method('post')
-                        ->action($url->generate('backend/tag/delete', ['tag_id' => $model->getId()]))
-                        ->addAttributes(['id' => 'removeRole'])
-                        ->encode(false)
-                        ->content(
-                            Input::tag()
-                                ->type('hidden')
-                                ->name('_csrf')
-                                ->value($csrf)
-                                ->render(),
-                            Input::tag()
-                                ->type('hidden')
-                                ->name('tag_id')
-                                ->value($model->getId())
-                                ->render(),
-                            Button::tag()
-                                ->class('btn btn-sm btn-danger')
-                                ->content($translator->translate('blog.delete'))
-                                ->render(),
-                        )
-                        ->render();
-                },
+                content: static fn(Tag $model): string => Form::tag()
+                    ->method('post')
+                    ->action($url->generate('backend/tag/delete', ['tag_id' => $model->getId()]))
+                    ->addAttributes(['id' => 'removeRole'])
+                    ->encode(false)
+                    ->content(
+                        Input::tag()
+                            ->type('hidden')
+                            ->name('_csrf')
+                            ->value($csrf)
+                            ->render(),
+                        Input::tag()
+                            ->type('hidden')
+                            ->name('tag_id')
+                            ->value($model->getId())
+                            ->render(),
+                        Button::tag()
+                            ->class('btn btn-sm btn-danger')
+                            ->content($translator->translate('blog.delete'))
+                            ->render(),
+                    )
+                    ->render(),
                 encodeContent: false,
                 filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
                 filterEmpty: false,

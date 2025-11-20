@@ -14,7 +14,6 @@ return RectorConfig::configure()
     ->withCache(
         cacheDirectory: __DIR__ . '/runtime/rector',
     )
-    // Исключаем директории, которые не нужно анализировать
     ->withSkip([
         __DIR__ . '/vendor',
         __DIR__ . '/runtime',

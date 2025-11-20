@@ -33,8 +33,8 @@ $pagination = Div::tag()
         OffsetPagination::create(
             $paginator,
             $url->generate('blog/author/posts', ['author' => $author->getName()]),
-            $url->generate('blog/author/posts', ['author' => $author->getName()],
-            ) . 'page/' . PaginationContext::URL_PLACEHOLDER,
+            $url->generate('blog/author/posts', ['author' => $author->getName()])
+            . 'page/' . PaginationContext::URL_PLACEHOLDER,
         ),
     )
     ->class('table-responsive')

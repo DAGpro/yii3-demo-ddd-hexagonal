@@ -162,8 +162,6 @@ final readonly class AuthorPostController
         );
     }
 
-    //remove?
-
     /**
      * @throws BlogNotFoundException
      */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 
 use App\Blog\Domain\Post;
+use App\Infrastructure\LocaleDateFormatter;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Data\Paginator\PaginatorInterface;
 use Yiisoft\Html\Html;
@@ -51,12 +52,10 @@ $this->setTitle($translator->translate('backend.title.posts'));
             property: 'title',
             header: 'Title',
             withSorting: true,
-            content: static function (Post $model) use ($url): string {
-                return A::tag()
-                    ->class('fw-bold')
-                    ->href($url->generate('backend/post/view', ['post_id' => $model->getId()]))
-                    ->content($model->getTitle())->render();
-            },
+            content: static fn(Post $model): string => A::tag()
+                ->class('fw-bold')
+                ->href($url->generate('backend/post/view', ['post_id' => $model->getId()]))
+                ->content($model->getTitle())->render(),
             encodeContent: false,
             filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
             filterEmpty: false,
@@ -73,19 +72,12 @@ $this->setTitle($translator->translate('backend.title.posts'));
             property: 'created_at',
             header: 'Created At',
             withSorting: true,
-            content: static function (Post $model) use ($translator): string {
-                return mb_convert_case(
-                    new IntlDateFormatter(
-                        $translator->getLocale(),
-                        IntlDateFormatter::NONE,
-                        IntlDateFormatter::NONE,
-                        null,
-                        null,
-                        'd MMMM yyyy HH:mm',
-                    )->format($model->getCreatedAt()),
-                    MB_CASE_TITLE,
-                );
-            },
+            content: static fn(Post $model): string
+                => LocaleDateFormatter::format(
+                $model->getCreatedAt(),
+                $translator->getLocale(),
+                'd MMMM yyyy HH:mm',
+            ),
             filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
             filterEmpty: false,
         ),
@@ -93,11 +85,10 @@ $this->setTitle($translator->translate('backend.title.posts'));
             property: 'public',
             header: 'Status',
             withSorting: true,
-            content: static function (Post $model) use ($translator): string {
-                return $model->isPublic()
-                    ? "<button class='btn btn-success btn-sm'>{$translator->translate('blog.public')}</button>"
-                    : "<button class='btn btn-danger btn-sm'>{$translator->translate('blog.draft')}</button>";
-            },
+            content: static fn(Post $model): string
+                => $model->isPublic()
+                ? "<button class='btn btn-success btn-sm'>{$translator->translate('blog.public')}</button>"
+                : "<button class='btn btn-danger btn-sm'>{$translator->translate('blog.draft')}</button>",
             encodeContent: false,
             filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
             filterEmpty: false,
@@ -105,30 +96,29 @@ $this->setTitle($translator->translate('backend.title.posts'));
         new DataColumn(
             header: 'Action',
             withSorting: true,
-            content: static function (Post $model) use ($translator, $url, $csrf): string {
-                return Form::tag()
-                    ->method('post')
-                    ->action($url->generate('backend/post/delete', ['post_id' => $model->getId()]))
-                    ->addAttributes(['id' => 'removeRole'])
-                    ->encode(false)
-                    ->content(
-                        Input::tag()
-                            ->type('hidden')
-                            ->name('_csrf')
-                            ->value($csrf)
-                            ->render(),
-                        Input::tag()
-                            ->type('hidden')
-                            ->name('post_id')
-                            ->value($model->getId())
-                            ->render(),
-                        Button::tag()
-                            ->class('btn btn-sm btn-danger')
-                            ->content($translator->translate('blog.delete'))
-                            ->render(),
-                    )
-                    ->render();
-            },
+            content: static fn(Post $model): string
+                => Form::tag()
+                ->method('post')
+                ->action($url->generate('backend/post/delete', ['post_id' => $model->getId()]))
+                ->addAttributes(['id' => 'removeRole'])
+                ->encode(false)
+                ->content(
+                    Input::tag()
+                        ->type('hidden')
+                        ->name('_csrf')
+                        ->value($csrf)
+                        ->render(),
+                    Input::tag()
+                        ->type('hidden')
+                        ->name('post_id')
+                        ->value($model->getId())
+                        ->render(),
+                    Button::tag()
+                        ->class('btn btn-sm btn-danger')
+                        ->content($translator->translate('blog.delete'))
+                        ->render(),
+                )
+                ->render(),
             encodeContent: false,
             filter: TextInputFilter::widget()->addAttributes(['class' => 'form-control form-control-sm']),
             filterEmpty: false,

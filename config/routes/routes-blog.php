@@ -10,13 +10,17 @@ use App\Blog\Presentation\Frontend\Web\Comment\CommentController;
 use App\Blog\Presentation\Frontend\Web\Post\PostController;
 use App\Blog\Presentation\Frontend\Web\Tag\TagController;
 use App\IdentityAccess\ContextMap\Middleware\AccessPermissionChecker;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Http\Method;
+use Yiisoft\HttpMiddleware\HttpCache\ETag;
+use Yiisoft\HttpMiddleware\HttpCache\ETagProvider\ETagProviderInterface;
+use Yiisoft\HttpMiddleware\HttpCache\HttpCacheMiddleware;
+use Yiisoft\HttpMiddleware\HttpCache\LastModifiedProvider\LastModifiedProviderInterface;
 use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
-use Yiisoft\Yii\Middleware\HttpCache;
 
 return [
     // Blog routes
@@ -25,32 +29,63 @@ return [
         // Index
             Route::get('[/page/{page:\d+}]')
                 ->name('blog/index')
-//                ->middleware(
-//                    fn(HttpCache $httpCache, ReadPostQueryServiceInterface $readPostQueryService)
-//                        => $httpCache->withLastModified(function (ServerRequestInterface $request, $params) use (
-//                        $readPostQueryService,
-//                    ) {
-//                        return $readPostQueryService->getMaxUpdatedAt()->getTimestamp();
-//                    }),
-//                )
+                ->middleware(
+                    fn(
+                        ResponseFactoryInterface $responseFactory,
+                        ReadPostQueryServiceInterface $readPostQueryService,
+                    )
+                        => new HttpCacheMiddleware(
+                        $responseFactory,
+                        lastModifiedProvider: new readonly class($readPostQueryService) implements
+                            LastModifiedProviderInterface {
+
+                            public function __construct(
+                                private ReadPostQueryServiceInterface $readPostQueryService,
+                            ) {
+                            }
+
+                            #[Override]
+                            public function get(ServerRequestInterface $request): DateTimeImmutable
+                            {
+                                return $this->readPostQueryService->getMaxUpdatedAt();
+                            }
+                        },
+                    ),
+                )
                 ->action([BlogController::class, 'index']),
             // Post page
             Route::get('/post/{slug}')
                 ->name('blog/post')
                 ->middleware(
                     fn(
-                        HttpCache $httpCache,
+                        ResponseFactoryInterface $responseFactory,
                         ReadPostQueryServiceInterface $readPostQueryService,
                         CurrentRoute $currentRoute,
                     )
-                        => $httpCache->withEtagSeed(function (ServerRequestInterface $request, $params) use (
-                        $readPostQueryService,
-                        $currentRoute,
-                    ) {
-                        $post = $readPostQueryService->getPostBySlug($currentRoute->getArgument('slug'));
-                        return $post === null ? 'no-post' : $post->getSlug() . '-' . $post->getUpdatedAt(
-                            )->getTimestamp();
-                    }),
+                        => new HttpCacheMiddleware(
+                        $responseFactory,
+                        eTagProvider: new readonly class($readPostQueryService, $currentRoute) implements
+                            ETagProviderInterface {
+
+                            public function __construct(
+                                private ReadPostQueryServiceInterface $readPostQueryService,
+                                private CurrentRoute $currentRoute,
+                            ) {
+                            }
+
+                            #[Override]
+                            public function get(ServerRequestInterface $request): ?ETag
+                            {
+                                $post = $this->readPostQueryService->getPostBySlug(
+                                    $this->currentRoute->getArgument('slug') ?? '',
+                                );
+
+                                return $post ? new ETag(
+                                    $post->getSlug() . '-' . $post->getUpdatedAt()->getTimestamp(),
+                                ) : null;
+                            }
+                        },
+                    ),
                 )
                 ->action([PostController::class, 'index']),
 
@@ -81,9 +116,8 @@ return [
                 // List author post page
                     Route::get('/{author}/posts[/page/{page}]')
                         ->name('blog/author/posts')
-                        ->middleware(fn(AccessPermissionChecker $checker)
-                            => $checker->withPermission('authorPostsList',
-                        ),
+                        ->middleware(
+                            fn(AccessPermissionChecker $checker) => $checker->withPermission('authorPostsList'),
                         )
                         ->middleware(Authentication::class)
                         ->action([AuthorPostController::class, 'authorPosts']),
@@ -108,9 +142,9 @@ return [
                     //Delete post page
                     Route::post('/post/delete/{slug}')
                         ->name('blog/author/post/delete')
-                        ->middleware(fn(AccessPermissionChecker $checker)
-                            => $checker->withPermission('authorDeletePost',
-                        ))
+                        ->middleware(
+                            fn(AccessPermissionChecker $checker) => $checker->withPermission('authorDeletePost'),
+                        )
                         ->middleware(Authentication::class)
                         ->action([AuthorPostController::class, 'delete']),
                 ),
