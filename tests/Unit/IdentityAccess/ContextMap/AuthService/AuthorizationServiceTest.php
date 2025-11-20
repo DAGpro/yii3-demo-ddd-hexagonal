@@ -2,22 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\IdentityAccess\AuthService;
+namespace App\Tests\Unit\IdentityAccess\ContextMap\AuthService;
 
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
-use App\IdentityAccess\AuthService\AuthorizationService;
+use App\IdentityAccess\ContextMap\AuthService\AuthorizationService;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(AuthorizationService::class)]
-class AuthorizationServiceTest extends TestCase
+class AuthorizationServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private AuthorizationService $authorizationService;
-    private MockObject|AssignmentsServiceInterface $assignmentsService;
+
+    private MockObject&AssignmentsServiceInterface $assignmentsService;
 
     public function testUserHasPermissionWhenGranted(): void
     {
@@ -112,7 +116,7 @@ class AuthorizationServiceTest extends TestCase
         $grandParentRole = 'superadmin';
         $parentRole = 'admin';
         $childRole = 'editor';
-        
+
         $this->assignmentsService
             ->expects($this->once())
             ->method('userHasRole')
@@ -138,9 +142,10 @@ class AuthorizationServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->assignmentsService = $this->createMock(AssignmentsServiceInterface::class);
-        $this->authorizationService = new AuthorizationService($this->assignmentsService);
+        $this->authorizationService = new AuthorizationService($this->assignmentsService,
+        );
     }
 }

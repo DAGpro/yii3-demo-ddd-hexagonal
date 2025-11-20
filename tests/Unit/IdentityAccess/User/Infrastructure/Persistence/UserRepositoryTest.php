@@ -6,24 +6,57 @@ namespace App\Tests\Unit\IdentityAccess\User\Infrastructure\Persistence;
 
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Cycle\Database\DatabaseInterface;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\SourceInterface;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use ReflectionClass;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
 #[CoversClass(UserRepository::class)]
-final class UserRepositoryTest extends TestCase
+final class UserRepositoryTest extends Unit
 {
-    private Select|MockObject $select;
-    private EntityManagerInterface|MockObject $entityManager;
-    private ORMInterface|MockObject $orm;
+    protected UnitTester $tester;
+
+    private Select&MockObject $select;
+
+    private EntityManagerInterface&MockObject $entityManager;
+
+    private ORMInterface&MockObject $orm;
+
     private UserRepository $repository;
+
+    public function testFindAllPreloaded(): void
+    {
+        $this->select
+            ->expects($this->once())
+            ->method('__call')
+            ->willReturnCallback(
+                function (string $method, array $args) {
+                    if ($method === 'getDriver') {
+                        $driverMock = $this
+                            ->createMock(DriverInterface::class);
+                        $driverMock
+                            ->expects($this->once())
+                            ->method('getType')
+                            ->willReturn('SQLite');
+                        return $driverMock;
+                    }
+                    return $this->select;
+                },
+            );
+
+        $result = $this->repository->findAllPreloaded();
+
+        $this->assertInstanceOf(DataReaderInterface::class, $result);
+    }
 
     /**
      * @throws Exception
@@ -95,36 +128,26 @@ final class UserRepositoryTest extends TestCase
 
     public function testGetUsersWithEmptyArray(): void
     {
-        // Создаем реальный объект Select, чтобы избежать проблем с моками
-        $reflection = new ReflectionClass($this->repository);
-        $selectProperty = $reflection->getProperty('select');
-        $selectProperty->setAccessible(true);
+        $this->select
+            ->expects($this->once())
+            ->method('__call')
+            ->willReturnCallback(function ($name, $args) {
+                if ($name === 'where') {
+                    $this->assertIsArray($args[0]);
+                    $this->assertArrayHasKey('id', $args[0]);
+                    $this->assertArrayHasKey('in', $args[0]['id']);
+                }
+                return $this->select;
+            });
 
-        // Сохраняем оригинальный select
-        $originalSelect = $selectProperty->getValue($this->repository);
+        $this->select
+            ->expects($this->once())
+            ->method('fetchAll')
+            ->willReturn([]);
 
-        try {
-            // Создаем заглушку, которая вернет пустой массив
-            $emptySelect = $this->createMock(Select::class);
-            $emptySelect
-                ->method('__call')
-                ->willReturnCallback(function ($name, $args) {
-                    if ($name === 'fetchAll') {
-                        return [];
-                    }
-                    return $this->createMock(Select::class);
-                });
 
-            $selectProperty->setValue($this->repository, $emptySelect);
-
-            // Тестируем метод с пустым массивом
-            $result = $this->repository->getUsers([]);
-            $this->assertIsIterable($result);
-            $this->assertEmpty(iterator_to_array($result));
-        } finally {
-            // Восстанавливаем оригинальный select
-            $selectProperty->setValue($this->repository, $originalSelect);
-        }
+        $result = $this->repository->getUsers([]);
+        $this->assertEmpty($result);
     }
 
     /**
@@ -149,7 +172,7 @@ final class UserRepositoryTest extends TestCase
         $database
             ->expects($this->once())
             ->method('execute')
-            ->with('DELETE FROM users');
+            ->with('DELETE FROM user');
 
         $this->repository->removeAll();
     }
@@ -180,10 +203,105 @@ final class UserRepositoryTest extends TestCase
         $this->repository->delete([]);
     }
 
+    public function testSaveSingleUser(): void
+    {
+        $user = $this->createMock(User::class);
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('persist')
+            ->with($user);
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('run');
+
+        $this->repository->save([$user]);
+    }
+
+    public function testSaveMultipleUsers(): void
+    {
+        $user1 = $this->createMock(User::class);
+        $user2 = $this->createMock(User::class);
+        $user3 = $this->createMock(User::class);
+
+        $expectedUsers = [$user1, $user2, $user3];
+        $callCount = 0;
+
+        $this->entityManager
+            ->expects($this->exactly(3))
+            ->method('persist')
+            ->willreturnCallback(
+                function (User $user) use ($expectedUsers, &$callCount) {
+                    $this->assertSame(
+                        $expectedUsers[$callCount],
+                        $user,
+                        "Unexpected user passed to persist() at call #" . ($callCount + 1),
+                    );
+                    $callCount++;
+
+                    return $this->entityManager;
+                },
+            );
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('run');
+
+        $this->repository->save([$user1, $user2, $user3]);
+    }
+
+    public function testDeleteSingleUser(): void
+    {
+        $user = $this->createMock(User::class);
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('delete')
+            ->with($user);
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('run');
+
+        $this->repository->delete([$user]);
+    }
+
+    public function testDeleteMultipleUsers(): void
+    {
+        $user1 = $this->createMock(User::class);
+        $user2 = $this->createMock(User::class);
+
+        $expectedUsers = [$user1, $user2];
+        $callCount = 0;
+
+        $this->entityManager
+            ->expects($this->exactly(2))
+            ->method('delete')
+            ->willreturnCallback(
+                function (User $user) use ($expectedUsers, &$callCount) {
+                    $this->assertSame(
+                        $expectedUsers[$callCount],
+                        $user,
+                    );
+                    $callCount++;
+
+                    return $this->entityManager;
+                },
+            );
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('run');
+
+        $this->repository->delete([$user1, $user2]);
+    }
+
     /**
      * @throws Exception
      */
-    protected function setUp(): void
+    #[Override]
+    protected function _before(): void
     {
         $this->select = $this->createMock(Select::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);

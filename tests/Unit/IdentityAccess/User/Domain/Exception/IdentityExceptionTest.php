@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Unit\IdentityAccess\User\Domain\Exception;
 
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 #[CoversClass(IdentityException::class)]
-final class IdentityExceptionTest extends TestCase
+final class IdentityExceptionTest extends Unit
 {
+    protected UnitTester $tester;
+
     public function testCreateException(): void
     {
         $message = 'Test exception message';

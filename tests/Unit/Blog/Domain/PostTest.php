@@ -8,21 +8,30 @@ use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use DateTimeImmutable;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
 
 #[CoversClass(Post::class)]
-final class PostTest extends TestCase
+final class PostTest extends Unit
 {
+    protected UnitTester $tester;
+
     private Post $post;
-    private Author $author;
+
+    private Author&MockObject $author;
+
     private string $title = 'Test Post Title';
+
     private string $content = 'Test Post Content';
+
     private string $updatedTitle = 'Updated Post Title';
+
     private string $updatedContent = 'Updated Post Content';
 
     public function testCreate(): void
@@ -69,11 +78,9 @@ final class PostTest extends TestCase
 
     public function testToDraft(): void
     {
-        // Сначала публикуем пост
         $this->post->publish();
         $this->assertTrue($this->post->isPublic());
 
-        // Затем переводим в черновик
         $this->post->toDraft();
 
         $this->assertFalse($this->post->isPublic());
@@ -155,23 +162,27 @@ final class PostTest extends TestCase
 
     public function testIsNewRecord(): void
     {
-        // Новый пост (еще не сохранен в БД)
+        // New Post (not yet saved in the database)
         $this->assertTrue($this->post->isNewRecord());
 
-        // Эмулируем сохраненный пост
+        // emulate the preserved post
         $reflection = new ReflectionClass($this->post);
         $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
         $property->setValue($this->post, 1);
 
         $this->assertFalse($this->post->isNewRecord());
+    }
+
+    public function testNotDeletedPost(): void
+    {
+        $this->assertNull($this->post->getDeletedAt());
     }
 
     /**
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->author = $this->createMock(Author::class);
         $this->post = new Post(

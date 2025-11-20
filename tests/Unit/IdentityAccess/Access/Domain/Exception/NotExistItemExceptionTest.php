@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Unit\IdentityAccess\Access\Domain\Exception;
 
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 #[CoversClass(NotExistItemException::class)]
-final class NotExistItemExceptionTest extends TestCase
+final class NotExistItemExceptionTest extends Unit
 {
+    protected UnitTester $tester;
+
     public function testCreateException(): void
     {
         $message = 'Test exception message';

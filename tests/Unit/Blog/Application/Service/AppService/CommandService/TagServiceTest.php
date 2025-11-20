@@ -8,22 +8,28 @@ use App\Blog\Application\Service\AppService\CommandService\TagService;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\TagRepositoryInterface;
 use App\Blog\Domain\Tag;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Exception;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(TagService::class)]
-final class TagServiceTest extends TestCase
+final class TagServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private TagService $service;
 
     private TagRepositoryInterface&MockObject $tagRepository;
 
     private int $tagId = 1;
+
     private string $tagLabel = 'test-tag';
+
     private string $newTagLabel = 'updated-tag';
+
     private Tag $tag;
 
     /**
@@ -40,13 +46,16 @@ final class TagServiceTest extends TestCase
         $this->tagRepository
             ->expects($this->once())
             ->method('save')
-            ->with($this->callback(function ($tags) {
-                $this->assertIsArray($tags);
-                $this->assertCount(1, $tags);
-                $tag = $tags[0];
-                $this->assertEquals($this->newTagLabel, $tag->getLabel());
-                return true;
-            }),
+            ->with(
+                $this->callback(
+                    function ($tags) {
+                        $this->assertIsArray($tags);
+                        $this->assertCount(1, $tags);
+                        $tag = $tags[0];
+                        $this->assertEquals($this->newTagLabel, $tag->getLabel());
+                        return true;
+                    },
+                ),
             );
 
         $this->service->changeTag($this->tagId, $this->newTagLabel);
@@ -104,7 +113,7 @@ final class TagServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->tagRepository = $this->createMock(TagRepositoryInterface::class);
         $this->service = new TagService($this->tagRepository);

@@ -12,15 +12,18 @@ use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Exception;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ModerateCommentService::class)]
-final class ModerateCommentServiceTest extends TestCase
+final class ModerateCommentServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private ModerateCommentService $service;
 
     private CommentRepositoryInterface&MockObject $commentRepository;
@@ -45,13 +48,15 @@ final class ModerateCommentServiceTest extends TestCase
         $this->commentRepository
             ->expects($this->once())
             ->method('save')
-            ->with($this->callback(function ($comments) {
-                $this->assertIsArray($comments);
-                $this->assertCount(1, $comments);
-                $comment = $comments[0];
-                $this->assertFalse($comment->isPublic());
-                return true;
-            }),
+            ->with($this->callback(
+                function ($comments) {
+                    $this->assertIsArray($comments);
+                    $this->assertCount(1, $comments);
+                    $comment = $comments[0];
+                    $this->assertFalse($comment->isPublic());
+                    return true;
+                },
+            ),
             );
 
         $this->service->draft($this->commentId);
@@ -94,10 +99,12 @@ final class ModerateCommentServiceTest extends TestCase
         $this->commentRepository
             ->expects($this->once())
             ->method('save')
-            ->with($this->callback(function ($comments) {
-                $this->assertTrue($comments[0]->isPublic());
-                return true;
-            }),
+            ->with($this->callback(
+                function ($comments) {
+                    $this->assertTrue($comments[0]->isPublic());
+                    return true;
+                },
+            ),
             );
 
         $this->service->public($this->commentId);
@@ -152,11 +159,13 @@ final class ModerateCommentServiceTest extends TestCase
             ->method('save')
             ->with(
             /** @var iterable<Comment> $comments */
-                $this->callback(function (array $comments) use ($newText) {
-                    $this->assertEquals($newText, $comments[0]->getContent());
-                    $this->assertFalse($comments[0]->isPublic());
-                    return true;
-                }),
+                $this->callback(
+                    function (array $comments) use ($newText) {
+                        $this->assertEquals($newText, $comments[0]->getContent());
+                        $this->assertFalse($comments[0]->isPublic());
+                        return true;
+                    },
+                ),
             );
 
         $this->service->moderate($this->commentId, $newText, false);
@@ -195,11 +204,53 @@ final class ModerateCommentServiceTest extends TestCase
         $this->service->delete($this->commentId);
     }
 
+    public function testPublicThrowsExceptionWhenCommentNotFound(): void
+    {
+        $this->commentQueryService
+            ->expects($this->once())
+            ->method('getComment')
+            ->with($this->commentId)
+            ->willReturn(null);
+
+        $this->expectException(BlogNotFoundException::class);
+        $this->expectExceptionMessage('Comment does not exist!');
+
+        $this->service->public($this->commentId);
+    }
+
+    public function testDraftThrowsExceptionWhenCommentNotFound(): void
+    {
+        $this->commentQueryService
+            ->expects($this->once())
+            ->method('getComment')
+            ->with($this->commentId)
+            ->willReturn(null);
+
+        $this->expectException(BlogNotFoundException::class);
+        $this->expectExceptionMessage('Comment does not exist!');
+
+        $this->service->draft($this->commentId);
+    }
+
+    public function testModerateThrowsExceptionWhenCommentNotFound(): void
+    {
+        $this->commentQueryService
+            ->expects($this->once())
+            ->method('getComment')
+            ->with($this->commentId)
+            ->willReturn(null);
+
+        $this->expectException(BlogNotFoundException::class);
+        $this->expectExceptionMessage('Comment does not exist!');
+
+        $this->service->moderate($this->commentId, 'Updated text', true);
+    }
+
     /**
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->commentRepository = $this->createMock(CommentRepositoryInterface::class);
         $this->commentQueryService = $this->createMock(ModerateCommentQueryServiceInterface::class);

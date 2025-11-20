@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Tests\Unit\IdentityAccess\User\Domain;
 
 use App\IdentityAccess\User\Domain\User;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(User::class)]
-final class UserTest extends TestCase
+final class UserTest extends Unit
 {
     private const string TEST_LOGIN = 'test@example.com';
+
     private const string TEST_PASSWORD = 'password123';
+
+    protected UnitTester $tester;
 
     public function testCreateUser(): void
     {

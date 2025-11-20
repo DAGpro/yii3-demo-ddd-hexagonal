@@ -10,23 +10,24 @@ use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
-use App\Blog\Infrastructure\Persistence\Comment\CommentRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Yiisoft\Data\Reader\DataReaderInterface;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 
 #[CoversClass(ModerateCommentQueryService::class)]
-final class ModerateCommentQueryServiceTest extends TestCase
+final class ModerateCommentQueryServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private ModerateCommentQueryService $service;
 
-    private CommentRepositoryInterface $commentRepository;
+    private CommentRepositoryInterface&MockObject $commentRepository;
 
     private Select&MockObject $select;
 
@@ -34,10 +35,10 @@ final class ModerateCommentQueryServiceTest extends TestCase
     {
         $query = $this->select;
         $query
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('__call')
             ->willReturnCallback(
-                function ($method, $arguments) use ($query) {
+                function (string $method, array $arguments) use ($query) {
                     if ($method === 'getDriver') {
                         $driverMock = $this
                             ->createMock(DriverInterface::class);
@@ -47,19 +48,50 @@ final class ModerateCommentQueryServiceTest extends TestCase
                             ->willReturn('MySQL');
                         return $driverMock;
                     }
-                    if ($method === 'andWhere') {
-                        $this->assertIsArray($arguments);
-                        $this->assertSame('deleted_at', $arguments[0]);
-                        $this->assertSame('=', $arguments[1]);
-                        $this->assertNull($arguments[2]);
+                    if ($method === 'orderBy') {
+                        $this->assertEquals('orderBy', $method);
+                        $this->assertEquals(
+                            [
+                                [
+                                    'published_at' => 'ASC',
+                                    'id' => 'DESC',
+                                    'public' => 'ASC',
+                                    'updated_at' => 'ASC',
+                                    'post_id' => 'ASC',
+                                ],
+                            ],
+                            $arguments,
+                        );
                     }
+
                     return $query;
                 },
             );
+        $commentator = new Commentator(1, 'Commentator');
+        $post = new Post('title', 'content', new Author(1, 'Author'));
+        $selectResult = [
+            new Comment('comment', $post, $commentator),
+            new Comment('comment 2', $post, $commentator),
+        ];
+        $query
+            ->expects($this->once())
+            ->method('fetchAll')
+            ->willReturn($selectResult);
 
-        $result = $this->service->findAllPreloaded();
+        $this->commentRepository
+            ->expects($this->once())
+            ->method('findAllNonDeleted')
+            ->willReturn(new EntityReader($query));
 
-        $this->assertInstanceOf(DataReaderInterface::class, $result);
+        $dataReader = $this->service->findAllPreloaded();
+
+        $sortDataReader = $dataReader->getSort();
+        $this->assertEquals(
+            ['id' => 'asc', 'public' => 'asc', 'updated_at' => 'asc', 'published_at' => 'asc', 'post_id' => 'asc'],
+            $sortDataReader->getDefaultOrder(),
+        );
+        $this->assertEquals(['id' => 'desc'], $sortDataReader->getOrder());
+        $this->assertEquals($selectResult, $dataReader->read());
     }
 
     public function testGetCommentWhenCommentExists(): void
@@ -71,15 +103,10 @@ final class ModerateCommentQueryServiceTest extends TestCase
             new Commentator(1, 'Commentator'),
         );
 
-        $this->select
+        $this->commentRepository
             ->expects($this->once())
-            ->method('__call')
-            ->with('where', [['id' => $commentId]])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->once())
-            ->method('fetchOne')
+            ->method('getComment')
+            ->with($commentId)
             ->willReturn($comment);
 
         $result = $this->service->getComment($commentId);
@@ -91,15 +118,10 @@ final class ModerateCommentQueryServiceTest extends TestCase
     {
         $commentId = 999;
 
-        $this->select
+        $this->commentRepository
             ->expects($this->once())
-            ->method('__call')
-            ->with('where', [['id' => $commentId]])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->once())
-            ->method('fetchOne')
+            ->method('getComment')
+            ->with($commentId)
             ->willReturn(null);
 
         $result = $this->service->getComment($commentId);
@@ -111,12 +133,10 @@ final class ModerateCommentQueryServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
-        $this->commentRepository = new CommentRepository(
-            $this->select = $this->createMock(Select::class),
-            $this->createMock(EntityManagerInterface::class),
-        );
+        $this->select = $this->createMock(Select::class);
+        $this->commentRepository = $this->createMock(CommentRepositoryInterface::class);
 
         $this->service = new ModerateCommentQueryService($this->commentRepository);
     }

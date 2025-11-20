@@ -9,121 +9,114 @@ use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
-use App\Blog\Infrastructure\Persistence\Post\PostRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Yiisoft\Data\Reader\DataReaderInterface;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 
 #[CoversClass(ReadPostQueryService::class)]
-final class ReadPostQueryServiceTest extends TestCase
+final class ReadPostQueryServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private ReadPostQueryService $service;
 
-    private PostRepositoryInterface $postRepository;
+    private PostRepositoryInterface&MockObject $repository;
 
     private Select&MockObject $select;
 
     public function testFindAllPreloaded(): void
     {
-        $this->select
+        $author = $this->createMock(Author::class);
+        $tag = new Tag('test-tag');
+        $tag2 = new Tag('test-tag-2');
+        $post = new Post('title', 'content', $author);
+        $post->addTag($tag);
+        $post2 = new Post('title 2', 'content 2', $author);
+        $post2->addTag($tag2);
+        $selectResult = [
+            $post,
+            $post2,
+        ];
+
+        $select = $this->createMockSelectForReader(
+            [
+                [
+                    'published_at' => 'DESC',
+                    'id' => 'ASC',
+                    'title' => 'ASC',
+                    'public' => 'ASC',
+                    'updated_at' => 'ASC',
+                ],
+            ],
+            $selectResult,
+        );
+
+        $this->repository
             ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($this->select);
+            ->method('getAllWithPreloadedTags')
+            ->willReturn(new EntityReader($select));
 
-        $result = $this->service->findAllPreloaded();
+        $dataReader = $this->service->findAllPreloaded();
 
-        $this->assertInstanceOf(DataReaderInterface::class, $result);
+        $sortDataReader = $dataReader->getSort();
+        $this->assertEquals(
+            ['id' => 'asc', 'title' => 'asc', 'public' => 'asc', 'updated_at' => 'asc', 'published_at' => 'asc'],
+            $sortDataReader->getDefaultOrder(),
+        );
+        $this->assertEquals(['published_at' => 'desc'], $sortDataReader->getOrder());
+        $this->assertEquals($selectResult, $dataReader->read());
     }
 
     public function testFindByTag(): void
     {
-        // Arrange
         $tag = new Tag('test-tag');
 
-        $this->select
-            ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->exactly(2))
-            ->method('__call')
-            ->willReturnCallback(
-                function (mixed $method, mixed $arguments) {
-                    if ($method === 'getDriver') {
-                        $driverMock = $this
-                            ->createMock(DriverInterface::class);
-                        $driverMock
-                            ->expects($this->once())
-                            ->method('getType')
-                            ->willReturn('MySQL');
-                        return $driverMock;
-                    }
-                    if ($method === 'where') {
-                        $this->assertIsArray($arguments);
-                        $this->assertArrayHasKey('tags.label', $arguments[0]);
-                        $this->assertSame('test-tag', $arguments[0]['tags.label']);
-                        return $this->select;
-                    }
-                    return $this->select;
-                },
-            );
-
-        $result = $this->service->findByTag($tag);
-
-        $this->assertInstanceOf(DataReaderInterface::class, $result);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testFindByAuthor(): void
-    {
         $author = $this->createMock(Author::class);
-        $author->method('getId')->willReturn(1);
+        $post = new Post('title', 'content', $author);
+        $post->addTag($tag);
+        $post2 = new Post('title 2', 'content 2', $author);
+        $post2->addTag($tag);
+        $selectResult = [
+            $post,
+            $post2,
+        ];
 
-        $this->select
+        $select = $this->createMockSelectForReader(
+            [
+                [
+                    'published_at' => 'DESC',
+                    'id' => 'ASC',
+                    'title' => 'ASC',
+                    'public' => 'ASC',
+                    'updated_at' => 'ASC',
+                ],
+            ],
+            $selectResult,
+        );
+
+        $this->repository
             ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($this->select);
+            ->method('findByTagWithPreloadedTags')
+            ->with($tag)
+            ->willReturn(new EntityReader($select));
 
-        $this->select
-            ->expects($this->exactly(2))
-            ->method('__call')
-            ->willReturnCallback(
-                function (string $method, array $arguments) {
-                    if ($method === 'getDriver') {
-                        $driverMock = $this
-                            ->createMock(DriverInterface::class);
-                        $driverMock
-                            ->expects($this->once())
-                            ->method('getType')
-                            ->willReturn('MySQL');
-                        return $driverMock;
-                    }
-                    if ($method === 'where') {
-                        $this->assertIsArray($arguments);
-                        $this->assertArrayHasKey('author_id', $arguments[0]);
-                        $this->assertSame(1, $arguments[0]['author_id']);
-                        return $this->select;
-                    }
-                    return $this->select;
-                },
-            );
+        $dataReader = $this->service->findByTag($tag);
 
-        $result = $this->service->findByAuthor($author);
-
-        $this->assertInstanceOf(DataReaderInterface::class, $result);
+        $sortDataReader = $dataReader->getSort();
+        $this->assertEquals(
+            ['id' => 'asc', 'title' => 'asc', 'public' => 'asc', 'updated_at' => 'asc', 'published_at' => 'asc'],
+            $sortDataReader->getDefaultOrder(),
+        );
+        $this->assertEquals(['published_at' => 'desc'], $sortDataReader->getOrder());
+        $this->assertEquals($selectResult, $dataReader->read());
     }
 
     public function testGetPostBySlug(): void
@@ -131,26 +124,31 @@ final class ReadPostQueryServiceTest extends TestCase
         $slug = 'test-post';
         $post = $this->createMock(Post::class);
 
-        $this->select
+        $this->repository
             ->expects($this->once())
-            ->method('__call')
-            ->with('where', [['slug' => $slug]])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->once())
-            ->method('fetchOne')
+            ->method('findBySlug')
+            ->with($slug)
             ->willReturn($post);
 
         $result = $this->service->getPostBySlug($slug);
 
         $this->assertSame($post, $result);
+    }
+
+    public function testGetPostBySlugNotFound(): void
+    {
+        $slug = 'test-post';
+        $post = $this->createMock(Post::class);
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findBySlug')
+            ->with($slug)
+            ->willReturn(null);
+
+        $result = $this->service->getPostBySlug($slug);
+
+        $this->assertNull($result);
     }
 
     /**
@@ -161,21 +159,10 @@ final class ReadPostQueryServiceTest extends TestCase
         $postId = 1;
         $post = $this->createMock(Post::class);
 
-        $this->select
+        $this->repository
             ->expects($this->once())
-            ->method('__call')
-            ->with('where', [['id' => $postId]])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->once())
-            ->method('fetchOne')
+            ->method('findById')
+            ->with($postId)
             ->willReturn($post);
 
         $result = $this->service->getPost($postId);
@@ -186,35 +173,34 @@ final class ReadPostQueryServiceTest extends TestCase
     /**
      * @throws Exception
      */
+    public function testGetPostByIdNotFound(): void
+    {
+        $postId = 1;
+        $post = $this->createMock(Post::class);
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findById')
+            ->with($postId)
+            ->willReturn(null);
+
+        $result = $this->service->getPost($postId);
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testFullPostPage(): void
     {
         $slug = 'test-post';
         $post = $this->createMock(Post::class);
 
-        $this->select
+        $this->repository
             ->expects($this->once())
-            ->method('__call')
-            ->with('where', [['slug' => $slug]])
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->exactly(2))
-            ->method('load')
-            ->willReturnOnConsecutiveCalls(
-                [['tags']],
-                [
-                    'comments',
-                    [
-                        'method' => Select::OUTER_QUERY,
-                        'where' => ['public' => true],
-                    ],
-                ],
-            )
-            ->willReturn($this->select);
-
-        $this->select
-            ->expects($this->once())
-            ->method('fetchOne')
+            ->method('fullPostBySlug')
+            ->with($slug)
             ->willReturn($post);
 
         $result = $this->service->fullPostPage($slug);
@@ -222,19 +208,39 @@ final class ReadPostQueryServiceTest extends TestCase
         $this->assertSame($post, $result);
     }
 
+    /**
+     * @throws Exception
+     */
+    public function testFullPostPageNotFound(): void
+    {
+        $slug = 'test-post';
+        $post = $this->createMock(Post::class);
+
+        $this->repository
+            ->expects($this->once())
+            ->method('fullPostBySlug')
+            ->with($slug)
+            ->willReturn(null);
+
+        $result = $this->service->fullPostPage($slug);
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testGetMaxUpdatedAt(): void
     {
         $maxUpdatedAt = '2023-01-01 12:00:00';
 
-        $this->select
+        $this->repository
             ->expects($this->once())
-            ->method('__call')
-            ->with('max', ['updated_at'])
-            ->willReturn($maxUpdatedAt);
+            ->method('getMaxUpdatedAt')
+            ->willReturn(new DateTimeImmutable($maxUpdatedAt));
 
         $result = $this->service->getMaxUpdatedAt();
 
-        $this->assertInstanceOf(DateTimeImmutable::class, $result);
         $this->assertEquals($maxUpdatedAt, $result->format('Y-m-d H:i:s'));
     }
 
@@ -242,13 +248,43 @@ final class ReadPostQueryServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
-        $this->postRepository = new PostRepository(
-            $this->select = $this->createMock(Select::class),
-            $this->createMock(EntityManagerInterface::class),
-        );
+        $this->select = $this->createMock(Select::class);
+        $this->repository = $this->createMock(PostRepositoryInterface::class);
+        $this->service = new ReadPostQueryService($this->repository);
+    }
 
-        $this->service = new ReadPostQueryService($this->postRepository);
+    private function createMockSelectForReader(array $orderByEquals, array $resultFetchAll): Select&MockObject
+    {
+        $this->select
+            ->method('__call')
+            ->willReturnCallback(
+                function (string $method, array $arguments) use ($orderByEquals) {
+                    if ($method === 'getDriver') {
+                        $driverMock = $this->createMock(DriverInterface::class);
+                        $driverMock
+                            ->expects($this->once())
+                            ->method('getType')
+                            ->willReturn('SQLite');
+                        return $driverMock;
+                    }
+                    if ($method === 'orderBy') {
+                        $this->assertEquals('orderBy', $method);
+                        $this->assertEquals(
+                            $orderByEquals,
+                            $arguments,
+                        );
+                    }
+                    return $this->select;
+                },
+            );
+        $this->select
+            ->method('fetchAll')
+            ->willReturnCallback(
+                fn() => $resultFetchAll,
+            );
+
+        return $this->select;
     }
 }

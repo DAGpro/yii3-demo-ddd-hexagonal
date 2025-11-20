@@ -8,26 +8,26 @@ use App\Blog\Application\Service\AppService\QueryService\AuthorPostQueryService;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
-use App\Blog\Infrastructure\Persistence\Post\PostRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Yiisoft\Data\Reader\DataReaderInterface;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 
 #[CoversClass(AuthorPostQueryService::class)]
-final class AuthorPostQueryServiceTest extends TestCase
+final class AuthorPostQueryServiceTest extends Unit
 {
-    private AuthorPostQueryService $service;
+    protected UnitTester $tester;
 
-    private PostRepositoryInterface $postRepository;
+    private AuthorPostQueryService $authorPostQueryService;
+
+    private PostRepositoryInterface&MockObject $postRepository;
 
     private Select&MockObject $select;
-    private Select\QueryBuilder&MockObject $queryBuilder;
 
     public function testGetAuthorPosts(): void
     {
@@ -36,36 +36,61 @@ final class AuthorPostQueryServiceTest extends TestCase
 
         $query = $this->select;
         $query
-            ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($query);
-
-        $query
             ->expects($this->exactly(3))
             ->method('__call')
             ->willReturnCallback(
-                function ($method, $arguments) use ($query, $authorId) {
-                    if ($method === 'where' && $arguments[0] === 'author_id' && $arguments[1] === $authorId) {
-                        return $query;
-                    }
-
+                function (string $method, array $arguments) use ($query, $authorId) {
                     if ($method === 'getDriver') {
                         $driverMock = $this
                             ->createMock(DriverInterface::class);
                         $driverMock
                             ->expects($this->once())
                             ->method('getType')
-                            ->willReturn('MySQL');
+                            ->willReturn('SQLite');
                         return $driverMock;
+                    }
+
+                    if ($method === 'orderBy') {
+                        $this->assertEquals('orderBy', $method);
+                        $this->assertEquals(
+                            [
+                                [
+                                    'published_at' => 'DESC',
+                                ],
+                            ],
+                            $arguments,
+                        );
                     }
 
                     return $query;
                 },
             );
-        $result = $this->service->getAuthorPosts($author);
 
-        $this->assertInstanceOf(DataReaderInterface::class, $result);
+        $selectResult = [
+            new Post('title', 'content', new Author(1, 'Author')),
+            new Post('title 2', 'content 2', new Author(1, 'Author')),
+        ];
+
+        $query
+            ->expects($this->once())
+            ->method('fetchAll')
+            ->willReturn($selectResult);
+
+        $this->postRepository
+            ->expects($this->once())
+            ->method('findByAuthorNotDeletedPostWithPreloadedTags')
+            ->with($author)
+            ->willReturn(new EntityReader($query));
+
+        $dataReader = $this->authorPostQueryService->getAuthorPosts($author);
+
+        $sortDataReader = $dataReader->getSort();
+        $this->assertEquals(
+            ['published_at' => 'asc',],
+            $sortDataReader->getDefaultOrder(),
+        );
+        $this->assertEquals(['published_at' => 'desc'], $sortDataReader->getOrder());
+        $this->assertEquals($selectResult, $dataReader->read());
     }
 
     public function testGetPostBySlugWhenPostExists(): void
@@ -73,35 +98,13 @@ final class AuthorPostQueryServiceTest extends TestCase
         $slug = 'test-post';
         $post = new Post('Test Post', 'Test content', new Author(1, 'Author'));
 
-        $query = $this->select;
-        $query
+        $this->postRepository
             ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($query);
-
-        $query
-            ->expects($this->exactly(2))
-            ->method('__call')
-            ->willReturnCallback(
-                function ($method, $arguments) use ($query, $slug) {
-                    if ($method === 'andWhere' && $arguments[0] === 'slug' && $arguments[1] === '=' && $arguments[2] === $slug) {
-                        return $query;
-                    }
-
-                    if ($method === 'andWhere' && $arguments[0] === 'deleted_at' && $arguments[1] === '=' && $arguments[2] === null) {
-                        return $query;
-                    }
-                    return $query;
-                },
-            );
-
-        $query
-            ->expects($this->once())
-            ->method('fetchOne')
+            ->method('findBySlugNotDeletedPostWithPreloadedTags')
+            ->with($slug)
             ->willReturn($post);
 
-        $result = $this->service->getPostBySlug($slug);
+        $result = $this->authorPostQueryService->getPostBySlug($slug);
 
         $this->assertSame($post, $result);
     }
@@ -110,35 +113,13 @@ final class AuthorPostQueryServiceTest extends TestCase
     {
         $slug = 'non-existent-post';
 
-        $query = $this->select;
-        $query
+        $this->postRepository
             ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($query);
-
-        $query
-            ->expects($this->exactly(2))
-            ->method('__call')
-            ->willReturnCallback(
-                function ($method, $arguments) use ($query, $slug) {
-                    if ($method === 'andWhere' && $arguments[0] === 'slug' && $arguments[1] === '=' && $arguments[2] === $slug) {
-                        return $query;
-                    }
-
-                    if ($method === 'andWhere' && $arguments[0] === 'deleted_at' && $arguments[1] === '=' && $arguments[2] === null) {
-                        return $query;
-                    }
-                    return $query;
-                },
-            );
-
-        $query
-            ->expects($this->once())
-            ->method('fetchOne')
+            ->method('findBySlugNotDeletedPostWithPreloadedTags')
+            ->with($slug)
             ->willReturn(null);
 
-        $result = $this->service->getPostBySlug($slug);
+        $result = $this->authorPostQueryService->getPostBySlug($slug);
 
 
         $this->assertNull($result);
@@ -149,14 +130,11 @@ final class AuthorPostQueryServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
-        $this->postRepository = new PostRepository(
-            $this->select = $this->createMock(Select::class),
-            $this->createMock(EntityManagerInterface::class),
-        );
+        $this->select = $this->createMock(Select::class);
+        $this->postRepository = $this->createMock(PostRepositoryInterface::class);
 
-
-        $this->service = new AuthorPostQueryService($this->postRepository);
+        $this->authorPostQueryService = new AuthorPostQueryService($this->postRepository);
     }
 }

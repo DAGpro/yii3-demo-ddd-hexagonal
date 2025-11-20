@@ -15,22 +15,24 @@ use App\Blog\Domain\Port\TagRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
-use Override;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(AuthorPostService::class)]
-final class AuthorPostServiceTest extends TestCase
+final class AuthorPostServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private AuthorPostService $service;
 
-    private PostRepositoryInterface&MockObject $postRepository;
+    private MockObject&PostRepositoryInterface $postRepository;
 
-    private AuthorPostQueryServiceInterface&MockObject $postQueryService;
+    private MockObject&AuthorPostQueryServiceInterface $postQueryService;
 
-    private TagRepositoryInterface&MockObject $tagRepository;
+    private MockObject&TagRepositoryInterface $tagRepository;
 
     private Author $author;
     private string $postTitle = 'Test Post';
@@ -59,15 +61,22 @@ final class AuthorPostServiceTest extends TestCase
         $this->postRepository
             ->expects($this->once())
             ->method('save')
-            ->with($this->callback(function ($posts) {
-                $this->assertIsArray($posts);
-                $this->assertCount(1, $posts);
-                $post = $posts[0];
-                $this->assertInstanceOf(Post::class, $post);
-                $this->assertEquals($this->postTitle, $post->getTitle());
-                $this->assertEquals($this->postContent, $post->getContent());
-                return true;
-            }),
+            ->with(
+                $this->callback(
+                    /** @param array<array-key, mixed> $posts */
+                    function (array $posts): bool {
+                        $this->assertCount(1, $posts);
+                        $post = $posts[0];
+                        $this->assertInstanceOf(Post::class, $post);
+                        $this->assertEquals($this->postTitle, $post->getTitle());
+                        $this->assertEquals($this->postContent, $post->getContent());
+                        $this->assertEquals(
+                            array_values($this->postTags),
+                            array_map(static fn(Tag $tag): string => $tag->getLabel(), $posts[0]->getTags()),
+                        );
+                        return true;
+                    },
+                ),
             );
 
         $this->service->create($postCreateDTO, $this->author);
@@ -215,7 +224,7 @@ final class AuthorPostServiceTest extends TestCase
     {
         $postSlug = 'test-post';
         $otherAuthor = new Author(2, 'Other Author');
-        $post = new Post('Title', 'Content', $otherAuthor); // Пост принадлежит другому автору
+        $post = new Post('Title', 'Content', $otherAuthor);
 
         $this->postQueryService
             ->expects($this->once())
@@ -232,12 +241,11 @@ final class AuthorPostServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
-        $this->postRepository = $this->createMock(PostRepositoryInterface::class);
-        $this->postQueryService = $this->createMock(AuthorPostQueryServiceInterface::class);
-        $this->tagRepository = $this->createMock(TagRepositoryInterface::class);
+        $this->postRepository = $this->makeEmpty(PostRepositoryInterface::class);
+        $this->postQueryService = $this->makeEmpty(AuthorPostQueryServiceInterface::class);
+        $this->tagRepository = $this->makeEmpty(TagRepositoryInterface::class);
 
         $this->service = new AuthorPostService(
             $this->postRepository,

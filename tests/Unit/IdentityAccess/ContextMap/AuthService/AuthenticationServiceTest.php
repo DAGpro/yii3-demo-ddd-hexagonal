@@ -2,36 +2,40 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\IdentityAccess\AuthService;
+namespace App\Tests\Unit\IdentityAccess\ContextMap\AuthService;
 
-use App\IdentityAccess\AuthService\AuthenticationService;
+use App\IdentityAccess\ContextMap\AuthService\AuthenticationService;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Authentication\AuthenticationException;
 use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
 use App\IdentityAccess\User\Infrastructure\Authentication\IdentityRepositoryInterface;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 use Yiisoft\User\CurrentUser;
 use Yiisoft\User\Event\AfterLogin;
 use Yiisoft\User\Event\BeforeLogin;
-use Yiisoft\User\Method\WebAuth;
 
 #[CoversClass(AuthenticationService::class)]
-final class AuthenticationServiceTest extends TestCase
+final class AuthenticationServiceTest extends Unit
 {
-    private AuthenticationService $authService;
-    private CurrentUser $currentUser;
-    private MockObject|UserQueryServiceInterface $userQueryService;
-    private MockObject|IdentityRepositoryInterface $identityRepository;
-    private MockObject|WebAuth $webAuth;
+    protected UnitTester $tester;
 
-    private EventDispatcherInterface|MockObject $eventDispatcher;
+    private AuthenticationService $authService;
+
+    private CurrentUser $currentUser;
+
+    private MockObject&UserQueryServiceInterface $userQueryService;
+
+    private MockObject&IdentityRepositoryInterface $identityRepository;
+
+    private EventDispatcherInterface&MockObject $eventDispatcher;
 
     /**
      * @throws Throwable
@@ -71,9 +75,7 @@ final class AuthenticationServiceTest extends TestCase
             ->expects($this->exactly(2))
             ->method('dispatch')
             ->willReturnCallback(
-                static function (BeforeLogin|AfterLogin $event): object {
-                    return $event;
-                },
+                static fn(BeforeLogin|AfterLogin $event): object => $event,
             );
 
         $result = $this->authService->login($login, $password);
@@ -160,9 +162,7 @@ final class AuthenticationServiceTest extends TestCase
             ->expects($this->exactly(4))
             ->method('dispatch')
             ->willReturnCallback(
-                static function (object $event): object {
-                    return $event;
-                },
+                static fn(object $event): object => $event,
             );
 
         $this->currentUser->login($identity);
@@ -174,7 +174,7 @@ final class AuthenticationServiceTest extends TestCase
         $this->identityRepository
             ->expects($this->once())
             ->method('save')
-            ->with($identity);
+            ->with([$identity]);
 
 
         $result = $this->authService->logout();
@@ -214,9 +214,7 @@ final class AuthenticationServiceTest extends TestCase
             ->expects($this->exactly(2))
             ->method('dispatch')
             ->willReturnCallback(
-                static function (object $event): object {
-                    return $event;
-                },
+                static fn(object $event): object => $event,
             );
 
         $this->currentUser->login($identity);
@@ -241,11 +239,11 @@ final class AuthenticationServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->identityRepository = $this->createMock(IdentityRepositoryInterface::class);
-        
+
         $this->currentUser = new CurrentUser(
             $this->identityRepository,
             $this->eventDispatcher,

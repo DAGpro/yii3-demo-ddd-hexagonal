@@ -5,27 +5,66 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Blog\Infrastructure\Persistence\Comment;
 
 use App\Blog\Domain\Comment;
+use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Infrastructure\Persistence\Comment\CommentRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use stdClass;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
-class CommentRepositoryTest extends TestCase
+class CommentRepositoryTest extends Unit
 {
-    private CommentRepository $repository;
-    private Select|MockObject $select;
-    private EntityManagerInterface|MockObject $entityManager;
-    private ORMInterface|MockObject $orm;
+    protected UnitTester $tester;
 
-    public function testSelect(): void
+    private CommentRepositoryInterface $repository;
+
+    private Select&MockObject $select;
+
+    private EntityManagerInterface&MockObject $entityManager;
+
+    private readonly ORMInterface&MockObject $orm;
+
+    /**
+     * @throws Exception
+     */
+    public function testFindAllNonDeleted(): void
     {
-        $select = $this->repository->select();
-        $this->assertInstanceOf(Select::class, $select);
+        $this->select
+            ->expects($this->once())
+            ->method('scope')
+            ->willReturn($this->select);
+
+        $this->select
+            ->expects($this->exactly(2))
+            ->method('__call')
+            ->willReturnCallback(
+                function (string $method, array $arguments) {
+                    if ($method === 'getDriver') {
+                        $driverMock = $this
+                            ->createMock(DriverInterface::class);
+                        $driverMock
+                            ->expects($this->once())
+                            ->method('getType')
+                            ->willReturn('SQLite');
+                        return $driverMock;
+                    }
+                    $this->assertIsArray($arguments);
+                    $this->assertSame('deleted_at', $arguments[0]);
+                    $this->assertSame('=', $arguments[1]);
+                    $this->assertNull($arguments[2]);
+                    return $this->select;
+                },
+            );
+
+        $result = $this->repository->findAllNonDeleted();
+
+        $this->assertInstanceOf(DataReaderInterface::class, $result);
     }
 
     /**
@@ -39,7 +78,6 @@ class CommentRepositoryTest extends TestCase
         $this->select
             ->expects($this->once())
             ->method('fetchOne')
-            ->with(['id' => $commentId])
             ->willReturn($expectedComment);
 
         $result = $this->repository->getPublicComment($commentId);
@@ -54,7 +92,6 @@ class CommentRepositoryTest extends TestCase
         $this->select
             ->expects($this->once())
             ->method('fetchOne')
-            ->with(['id' => $commentId])
             ->willReturn(null);
 
         $result = $this->repository->getPublicComment($commentId);
@@ -71,11 +108,11 @@ class CommentRepositoryTest extends TestCase
         $expectedComment = $this->createMock(Comment::class);
 
         $selectMock = $this->select;
+
         $selectMock
             ->expects($this->once())
-            ->method('__call')
-            ->with('where', [['id' => $commentId]])
-            ->willReturnSelf();
+            ->method('scope')
+            ->willReturn($selectMock);
 
         $selectMock
             ->expects($this->once())
@@ -92,11 +129,11 @@ class CommentRepositoryTest extends TestCase
         $commentId = 999;
 
         $selectMock = $this->select;
+
         $selectMock
             ->expects($this->once())
-            ->method('__call')
-            ->with('where', [['id' => $commentId]])
-            ->willReturnSelf();
+            ->method('scope')
+            ->willReturn($selectMock);
 
         $selectMock
             ->expects($this->once())
@@ -128,7 +165,6 @@ class CommentRepositoryTest extends TestCase
     {
         $comment1 = $this->createMock(Comment::class);
         $comment2 = $this->createMock(Comment::class);
-        $nonComment = new stdClass();
 
         $this->entityManager
             ->expects($this->exactly(2))
@@ -142,7 +178,7 @@ class CommentRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('run');
 
-        $this->repository->save([$comment1, $nonComment, $comment2]);
+        $this->repository->save([$comment1, $comment2]);
     }
 
     public function testDeleteWithEmptyArray(): void
@@ -165,7 +201,6 @@ class CommentRepositoryTest extends TestCase
     {
         $comment1 = $this->createMock(Comment::class);
         $comment2 = $this->createMock(Comment::class);
-        $nonComment = new stdClass();
 
         $this->entityManager
             ->expects($this->exactly(2))
@@ -179,14 +214,14 @@ class CommentRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('run');
 
-        $this->repository->delete([$comment1, $nonComment, $comment2]);
+        $this->repository->delete([$comment1, $comment2]);
     }
 
     /**
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->select = $this->createMock(Select::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);

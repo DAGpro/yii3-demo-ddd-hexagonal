@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Unit\IdentityAccess\Access\Application\Service;
 
 use App\IdentityAccess\Access\Application\Service\PermissionDTO;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(PermissionDTO::class)]
-final class PermissionDTOTest extends TestCase
+final class PermissionDTOTest extends Unit
 {
+    protected UnitTester $tester;
+
     public function testCreatePermissionDTOWithAllFields(): void
     {
         $name = 'edit_article';

@@ -9,21 +9,29 @@ use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Throwable;
 
 #[CoversClass(UserService::class)]
-class UserServiceTest extends TestCase
+class UserServiceTest extends Unit
 {
     private const string TEST_LOGIN = 'test@example.com';
+
     private const string TEST_PASSWORD = 'test-password';
+
     private const int TEST_USER_ID = 1;
 
-    private MockObject|UserRepositoryInterface $userRepository;
-    private MockObject|UserQueryServiceInterface $userQueryService;
+    protected UnitTester $tester;
+
+    private MockObject&UserRepositoryInterface $userRepository;
+
+    private MockObject&UserQueryServiceInterface $userQueryService;
+
     private UserService $userService;
 
     /**
@@ -40,7 +48,14 @@ class UserServiceTest extends TestCase
         $this->userRepository
             ->expects($this->once())
             ->method('save')
-            ->with($this->isType('array'));
+            ->willReturnCallback(
+                function (array $users) {
+                    $user = $users[0];
+                    $this->assertInstanceOf(User::class, $user);
+                    $this->assertEquals(self::TEST_LOGIN, $user->getLogin());
+                    $this->assertTrue($user->validatePassword(self::TEST_PASSWORD));
+                },
+            );
 
         $this->userService->createUser(self::TEST_LOGIN, self::TEST_PASSWORD);
     }
@@ -88,7 +103,13 @@ class UserServiceTest extends TestCase
         $this->userRepository
             ->expects($this->once())
             ->method('delete')
-            ->with($this->isType('array'));
+            ->willReturnCallback(
+                function (array $users) {
+                    $user = $users[0];
+                    $this->assertInstanceOf(User::class, $user);
+                    $this->assertEquals(self::TEST_USER_ID, $user->getId());
+                },
+            );
 
         $this->userService->deleteUser(self::TEST_USER_ID);
     }
@@ -118,7 +139,8 @@ class UserServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    protected function setUp(): void
+    #[Override]
+    protected function _before(): void
     {
         $this->userRepository = $this->createMock(UserRepositoryInterface::class);
         $this->userQueryService = $this->createMock(UserQueryServiceInterface::class);

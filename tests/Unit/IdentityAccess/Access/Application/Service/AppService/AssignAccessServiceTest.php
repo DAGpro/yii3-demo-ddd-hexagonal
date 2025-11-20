@@ -15,11 +15,13 @@ use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\ManagerInterface;
@@ -30,15 +32,23 @@ use Yiisoft\Rbac\Role;
 use Yiisoft\Rbac\RuleFactoryInterface;
 
 #[CoversClass(AssignAccessService::class)]
-final class AssignAccessServiceTest extends TestCase
+final class AssignAccessServiceTest extends Unit
 {
+    private static ?ItemsStorageInterface $storage = null;
+
+    private static ?AssignmentsStorageInterface $assignmentsStorage = null;
+
+    private static ?string $tempDir = null;
+
+    protected UnitTester $tester;
+
     private AssignAccessService $assignService;
+
     private ManagerInterface $manager;
+
     private AccessRightsServiceInterface $accessRightsService;
-    private ItemsStorageInterface $storage;
+
     private AssignmentsServiceInterface $assignmentsService;
-    private AssignmentsStorage $assignmentsStorage;
-    private string $tempDir;
 
     /**
      * @throws AssignedItemException
@@ -96,10 +106,110 @@ final class AssignAccessServiceTest extends TestCase
         $permissionDTO = new PermissionDTO('create_post', 'Create Post');
         $userId = 1;
 
-        $this->manager->addPermission(new Permission('create_post')->withDescription('Create Post'));
+        $this->manager->addPermission(
+            new Permission('create_post')
+                ->withDescription('Create Post'),
+        );
 
+        // Test assigning permission
         $this->assignService->assignPermission($permissionDTO, $userId);
         $this->assertTrue($this->assignmentsService->userHasPermission($userId, 'create_post'));
+
+        // Verify the permission is in user's assignments
+        $user = new User('test', 'password');
+        $reflection = new ReflectionClass($user);
+        $property = $reflection->getProperty('id');
+        $property->setValue($user, $userId);
+
+        $userAssignments = $this->assignmentsService->getUserAssignments($user);
+        $this->assertTrue($userAssignments->existPermissions());
+        $this->assertArrayHasKey('create_post', $userAssignments->getPermissions());
+    }
+
+    /**
+     * @throws AssignedItemException
+     */
+    public function testAssignPermissionThrowsExceptionWhenPermissionDoesNotExist(): void
+    {
+        $permissionDTO = new PermissionDTO('nonexistent', 'Nonexistent Permission');
+        $userId = 1;
+
+        $this->expectException(NotExistItemException::class);
+        $this->expectExceptionMessage('This permission does not exist!');
+
+        $this->assignService->assignPermission($permissionDTO, $userId);
+    }
+
+    /**
+     * @throws NotExistItemException
+     * @throws AssignedItemException
+     */
+    public function testAssignPermissionThrowsExceptionWhenAlreadyAssigned(): void
+    {
+        $permissionDTO = new PermissionDTO('create_post', 'Create Post');
+        $userId = 1;
+
+        $this->manager->addPermission(new Permission('create_post'));
+        $this->assignService->assignPermission($permissionDTO, $userId);
+
+        $this->expectException(AssignedItemException::class);
+        $this->expectExceptionMessage('The permission has already been assigned to the user!');
+
+        $this->assignService->assignPermission($permissionDTO, $userId);
+    }
+
+    /**
+     * @throws NotExistItemException
+     * @throws AssignedItemException
+     */
+    public function testRevokePermissionSuccessfully(): void
+    {
+        $permissionDTO = new PermissionDTO('create_post', 'Create Post');
+        $userId = 1;
+
+        // Add permission and assign it to user
+        $this->manager->addPermission(new Permission('create_post'));
+        $this->assignService->assignPermission($permissionDTO, $userId);
+        $this->assertTrue($this->assignmentsService->userHasPermission($userId, 'create_post'));
+
+        // Revoke the permission
+        $this->assignService->revokePermission($permissionDTO, $userId);
+
+        // Verify permission was revoked
+        $this->assertFalse($this->assignmentsService->userHasPermission($userId, 'create_post'));
+
+        $user = new User('test', 'password');
+        $reflection = new ReflectionClass($user);
+        $property = $reflection->getProperty('id');
+        $property->setValue($user, $userId);
+
+        $userAssignments = $this->assignmentsService->getUserAssignments($user);
+        $this->assertEmpty($userAssignments->getPermissions());
+    }
+
+    public function testRevokePermissionThrowsExceptionWhenNotAssigned(): void
+    {
+        $permissionDTO = new PermissionDTO('create_post', 'Create Post');
+        $userId = 1;
+
+        // Add permission but don't assign it
+        $this->manager->addPermission(new Permission('create_post'));
+
+        $this->expectException(AssignedItemException::class);
+        $this->expectExceptionMessage('The permission was not previously assigned to the user!');
+
+        $this->assignService->revokePermission($permissionDTO, $userId);
+    }
+
+    public function testRevokePermissionThrowsExceptionWhenPermissionDoesNotExist(): void
+    {
+        $permissionDTO = new PermissionDTO('nonexistent', 'Nonexistent Permission');
+        $userId = 1;
+
+        $this->expectException(AssignedItemException::class);
+        $this->expectExceptionMessage('The permission was not previously assigned to the user!');
+
+        $this->assignService->revokePermission($permissionDTO, $userId);
     }
 
     /**
@@ -145,7 +255,6 @@ final class AssignAccessServiceTest extends TestCase
         $user = new User('login', 'password');
         $reflection = new ReflectionClass($user);
         $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
         $property->setValue($user, 1);
 
         $userAssignments = $this->assignmentsService->getUserAssignments($user);
@@ -176,27 +285,25 @@ final class AssignAccessServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
-        $this->tempDir = sys_get_temp_dir() . '/test_' . uniqid('', true);
-        mkdir($this->tempDir, 0777, true);
+        $this->getItemStorage();
+        $this->getAssignmentsStorage();
 
-        $this->storage = new ItemsStorage($this->tempDir . '/items.php');
-        $this->assignmentsStorage = new AssignmentsStorage($this->tempDir . '/assignments.php');
         $this->manager = new Manager(
-            $this->storage,
-            $this->assignmentsStorage,
+            $this->getItemStorage(),
+            $this->getAssignmentsStorage(),
             $this->createMock(RuleFactoryInterface::class),
             true,
         );
 
         $this->accessRightsService = new AccessRightsService(
             $this->manager,
-            $this->storage,
+            $this->getItemStorage(),
         );
 
         $this->assignmentsService = new AssignmentsService(
-            $this->assignmentsStorage,
+            $this->getAssignmentsStorage(),
             $this->accessRightsService,
             $this->createMock(UserQueryServiceInterface::class),
             $this->manager,
@@ -205,28 +312,45 @@ final class AssignAccessServiceTest extends TestCase
         $this->assignService = new AssignAccessService(
             $this->manager,
             $this->accessRightsService,
-            $this->assignmentsStorage,
+            $this->getAssignmentsStorage(),
             $this->assignmentsService,
         );
     }
 
     #[Override]
-    protected function tearDown(): void
+    protected function _after(): void
     {
-        $this->removeDirectory($this->tempDir);
+        $this->getItemStorage()->clear();
+        $this->getAssignmentsStorage()->clear();
     }
 
-    private function removeDirectory(string $dir): void
+    private function initTempDir(): string
     {
-        if (!is_dir($dir)) {
-            return;
+        if (self::$tempDir === null) {
+            self::$tempDir = sys_get_temp_dir() . '/test_' . uniqid('', true);
+            mkdir(self::$tempDir, 0777, true);
+            return self::$tempDir;
         }
 
-        $files = array_diff(scandir($dir), ['.', '..']);
-        foreach ($files as $file) {
-            $path = $dir . '/' . $file;
-            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
+        return self::$tempDir;
+    }
+
+    private function getItemStorage(): ItemsStorageInterface
+    {
+        $dir = $this->initTempDir();
+        if (self::$storage === null) {
+            self::$storage = new ItemsStorage($dir . '/items.php');
+            return self::$storage;
         }
-        rmdir($dir);
+        return self::$storage;
+    }
+
+    private function getAssignmentsStorage(): AssignmentsStorageInterface
+    {
+        $dir = $this->initTempDir();
+        if (self::$assignmentsStorage === null) {
+            self::$assignmentsStorage = new AssignmentsStorage($dir . '/assignments.php');
+        }
+        return self::$assignmentsStorage;
     }
 }

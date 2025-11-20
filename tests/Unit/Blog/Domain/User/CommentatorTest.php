@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Blog\Domain\User;
 
 use App\Blog\Domain\User\Commentator;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Commentator::class)]
-final class CommentatorTest extends TestCase
+final class CommentatorTest extends Unit
 {
     private const int TEST_ID = 1;
     private const string TEST_NAME = 'Test Commentator';
+
+    protected UnitTester $tester;
 
     private Commentator $commentator;
 
@@ -57,7 +60,7 @@ final class CommentatorTest extends TestCase
     }
 
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->commentator = new Commentator(self::TEST_ID, self::TEST_NAME);
     }

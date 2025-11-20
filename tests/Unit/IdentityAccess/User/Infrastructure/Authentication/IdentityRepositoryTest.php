@@ -7,20 +7,26 @@ namespace App\Tests\Unit\IdentityAccess\User\Infrastructure\Authentication;
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
 use App\IdentityAccess\User\Infrastructure\Authentication\IdentityRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\Select;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
 
 #[CoversClass(IdentityRepository::class)]
-final class IdentityRepositoryTest extends TestCase
+final class IdentityRepositoryTest extends Unit
 {
-    private Select|MockObject $select;
-    private EntityManager|MockObject $entityManager;
+    protected UnitTester $tester;
+
+    private Select&MockObject $select;
+
+    private EntityManager&MockObject $entityManager;
+
     private IdentityRepository $repository;
 
     public function testFindIdentityWithExistingId(): void
@@ -82,6 +88,9 @@ final class IdentityRepositoryTest extends TestCase
         $this->assertNull($result);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testSaveIdentity(): void
     {
         $identity = $this->createMock(Identity::class);
@@ -95,9 +104,28 @@ final class IdentityRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('run');
 
-        $this->repository->save($identity);
+        $this->repository->save([$identity]);
     }
 
+    /**
+     * @throws Throwable
+     */
+    public function testSaveIdentityWithEmptyArray(): void
+    {
+        $this->entityManager
+            ->expects($this->never())
+            ->method('persist');
+
+        $this->entityManager
+            ->expects($this->never())
+            ->method('run');
+
+        $this->repository->save([]);
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function testFindOrCreateWithExistingIdentity(): void
     {
         $user = $this->createMock(User::class);
@@ -157,6 +185,9 @@ final class IdentityRepositoryTest extends TestCase
         $this->assertSame($newIdentity, $result);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testFindOrCreateWithNullUserId(): void
     {
         $user = $this->createMock(User::class);
@@ -171,6 +202,9 @@ final class IdentityRepositoryTest extends TestCase
         $this->repository->findOrCreate($user);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testFindOrCreateWhenIdentityNotFoundAfterCreation(): void
     {
         $user = $this->createMock(User::class);
@@ -192,10 +226,79 @@ final class IdentityRepositoryTest extends TestCase
         $this->repository->findOrCreate($user);
     }
 
-    protected function setUp(): void
+
+    /**
+     * @throws Throwable
+     */
+    public function testDeleteSingleIdentity(): void
+    {
+        $identity = $this->createMock(Identity::class);
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('delete')
+            ->with($identity);
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('run');
+
+        $this->repository->delete([$identity]);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testDeleteMultipleIdentities(): void
+    {
+        $identity1 = $this->createMock(Identity::class);
+        $identity2 = $this->createMock(Identity::class);
+
+        $deleteCalls = [];
+        $this->entityManager
+            ->expects($this->exactly(2))
+            ->method('delete')
+            ->willReturnCallback(function ($identity) use (&$deleteCalls) {
+                $deleteCalls[] = $identity;
+                return $this->entityManager;
+            });
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('run');
+
+        $this->repository->delete([$identity1, $identity2]);
+
+        $this->assertCount(2, $deleteCalls);
+        $this->assertContains($identity1, $deleteCalls);
+        $this->assertContains($identity2, $deleteCalls);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testDeleteWithEmptyArray(): void
+    {
+        $this->entityManager
+            ->expects($this->never())
+            ->method('delete');
+
+        $this->entityManager
+            ->expects($this->never())
+            ->method('run');
+
+        $this->repository->delete([]);
+    }
+
+    #[Override]
+    protected function _before(): void
     {
         $this->select = $this->createMock(Select::class);
         $this->entityManager = $this->createMock(EntityManager::class);
-        $this->repository = new IdentityRepository($this->select, $this->entityManager);
+
+        $this->repository = new IdentityRepository(
+            $this->select,
+            $this->entityManager,
+        );
     }
 }

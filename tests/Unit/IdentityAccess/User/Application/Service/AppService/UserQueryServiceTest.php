@@ -7,19 +7,71 @@ namespace App\Tests\Unit\IdentityAccess\User\Application\Service\AppService;
 use App\IdentityAccess\User\Application\Service\AppService\UserQueryService;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\ORM\Select;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 
 #[CoversClass(UserQueryService::class)]
-class UserQueryServiceTest extends TestCase
+class UserQueryServiceTest extends Unit
 {
     private const int TEST_USER_ID = 1;
+
     private const string TEST_LOGIN = 'test@example.com';
 
-    private UserRepositoryInterface|MockObject $userRepository;
+    protected UnitTester $tester;
+
+    private UserRepositoryInterface&MockObject $userRepository;
+
     private UserQueryService $userQueryService;
+
+    private Select&MockObject $select;
+
+    public function testFindAllPreloaded(): void
+    {
+        $selectResult = [
+            new User('user1', 'password1'),
+            new User('user2', 'password2'),
+            new User('user3', 'password3'),
+        ];
+
+        $this->select
+            ->method('__call')
+            ->willReturnCallback(
+                function (string $method, array $arguments) {
+                    if ($method === 'getDriver') {
+                        $driverMock = $this->createMock(DriverInterface::class);
+                        $driverMock
+                            ->expects($this->once())
+                            ->method('getType')
+                            ->willReturn('SQLite');
+                        return $driverMock;
+                    }
+                    return $this->select;
+                },
+            );
+        $this->select
+            ->method('fetchAll')
+            ->willReturnCallback(
+                fn() => $selectResult,
+            );
+
+        $this->userRepository
+            ->expects($this->once())
+            ->method('findAllPreloaded')
+            ->willReturn(new EntityReader($this->select));
+
+        $dataReader = $this->userQueryService->findAllPreloaded();
+
+        $sortDataReader = $dataReader->getSort();
+        $this->assertNull($sortDataReader);
+        $this->assertEquals($selectResult, $dataReader->read());
+    }
 
     /**
      * @throws Exception
@@ -123,8 +175,10 @@ class UserQueryServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    protected function setUp(): void
+    #[Override]
+    protected function _before(): void
     {
+        $this->select = $this->createMock(Select::class);
         $this->userRepository = $this->createMock(UserRepositoryInterface::class);
         $this->userQueryService = new UserQueryService($this->userRepository);
     }

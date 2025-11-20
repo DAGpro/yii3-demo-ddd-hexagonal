@@ -2,22 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\IdentityAccess\Middleware;
+namespace App\Tests\Unit\IdentityAccess\ContextMap\Middleware;
 
 use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
-use App\IdentityAccess\AuthService\AuthenticationService;
-use App\IdentityAccess\AuthService\AuthorizationService;
-use App\IdentityAccess\Middleware\AccessRoleChecker;
+use App\IdentityAccess\ContextMap\AuthService\AuthenticationService;
+use App\IdentityAccess\ContextMap\AuthService\AuthorizationService;
+use App\IdentityAccess\ContextMap\Middleware\AccessRoleChecker;
 use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
 use App\IdentityAccess\User\Infrastructure\Authentication\IdentityRepositoryInterface;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use InvalidArgumentException;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -25,24 +26,33 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use RuntimeException;
-use Yiisoft\Auth\IdentityInterface;
 use Yiisoft\Http\Status;
 use Yiisoft\Session\SessionInterface;
 use Yiisoft\User\CurrentUser;
 
 #[CoversClass(AccessRoleChecker::class)]
-class AccessRoleCheckerTest extends TestCase
+class AccessRoleCheckerTest extends Unit
 {
+    private static ?User $user = null;
+
+    protected UnitTester $tester;
+
     private AuthenticationService $authenticationService;
+
     private AuthorizationService $authorizationService;
-    private ResponseFactoryInterface $responseFactory;
-    private ServerRequestInterface $request;
-    private RequestHandlerInterface $handler;
-    private ResponseInterface $response;
+
+    private ResponseFactoryInterface&MockObject $responseFactory;
+
+    private ServerRequestInterface&MockObject $request;
+
+    private RequestHandlerInterface&MockObject $handler;
+
+    private ResponseInterface&MockObject $response;
+
     private Identity $identity;
-    private User $user;
 
     private IdentityRepositoryInterface&MockObject $identityRepository;
+
     private AssignmentsServiceInterface&MockObject $assignmentsService;
 
     public function testProcessWithoutRoleThrowsException(): void
@@ -84,7 +94,6 @@ class AccessRoleCheckerTest extends TestCase
      */
     public function testProcessWithUnauthorizedRoleReturnsForbidden(): void
     {
-        $user = $this->createMock(IdentityInterface::class);
         $this->identityRepository
             ->expects($this->once())
             ->method('findIdentity')
@@ -169,13 +178,11 @@ class AccessRoleCheckerTest extends TestCase
         // Проверяем, что оригинальный объект не изменился
         $reflection = new ReflectionClass($checker);
         $roleProperty = $reflection->getProperty('role');
-        $roleProperty->setAccessible(true);
         $this->assertNull($roleProperty->getValue($checker));
 
         // Проверяем, что в новом объекте роль установлена
         $newReflection = new ReflectionClass($newChecker);
         $newRoleProperty = $newReflection->getProperty('role');
-        $newRoleProperty->setAccessible(true);
         $this->assertSame('admin', $newRoleProperty->getValue($newChecker));
     }
 
@@ -183,16 +190,17 @@ class AccessRoleCheckerTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
-        $user = new User('admin', 'admin');
-        $reflection = new ReflectionClass($user);
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($user, 1);
-        $this->user = $user;
+        if (self::$user === null) {
+            $user = new User('admin', 'admin');
+            $reflection = new ReflectionClass($user);
+            $property = $reflection->getProperty('id');
+            $property->setValue($user, 1);
+            self::$user = $user;
+        }
 
-        $this->identity = new Identity($this->user);
+        $this->identity = new Identity(self::$user);
         $this->identityRepository = $this->createMock(IdentityRepositoryInterface::class);
 
         $currentUser = new CurrentUser(

@@ -8,24 +8,25 @@ use App\Blog\Application\Service\AppService\QueryService\ModeratePostQueryServic
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
-use App\Blog\Infrastructure\Persistence\Post\PostRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\Select;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Yiisoft\Data\Reader\DataReaderInterface;
+use Yiisoft\Data\Cycle\Reader\EntityReader;
 
 
 #[CoversClass(ModeratePostQueryService::class)]
-final class ModeratePostQueryServiceTest extends TestCase
+final class ModeratePostQueryServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private ModeratePostQueryService $service;
 
-    private PostRepositoryInterface $postRepository;
+    private PostRepositoryInterface&MockObject $postRepository;
 
     private Select&MockObject $select;
 
@@ -33,38 +34,66 @@ final class ModeratePostQueryServiceTest extends TestCase
     {
         $query = $this->select;
         $query
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('__call')
             ->willReturnCallback(
-                function ($method, $arguments) use ($query) {
+                function (string $method, array $arguments) use ($query) {
                     if ($method === 'getDriver') {
                         $driverMock = $this
                             ->createMock(DriverInterface::class);
                         $driverMock
                             ->expects($this->once())
                             ->method('getType')
-                            ->willReturn('MySQL');
+                            ->willReturn('SQLite');
                         return $driverMock;
                     }
-                    if ($method === 'andWhere') {
-                        $this->assertIsArray($arguments);
-                        $this->assertSame('deleted_at', $arguments[0]);
-                        $this->assertSame('=', $arguments[1]);
-                        $this->assertNull($arguments[2]);
+
+                    if ($method === 'orderBy') {
+                        $this->assertEquals('orderBy', $method);
+                        $this->assertEquals(
+                            [
+                                [
+                                    'id' => 'ASC',
+                                    'title' => 'ASC',
+                                    'public' => 'ASC',
+                                    'author_name' => 'ASC',
+                                ],
+                            ],
+                            $arguments,
+                        );
                     }
+
                     return $query;
                 },
             );
 
+        $author = $this->createMock(Author::class);
+        $selectResult = [
+            new Post('title', 'content', $author),
+            new Post('title 2', 'content 2', $author),
+        ];
+
         $query
             ->expects($this->once())
-            ->method('load')
-            ->with(['tags'])
-            ->willReturn($query);
+            ->method('fetchAll')
+            ->willReturn(
+                $selectResult,
+            );
 
-        $result = $this->service->findAllPreloaded();
+        $this->postRepository
+            ->expects($this->once())
+            ->method('getAllForModerationWithPreloadedTags')
+            ->willReturn(new EntityReader($query));
 
-        $this->assertInstanceOf(DataReaderInterface::class, $result);
+        $dataReader = $this->service->findAllPreloaded();
+
+        $sortDataReader = $dataReader->getSort();
+        $this->assertEquals(
+            ['id' => 'asc', 'title' => 'asc', 'public' => 'asc', 'author_name' => 'asc'],
+            $sortDataReader->getDefaultOrder(),
+        );
+        $this->assertEquals(['published_at' => 'desc'], $sortDataReader->getOrder());
+        $this->assertEquals($selectResult, $dataReader->read());
     }
 
     public function testGetPostWhenPostExists(): void
@@ -72,31 +101,10 @@ final class ModeratePostQueryServiceTest extends TestCase
         $postId = 1;
         $post = new Post('Test Post', 'Test content', new Author(1, 'Test Author'));
 
-        $query = $this->select;
-        $query
-            ->expects($this->exactly(2))
-            ->method('__call')
-            ->willReturnCallback(
-                function ($method, $arguments) use ($query, $postId) {
-                    if ($method === 'andWhere' && $arguments[0] === 'id') {
-                        $this->assertIsArray($arguments);
-                        $this->assertSame('id', $arguments[0]);
-                        $this->assertSame('=', $arguments[1]);
-                        $this->assertSame($postId, $arguments[2]);
-                    }
-                    if ($method === 'andWhere' && $arguments[0] === 'deleted_at') {
-                        $this->assertIsArray($arguments);
-                        $this->assertSame('deleted_at', $arguments[0]);
-                        $this->assertSame('=', $arguments[1]);
-                        $this->assertNull($arguments[2]);
-                    }
-                    return $query;
-                },
-            );
-
-        $query
+        $this->postRepository
             ->expects($this->once())
-            ->method('fetchOne')
+            ->method('findByIdForModeration')
+            ->with($postId)
             ->willReturn($post);
 
         $result = $this->service->getPost($postId);
@@ -106,34 +114,12 @@ final class ModeratePostQueryServiceTest extends TestCase
 
     public function testGetPostWhenPostNotExists(): void
     {
-        // Arrange
         $postId = 999;
 
-        $query = $this->select;
-        $query
-            ->expects($this->exactly(2))
-            ->method('__call')
-            ->willReturnCallback(
-                function ($method, $arguments) use ($query, $postId) {
-                    if ($method === 'andWhere' && $arguments[0] === 'id') {
-                        $this->assertIsArray($arguments);
-                        $this->assertSame('id', $arguments[0]);
-                        $this->assertSame('=', $arguments[1]);
-                        $this->assertSame($postId, $arguments[2]);
-                    }
-                    if ($method === 'andWhere' && $arguments[0] === 'deleted_at') {
-                        $this->assertIsArray($arguments);
-                        $this->assertSame('deleted_at', $arguments[0]);
-                        $this->assertSame('=', $arguments[1]);
-                        $this->assertNull($arguments[2]);
-                    }
-                    return $query;
-                },
-            );
-
-        $this->select
+        $this->postRepository
             ->expects($this->once())
-            ->method('fetchOne')
+            ->method('findByIdForModeration')
+            ->with($postId)
             ->willReturn(null);
 
         $result = $this->service->getPost($postId);
@@ -145,12 +131,10 @@ final class ModeratePostQueryServiceTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
-        $this->postRepository = new PostRepository(
-            $this->select = $this->createMock(Select::class),
-            $this->createMock(EntityManagerInterface::class),
-        );
+        $this->select = $this->createMock(Select::class);
+        $this->postRepository = $this->createMock(PostRepositoryInterface::class);
 
         $this->service = new ModeratePostQueryService($this->postRepository);
     }

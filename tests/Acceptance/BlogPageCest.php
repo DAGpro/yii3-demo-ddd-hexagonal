@@ -27,7 +27,7 @@ final class BlogPageCest
             // If there are posts, check for post elements
             $I->seeElement('.post-preview');
             $I->seeElement('.pagination');
-        } catch (Exception $e) {
+        } catch (Exception) {
             // If no posts found, check for 'no records' message
             $I->see('No records', '.empty');
         }

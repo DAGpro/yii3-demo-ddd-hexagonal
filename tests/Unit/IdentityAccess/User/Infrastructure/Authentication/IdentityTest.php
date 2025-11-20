@@ -6,15 +6,20 @@ namespace App\Tests\Unit\IdentityAccess\User\Infrastructure\Authentication;
 
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Yiisoft\User\Login\Cookie\CookieLoginIdentityInterface;
 
 #[CoversClass(Identity::class)]
-final class IdentityTest extends TestCase
+final class IdentityTest extends Unit
 {
-    private User|MockObject $user;
+    protected UnitTester $tester;
+
+    private User&MockObject $user;
+
     private Identity $identity;
 
     public function testImplementsCookieLoginIdentityInterface(): void
@@ -56,10 +61,9 @@ final class IdentityTest extends TestCase
         $this->assertSame(32, strlen($newKey));
     }
 
-    protected function setUp(): void
+    #[Override]
+    protected function _before(): void
     {
-        parent::setUp();
-
         $this->user = $this->createMock(User::class);
         $this->identity = new Identity($this->user);
     }

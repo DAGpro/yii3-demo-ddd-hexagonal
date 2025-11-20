@@ -7,6 +7,7 @@ use App\Infrastructure\Presentation\Web\ViewInjection\LayoutViewInjection;
 use App\Infrastructure\Presentation\Web\ViewInjection\LinkTagsViewInjection;
 use App\Infrastructure\Presentation\Web\ViewInjection\MetaTagsViewInjection;
 use Cycle\Database\Config\SQLite\FileConnectionConfig;
+use Cycle\Database\Config\SQLite\MemoryConnectionConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Schema\Provider\PhpFileSchemaProvider;
 use Yiisoft\Assets\AssetManager;
@@ -120,12 +121,16 @@ return [
             'aliases' => [],
             'databases' => [
                 'default' => ['connection' => 'sqlite'],
+                'test-sqlite' => ['connection' => 'test-sqlite'],
             ],
             'connections' => [
                 'sqlite' => new SQLiteDriverConfig(
                     connection: new FileConnectionConfig(
                         database: 'runtime/database.db',
                     ),
+                ),
+                'test-sqlite' => new SQLiteDriverConfig(
+                    connection: new MemoryConnectionConfig(),
                 ),
             ],
         ],

@@ -6,13 +6,16 @@ namespace App\Tests\Unit\IdentityAccess\Access\Application\Service;
 
 use App\IdentityAccess\Access\Application\Service\PermissionDTO;
 use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 #[CoversClass(RoleDTO::class)]
-final class RoleDTOTest extends TestCase
+final class RoleDTOTest extends Unit
 {
+    protected UnitTester $tester;
+
     public function testCreateRoleDTOWithAllFields(): void
     {
         $name = 'admin';
@@ -113,12 +116,88 @@ final class RoleDTOTest extends TestCase
     public function testGetNestedRolesNameEmpty(): void
     {
         $dto = new RoleDTO('admin');
-        // Инициализируем пустой массив nestedRoles
         $reflection = new ReflectionClass($dto);
         $property = $reflection->getProperty('nestedRoles');
-        $property->setAccessible(true);
         $property->setValue($dto, []);
 
         $this->assertSame('', $dto->getNestedRolesName());
+    }
+
+    public function testGetNestedRolesName(): void
+    {
+        $role1 = new RoleDTO('moderator');
+        $role2 = new RoleDTO('editor');
+        
+        $dto = new RoleDTO('admin');
+        $dto->withNestedRoles([$role1, $role2]);
+
+        $this->assertSame('moderator, editor', $dto->getNestedRolesName());
+    }
+
+    public function testGetChildPermissionsName(): void
+    {
+        $permission1 = new PermissionDTO('create_post');
+        $permission2 = new PermissionDTO('edit_post');
+        
+        $dto = new RoleDTO('admin');
+        $dto->withChildPermissions([$permission1, $permission2]);
+
+        $this->assertSame('create_post, edit_post', $dto->getChildPermissionsName());
+    }
+
+    public function testGetChildPermissionsNameEmpty(): void
+    {
+        $dto = new RoleDTO('admin');
+        $dto->withChildPermissions([]);
+
+        $this->assertSame('', $dto->getChildPermissionsName());
+    }
+
+    public function testGetNestedPermissionsName(): void
+    {
+        $permission1 = new PermissionDTO('create_post');
+        $permission2 = new PermissionDTO('edit_post');
+        
+        $dto = new RoleDTO('admin');
+        $dto->withNestedPermissions(['create' => $permission1, 'edit' => $permission2]);
+
+        $this->assertSame('create_post, edit_post', $dto->getNestedPermissionsName());
+    }
+
+    public function testGetNestedPermissionsNameEmpty(): void
+    {
+        $dto = new RoleDTO('admin');
+        $reflection = new ReflectionClass($dto);
+        $property = $reflection->getProperty('nestedPermissions');
+        $property->setValue($dto, []);
+
+        $this->assertSame('', $dto->getNestedPermissionsName());
+    }
+
+    public function testGetChildRolesNameWithPermissionName(): void
+    {
+        $role1 = new RoleDTO('moderator');
+        $role2 = new RoleDTO('editor');
+        $permission1 = new PermissionDTO('create_post');
+        $permission2 = new PermissionDTO('edit_post');
+        
+        $dto = new RoleDTO('admin');
+        $dto->withChildRoles([$role1, $role2]);
+        $dto->withChildPermissions([$permission1, $permission2]);
+
+        $expected = [
+            'moderator[ permissions: create_post, edit_post]',
+            'editor[ permissions: create_post, edit_post]'
+        ];
+        
+        $this->assertSame($expected, $dto->getChildRolesNameWithPermissionName());
+    }
+
+    public function testGetChildRolesNameWithPermissionNameEmpty(): void
+    {
+        $dto = new RoleDTO('admin');
+        $dto->withChildRoles([]);
+        
+        $this->assertSame([], $dto->getChildRolesNameWithPermissionName());
     }
 }

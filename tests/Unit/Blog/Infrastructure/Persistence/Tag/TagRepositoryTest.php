@@ -6,6 +6,9 @@ namespace App\Tests\Unit\Blog\Infrastructure\Persistence\Tag;
 
 use App\Blog\Domain\Tag;
 use App\Blog\Infrastructure\Persistence\Tag\TagRepository;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\ORMInterface;
@@ -13,20 +16,46 @@ use Cycle\ORM\Select;
 use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Yiisoft\Data\Reader\DataReaderInterface;
 
-class TagRepositoryTest extends TestCase
+class TagRepositoryTest extends Unit
 {
+    protected UnitTester $tester;
+
     private TagRepository $repository;
     private Select&MockObject $select;
     private EntityManagerInterface&MockObject $entityManager;
     private ORMInterface&MockObject $orm;
 
+    public function testFindAllPreloaded()
+    {
+        $this->select
+            ->expects($this->once())
+            ->method('__call')
+            ->willReturnCallback(
+                function (string $method, array $arguments) {
+                    if ($method === 'getDriver') {
+                        $driverMock = $this
+                            ->createMock(DriverInterface::class);
+                        $driverMock
+                            ->expects($this->once())
+                            ->method('getType')
+                            ->willReturn('SQLite');
+                        return $driverMock;
+                    }
+                    return $this->select;
+                },
+            );
+
+        $dataReader = $this->repository->findAllPreloaded();
+
+        $this->assertInstanceOf(DataReaderInterface::class, $dataReader);
+    }
+
     public function testGetOrCreateWithNewTag(): void
     {
         $label = 'test-tag';
 
-        // Настройка моков
         $this->select
             ->expects($this->once())
             ->method('__call')
@@ -38,11 +67,8 @@ class TagRepositoryTest extends TestCase
             ->method('fetchOne')
             ->willReturn(null);
 
-        // Вызов тестируемого метода
         $tag = $this->repository->getOrCreate($label);
 
-        // Проверки
-        $this->assertInstanceOf(Tag::class, $tag);
         $this->assertSame($label, $tag->getLabel());
     }
 
@@ -51,7 +77,6 @@ class TagRepositoryTest extends TestCase
         $label = 'existing-tag';
         $existingTag = new Tag($label);
 
-        // Настройка моков
         $this->select
             ->expects($this->once())
             ->method('__call')
@@ -63,10 +88,8 @@ class TagRepositoryTest extends TestCase
             ->method('fetchOne')
             ->willReturn($existingTag);
 
-        // Вызов тестируемого метода
         $tag = $this->repository->getOrCreate($label);
 
-        // Проверки
         $this->assertSame($existingTag, $tag);
     }
 
@@ -75,7 +98,6 @@ class TagRepositoryTest extends TestCase
         $label = 'test-find';
         $expectedTag = new Tag($label);
 
-        // Настройка моков
         $this->select
             ->expects($this->once())
             ->method('__call')
@@ -87,10 +109,8 @@ class TagRepositoryTest extends TestCase
             ->method('fetchOne')
             ->willReturn($expectedTag);
 
-        // Вызов тестируемого метода
         $tag = $this->repository->findByLabel($label);
 
-        // Проверки
         $this->assertSame($expectedTag, $tag);
     }
 
@@ -98,7 +118,6 @@ class TagRepositoryTest extends TestCase
     {
         $label = 'non-existent';
 
-        // Настройка моков
         $this->select
             ->expects($this->once())
             ->method('__call')
@@ -110,10 +129,8 @@ class TagRepositoryTest extends TestCase
             ->method('fetchOne')
             ->willReturn(null);
 
-        // Вызов тестируемого метода
         $tag = $this->repository->findByLabel($label);
 
-        // Проверки
         $this->assertNull($tag);
     }
 
@@ -122,7 +139,6 @@ class TagRepositoryTest extends TestCase
         $tagId = 1;
         $expectedTag = new Tag('test-tag');
 
-        // Настройка моков
         $this->select
             ->expects($this->once())
             ->method('__call')
@@ -134,10 +150,8 @@ class TagRepositoryTest extends TestCase
             ->method('fetchOne')
             ->willReturn($expectedTag);
 
-        // Вызов тестируемого метода
         $tag = $this->repository->getTag($tagId);
 
-        // Проверки
         $this->assertSame($expectedTag, $tag);
     }
 
@@ -146,7 +160,6 @@ class TagRepositoryTest extends TestCase
         $tag = new Tag('test-save');
         $tags = [$tag];
 
-        // Настройка моков
         $this->entityManager
             ->expects($this->once())
             ->method('persist')
@@ -156,13 +169,11 @@ class TagRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('run');
 
-        // Вызов тестируемого метода
         $this->repository->save($tags);
     }
 
     public function testSaveEmptyArray(): void
     {
-        // Настройка моков - не должно быть вызовов persist и run
         $this->entityManager
             ->expects($this->never())
             ->method('persist');
@@ -171,7 +182,6 @@ class TagRepositoryTest extends TestCase
             ->expects($this->never())
             ->method('run');
 
-        // Вызов тестируемого метода с пустым массивом
         $this->repository->save([]);
     }
 
@@ -180,7 +190,6 @@ class TagRepositoryTest extends TestCase
         $tag = new Tag('test-delete');
         $tags = [$tag];
 
-        // Настройка моков
         $this->entityManager
             ->expects($this->once())
             ->method('delete')
@@ -190,13 +199,11 @@ class TagRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('run');
 
-        // Вызов тестируемого метода
         $this->repository->delete($tags);
     }
 
     public function testDeleteEmptyArray(): void
     {
-        // Настройка моков - не должно быть вызовов delete и run
         $this->entityManager
             ->expects($this->never())
             ->method('delete');
@@ -205,7 +212,6 @@ class TagRepositoryTest extends TestCase
             ->expects($this->never())
             ->method('run');
 
-        // Вызов тестируемого метода с пустым массивом
         $this->repository->delete([]);
     }
 
@@ -214,9 +220,15 @@ class TagRepositoryTest extends TestCase
      */
     public function testGetTagMentions(): void
     {
-        $limit = 5;
-
         $selectQuery = $this->createMock(SelectQuery::class);
+
+        $this->select
+            ->expects($this->exactly(2))
+            ->method('__call')
+            ->willReturnMap([
+                ['groupBy', ['posts.@.tag_id'], $this->select],
+                ['groupBy', ['label'], $this->select],
+            ]);
 
         $this->select
             ->expects($this->once())
@@ -224,29 +236,21 @@ class TagRepositoryTest extends TestCase
             ->willReturn($selectQuery);
 
         $selectQuery
-            ->expects($this->exactly(2))
-            ->method('groupBy')
-            ->willReturnMap([
-                ['posts.@.tag_id', $selectQuery],
-                ['label', $selectQuery],
-            ]);
-
-        $selectQuery
             ->expects($this->once())
             ->method('columns')
             ->with(['label', 'count(*) count'])
             ->willReturn($selectQuery);
 
-        $result = $this->repository->getTagMentions($limit);
+        $result = $this->repository->getTagMentions();
 
-        $this->assertInstanceOf(SelectQuery::class, $result);
+        $this->assertInstanceOf(DataReaderInterface::class, $result);
     }
 
     /**
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->select = $this->createMock(Select::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);

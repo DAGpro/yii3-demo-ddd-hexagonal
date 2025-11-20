@@ -13,15 +13,17 @@ use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(CommentService::class)]
-final class CommentServiceTest extends TestCase
+final class CommentServiceTest extends Unit
 {
+    protected UnitTester $tester;
+
     private CommentService $service;
 
     private CommentRepositoryInterface&MockObject $commentRepository;
@@ -31,8 +33,11 @@ final class CommentServiceTest extends TestCase
     private CommentQueryServiceInterface&MockObject $commentQueryService;
 
     private Commentator $commentator;
+
     private int $postId = 1;
+
     private int $commentId = 1;
+
     private string $commentText = 'Test comment';
 
     /**
@@ -52,14 +57,16 @@ final class CommentServiceTest extends TestCase
             ->expects($this->once())
             ->method('save')
             ->with(
-                $this->callback(function ($comments) {
-                    $this->assertIsArray($comments);
-                    $this->assertCount(1, $comments);
-                    $comment = $comments[0];
-                    $this->assertInstanceOf(Comment::class, $comment);
-                    $this->assertEquals($this->commentText, $comment->getContent());
-                    return true;
-                }),
+                $this->callback(
+                    function ($comments) {
+                        $this->assertIsArray($comments);
+                        $this->assertCount(1, $comments);
+                        $comment = $comments[0];
+                        $this->assertInstanceOf(Comment::class, $comment);
+                        $this->assertEquals($this->commentText, $comment->getContent());
+                        return true;
+                    },
+                ),
             );
 
         $this->service->add($this->postId, $this->commentText, $this->commentator);
@@ -102,13 +109,15 @@ final class CommentServiceTest extends TestCase
             ->method('save')
             ->with(
             /** @var iterable<Comment> $comments */
-                $this->callback(function (array $comments) use ($newCommentText) {
-                    $this->assertIsArray($comments);
-                    $this->assertCount(1, $comments);
-                    $updatedComment = $comments[0];
-                    $this->assertEquals($newCommentText, $updatedComment->getContent());
-                    return true;
-                }),
+                $this->callback(
+                    function (array $comments) use ($newCommentText) {
+                        $this->assertIsArray($comments);
+                        $this->assertCount(1, $comments);
+                        $updatedComment = $comments[0];
+                        $this->assertEquals($newCommentText, $updatedComment->getContent());
+                        return true;
+                    },
+                ),
             );
 
         $this->service->edit($this->commentId, $newCommentText);
@@ -130,11 +139,8 @@ final class CommentServiceTest extends TestCase
         $this->service->edit($this->commentId, $newCommentText);
     }
 
-    /**
-     * @throws Exception
-     */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->commentRepository = $this->createMock(CommentRepositoryInterface::class);
         $this->postQueryService = $this->createMock(ReadPostQueryServiceInterface::class);

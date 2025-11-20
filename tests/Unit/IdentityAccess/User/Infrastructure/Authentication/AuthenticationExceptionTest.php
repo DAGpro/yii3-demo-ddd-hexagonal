@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Unit\IdentityAccess\User\Infrastructure\Authentication;
 
 use App\IdentityAccess\User\Infrastructure\Authentication\AuthenticationException;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 #[CoversClass(AuthenticationException::class)]
-final class AuthenticationExceptionTest extends TestCase
+final class AuthenticationExceptionTest extends Unit
 {
+    protected UnitTester $tester;
+
     public function testCreateException(): void
     {
         $message = 'Authentication failed';

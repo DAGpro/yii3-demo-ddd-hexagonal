@@ -7,17 +7,23 @@ namespace App\Tests\Unit\Blog\Domain;
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Commentator;
+use App\Tests\UnitTester;
+use Codeception\Test\Unit;
 use DateTimeImmutable;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 #[CoversClass(Comment::class)]
-final class CommentTest extends TestCase
+final class CommentTest extends Unit
 {
+    protected UnitTester $tester;
+
     private Comment $comment;
-    private Post $post;
+
+    private Post&MockObject $post;
+
     private Commentator $commentator;
     private string $content = 'Test comment content';
 
@@ -43,11 +49,9 @@ final class CommentTest extends TestCase
 
     public function testToDraft(): void
     {
-        // Сначала публикуем комментарий
         $this->comment->publish();
         $this->assertTrue($this->comment->isPublic());
 
-        // Затем переводим в черновик
         $this->comment->toDraft();
 
         $this->assertFalse($this->comment->isPublic());
@@ -72,19 +76,14 @@ final class CommentTest extends TestCase
 
     public function testChangeCommentator(): void
     {
-        $newCommentator = $this->createMock(Commentator::class);
-        $this->comment->change('', null, $newCommentator);
+        $newCommentator = new Commentator(2, 'new name');
+        $this->comment->changeCommentator($newCommentator);
 
         $this->assertSame($newCommentator, $this->comment->getCommentator());
     }
 
     public function testIsCommentator(): void
     {
-        $this->commentator
-            ->method('isEqual')
-            ->with($this->commentator)
-            ->willReturn(true);
-
         $this->assertTrue($this->comment->isCommentator($this->commentator));
     }
 
@@ -105,10 +104,10 @@ final class CommentTest extends TestCase
      * @throws Exception
      */
     #[Override]
-    protected function setUp(): void
+    protected function _before(): void
     {
         $this->post = $this->createMock(Post::class);
-        $this->commentator = $this->createMock(Commentator::class);
+        $this->commentator = new Commentator(1, 'name');
 
         $this->comment = new Comment(
             $this->content,
