@@ -10,6 +10,11 @@
 
 It's intended to show and test all Yii features.
 
+[![build](https://github.com/dagpro/yii3-demo-ddd-hexagonal/workflows/build/badge.svg)](https://github.com/dagpro/yii3-demo-ddd-hexagonal/actions)
+[![Code Coverage](https://scrutinizer-ci.com/g/dagpro/yii3-demo-ddd-hexagonal/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/dagpro/yii3-demo-ddd-hexagonal/?branch=master)
+[![static analysis](https://github.com/dagpro/yii3-demo-ddd-hexagonal/workflows/static%20analysis/badge.svg)](https://github.com/dagpro/yii3-demo-ddd-hexagonal/actions?query=workflow%3A%22static+analysis%22)
+[![type-coverage](https://shepherd.dev/github/dagpro/yii3-demo-ddd-hexagonal/coverage.svg)](https://shepherd.dev/github/dagpro/yii3-demo-ddd-hexagonal)
+
 ## Installation
 
 You'll need at least PHP 8.4.
