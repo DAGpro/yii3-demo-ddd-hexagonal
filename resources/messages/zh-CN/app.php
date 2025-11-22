@@ -47,7 +47,7 @@ return [
     'view-site.other' => '其他',
     'view-site.add.random.content' => '添加随机内容',
     'view-site.add.demo.access.rights' => '添加演示访问权限',
-    'view-site.add.admin.backend' => '为用户添加后台管理权限',
+    'view-site.add.admin.backend' => '或者为当前用户添加后台管理权限',
     'view-site.assignments.list' => '分配列表',
     'view-site.user.assignments' => '用户分配',
     'view-site.access.rights.list' => '访问权限列表',
@@ -57,6 +57,7 @@ return [
     'view-site.create.and.delete.user' => '创建和删除用户',
     'view-site.list.of.routes' => '路由列表',
     'view-site.translate' => '翻译',
+    'view-site.create.user' => '创建具有管理员权限的用户',
 
     'views.no-records' => '无记录',
     'view-comment.show-more' => '显示更多',

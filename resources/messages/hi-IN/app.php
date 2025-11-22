@@ -47,7 +47,7 @@ return [
     'view-site.other' => 'अन्य',
     'view-site.add.random.content' => 'यादृच्छिक सामग्री जोड़ें',
     'view-site.add.demo.access.rights' => 'डेमो पहुंच अधिकार जोड़ें',
-    'view-site.add.admin.backend' => 'बैकएंड तक पहुंच के लिए व्यवस्थापक अधिकार जोड़ें',
+    'view-site.add.admin.backend' => 'या बैकएंड तक पहुंचने के लिए वर्तमान उपयोगकर्ता को व्यवस्थापक अधिकार जोड़ें',
     'view-site.assignments.list' => 'असाइनमेंट सूची',
     'view-site.user.assignments' => 'उपयोगकर्ता असाइनमेंट',
     'view-site.access.rights.list' => 'पहुंच अधिकार सूची',
@@ -57,6 +57,7 @@ return [
     'view-site.create.and.delete.user' => 'उपयोगकर्ता बनाएं और हटाएं',
     'view-site.list.of.routes' => 'मार्ग सूची',
     'view-site.translate' => 'अनुवाद',
+    'view-site.create.user' => 'व्यवस्थापक अधिकार सहायता से एक उपयोगकर्ता बनाएं',
 
     'views.no-records' => 'कोई रिकॉर्ड नहीं मिला',
     'view-comment.show-more' => 'और दिखाएं',

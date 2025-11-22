@@ -47,7 +47,7 @@ return [
     'view-site.other' => 'أخرى',
     'view-site.add.random.content' => 'إضافة محتوى عشوائي',
     'view-site.add.demo.access.rights' => 'إضافة صلاحيات تجريبية',
-    'view-site.add.admin.backend' => 'إضافة صلاحيات المدير للوصول إلى لوحة التحكم',
+    'view-site.add.admin.backend' => 'أو أضف صلاحيات المدير للمستخدم الحالي للوصول إلى لوحة التحكم',
     'view-site.assignments.list' => 'قائمة المهام',
     'view-site.user.assignments' => 'مهام المستخدم',
     'view-site.access.rights.list' => 'قائمة صلاحيات الوصول',
@@ -57,6 +57,7 @@ return [
     'view-site.create.and.delete.user' => 'إنشاء وحذف المستخدمين',
     'view-site.list.of.routes' => 'قائمة المسارات',
     'view-site.translate' => 'ترجمة',
+    'view-site.create.user' => 'إنشاء مستخدم بصلاحيات المدير',
 
     'views.no-records' => 'لا توجد سجلات',
     'view-comment.show-more' => 'عرض المزيد',

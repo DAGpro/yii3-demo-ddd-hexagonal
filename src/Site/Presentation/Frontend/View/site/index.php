@@ -94,6 +94,12 @@ echo Carousel::widget()
                     <code><?= "{$binPath} fixture:add [count = 10]" ?></code>
                 </div>
                 <h4 class="card-title text-muted mt-2 mb-1">
+                    <?= $translator->translate('view-site.create.user') ?>
+                </h4>
+                <div>
+                    <code><?= "{$binPath} user:create &lt;login&gt; &lt;password&gt; [isAdmin = 0]" ?></code>
+                </div>
+                <h4 class="card-title text-muted mt-2 mb-1">
                     <?= $translator->translate('view-site.add.admin.backend') ?>
                 </h4>
                 <div>
@@ -117,7 +123,7 @@ echo Carousel::widget()
                     <?= $translator->translate('view-site.assignments.list') ?>
                 </h4>
                 <div>
-                    <code><?= "{$binPath} assign:assignmentsList" ?></code>
+                    <code><?= "{$binPath} assignments:list" ?></code>
                 </div>
                 <h4 class="card-title text-muted mt-2 mb-1">
                     <?= $translator->translate('view-site.access.rights.list') ?>
@@ -129,7 +135,7 @@ echo Carousel::widget()
                     <?= $translator->translate('view-site.user.assignments') ?>
                 </h4>
                 <div>
-                    <code><?= "{$binPath} access:userAssignments &lt;userId&gt;" ?></code>
+                    <code><?= "{$binPath} assignments:user &lt;userId&gt;" ?></code>
                 </div>
                 <h4 class="card-title text-muted mt-2 mb-1">
                     <?= $translator->translate('view-site.view.role') ?>

@@ -47,7 +47,7 @@ return [
     'view-site.other' => 'Other',
     'view-site.add.random.content' => 'Add random content',
     'view-site.add.demo.access.rights' => 'Add demo access rights',
-    'view-site.add.admin.backend' => 'Add admin rights to the user to access the Backend',
+    'view-site.add.admin.backend' => 'Or add admin rights to the current user to access the Backend',
     'view-site.assignments.list' => 'Assignments list',
     'view-site.user.assignments' => 'User Assignments',
     'view-site.access.rights.list' => 'Access rights list',
@@ -57,6 +57,7 @@ return [
     'view-site.create.and.delete.user' => 'Create and delete user',
     'view-site.list.of.routes' => 'List of routes',
     'view-site.translate' => 'Translate',
+    'view-site.create.user' => 'Create user with admin rights',
 
     'views.no-records' => 'No records',
     'view-comment.show-more' => 'show more',

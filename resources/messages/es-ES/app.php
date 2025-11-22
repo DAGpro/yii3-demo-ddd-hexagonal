@@ -47,7 +47,7 @@ return [
     'view-site.other' => 'Otros',
     'view-site.add.random.content' => 'Añadir contenido aleatorio',
     'view-site.add.demo.access.rights' => 'Añadir derechos de acceso de demostración',
-    'view-site.add.admin.backend' => 'Añadir derechos de administrador para acceder al panel',
+    'view-site.add.admin.backend' => 'O agregue derechos de administrador al usuario actual para acceder al panel',
     'view-site.assignments.list' => 'Lista de asignaciones',
     'view-site.user.assignments' => 'Asignaciones de usuario',
     'view-site.access.rights.list' => 'Lista de derechos de acceso',
@@ -57,6 +57,7 @@ return [
     'view-site.create.and.delete.user' => 'Crear y eliminar usuario',
     'view-site.list.of.routes' => 'Lista de rutas',
     'view-site.translate' => 'Traducir',
+    'view-site.create.user' => 'Crear un usuario con derechos de administrador',
 
     'views.no-records' => 'No hay registros',
     'view-comment.show-more' => 'mostrar más',
