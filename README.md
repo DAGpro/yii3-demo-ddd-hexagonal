@@ -2,13 +2,18 @@
     <a href="http://www.yiiframework.com/" target="_blank">
         <img src="https://www.yiiframework.com/image/yii_logo_light.png" width="400" alt="Yii Framework" />
     </a>
-    <h1 align="center">Yii Framework Demo Project</h1>
+    <h1 align="center">Explicit Architecture on the Yii3 framework</h1>
     <br>
 </p>
 
 [Yii Framework] is a modern framework designed to be a solid foundation for your PHP application.
 
-It's intended to show and test all Yii features.
+This repository is a demo created on the basis of
+[explicit architecture post](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
+from a series of posts about
+[Software Architecture](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
+The main idea behind it is to showcase the practical application of various architectural patterns
+in a comprehensive and easily understandable way.
 
 [![build](https://github.com/dagpro/yii3-demo-ddd-hexagonal/workflows/build/badge.svg)](https://github.com/dagpro/yii3-demo-ddd-hexagonal/actions)
 [![Code Coverage](https://scrutinizer-ci.com/g/dagpro/yii3-demo-ddd-hexagonal/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/dagpro/yii3-demo-ddd-hexagonal/?branch=master)
