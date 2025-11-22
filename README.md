@@ -20,15 +20,17 @@ It's intended to show and test all Yii features.
 You'll need at least PHP 8.4.
 
 1. Clone this repository.
-2. Run `composer install` in project root directory.
-3. Run `./yii serve` (on Windows `yii serve`). The application will be started on http://localhost:8080/.
+2. Run `composer install` and `npm install` in project root directory or via docker `make init`.
+3. Run `./yii serve` (on Windows `yii serve`) or via docker `make dev`. The application will be started
+   on http://localhost:8080/.
 4. Go to index page. Cycle ORM will create tables, indexes and relations automatically in the configured DB.
    If you want to disable this behavior then comment out line with `Generator\SyncTables::class` in the
    `config/packges/yiisoft/yii-cycle/params.php`.
    In this case you should create migrations to sync changes of entities with DB.
-5. Run `./yii fixture/addAccess` to create demo access rights
-6. Run `./yii fixture/add <count>` to create some random data.
-7. Run `./yii assign/assignRole <userId> admin` add admin rights to the user to access the backend
+5. Run `./yii fixture:addAccess` or via docker `make add-fixture-access` to create demo access rights
+6. Run `./yii fixture:add <count>` or via docker `make add-fixture <count>` to create some random data.
+7. Run `./yii assign:assignRole <userId> admin` or via docker `make assign-role <userId> admin` add admin rights to the
+   user to access the backend
 
 ## Console
 
@@ -37,8 +39,8 @@ Console works out of the box and could be executed with `./yii`.
 Some commands:
 
 ```bash
-user/create <login> <password>
-fixture/add [count]
+user:create <login> <password>
+fixture:add [count]
 ```
 
 In order to register your own commands, add them to `console/params.php`, `console` → `commands` section.

@@ -6,6 +6,11 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libsqlite3-dev \
     sqlite3 \
+    curl \
+    gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install \
