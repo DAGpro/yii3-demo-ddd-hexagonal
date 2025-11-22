@@ -58,7 +58,7 @@ final class UserAssignmentsCommand extends Command
                 return ExitCode::OK;
             }
 
-            $io->success('List of user roles and permissions' . $userAssignments->getLogin());
+            $io->success('List of user roles and permissions: ' . $userAssignments->getLogin());
             $this->getUserRolesTable($io, $userAssignments->getRoles());
             $this->getUserPermissionsTable($io, $userAssignments->getPermissions());
 
