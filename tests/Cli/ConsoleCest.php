@@ -19,7 +19,7 @@ final class ConsoleCest
     public function testCommandFixtureAdd(CliTester $I): void
     {
         $command = dirname(__DIR__, 2) . '/yii';
-        $I->runShellCommand($command . ' fixture/add');
+        $I->runShellCommand($command . ' fixture:add');
         $I->seeResultCodeIs(ExitCode::OK);
     }
 
