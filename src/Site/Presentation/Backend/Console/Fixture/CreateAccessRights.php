@@ -86,19 +86,21 @@ final class CreateAccessRights extends Command
             }
 
             foreach ($adminPermissions as $permission) {
-                $this->accessManagementService->addChildPermission(new RoleDTO('admin'),
+                $this->accessManagementService->addChildPermission(
+                    new RoleDTO('admin'),
                     new PermissionDTO($permission),
                 );
             }
 
             foreach ($authorPermissions as $permission) {
-                $this->accessManagementService->addChildPermission(new RoleDTO('author'),
+                $this->accessManagementService->addChildPermission(
+                    new RoleDTO('author'),
                     new PermissionDTO($permission),
                 );
             }
         } catch (Throwable $t) {
             $io->error($t->getMessage());
-            return (int)$t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
+            return (int) $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }
         $io->success('Done');
         return ExitCode::OK;

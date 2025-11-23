@@ -24,8 +24,7 @@ final class AccessRoleChecker implements MiddlewareInterface
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly AuthenticationService $authenticationService,
         private readonly AuthorizationService $authorizationService,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -39,7 +38,7 @@ final class AccessRoleChecker implements MiddlewareInterface
             throw new InvalidArgumentException('Role not set.');
         }
 
-        if (!$this->authorizationService->userHasRole((string)$user->getId(), $this->role)) {
+        if (!$this->authorizationService->userHasRole((string) $user->getId(), $this->role)) {
             return $this->responseFactory->createResponse(Status::FORBIDDEN);
         }
 

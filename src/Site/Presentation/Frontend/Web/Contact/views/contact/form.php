@@ -38,7 +38,6 @@ $this->setTitle($translator->translate('menu.contact'));
                         ->csrf($csrf)
                         ->id('form-contact')
                         ->content(
-
                             Field::text($form, 'name')->label($translator->translate('site.form.name')),
                             Field::email($form, 'email')->label($translator->translate('site.form.email')),
                             Field::text($form, 'subject')->label($translator->translate('site.form.subject')),
@@ -62,7 +61,7 @@ $this->setTitle($translator->translate('menu.contact'));
                                 )
                                 ->containerClass('btn-group btn-toolbar float-end'),
                         )
-                    ?>
+?>
                 </div>
             </div>
         </div>

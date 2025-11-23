@@ -33,7 +33,8 @@ use Yiisoft\View\WebView;
 $tagsErrorMessages = $form->isValidated()
     ? $form->getValidationResult()->getPropertyErrorMessagesIndexedByPath('tags')
     : null;
-$tagsErrorsWithString = !empty($tagsErrorMessages) ? implode(', ',
+$tagsErrorsWithString = !empty($tagsErrorMessages) ? implode(
+    ', ',
     /** @return string[] */
     array_merge(...array_values($tagsErrorMessages)),
 ) : '';

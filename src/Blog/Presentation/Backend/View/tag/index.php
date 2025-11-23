@@ -63,7 +63,8 @@ $this->setTitle($translator->translate('backend.title.tags'));
             new DataColumn(
                 header: $translator->translate('blog.action'),
                 withSorting: true,
-                content: static fn(Tag $model): string => Form::tag()
+                content: static fn(Tag $model): string
+                    => Form::tag()
                     ->method('post')
                     ->action($url->generate('backend/tag/delete', ['tag_id' => $model->getId()]))
                     ->addAttributes(['id' => 'removeRole'])

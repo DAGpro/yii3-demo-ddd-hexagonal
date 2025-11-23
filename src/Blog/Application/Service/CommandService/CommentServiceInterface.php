@@ -9,7 +9,6 @@ use App\Blog\Domain\User\Commentator;
 
 interface CommentServiceInterface
 {
-
     /**
      * @throws BlogNotFoundException
      */

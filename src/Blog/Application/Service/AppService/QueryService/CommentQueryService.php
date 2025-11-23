@@ -17,8 +17,7 @@ final readonly class CommentQueryService implements CommentQueryServiceInterface
 
     public function __construct(
         private CommentRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function getFeedPaginator(): KeysetPaginator

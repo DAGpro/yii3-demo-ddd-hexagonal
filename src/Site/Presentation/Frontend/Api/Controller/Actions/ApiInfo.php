@@ -17,9 +17,7 @@ use Yiisoft\DataResponse\DataResponseFactoryInterface;
 #[Info(version: '2.0', title: 'Yii demo Api')]
 final readonly class ApiInfo implements MiddlewareInterface
 {
-    public function __construct(private DataResponseFactoryInterface $responseFactory)
-    {
-    }
+    public function __construct(private DataResponseFactoryInterface $responseFactory) {}
 
     #[Get(
         '/api/info/v2',

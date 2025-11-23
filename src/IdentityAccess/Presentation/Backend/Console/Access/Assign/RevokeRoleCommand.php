@@ -45,11 +45,11 @@ final class RevokeRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = (string)$input->getArgument('role');
-        $userId = (string)$input->getArgument('userId');
+        $roleName = (string) $input->getArgument('role');
+        $userId = (string) $input->getArgument('userId');
 
         try {
-            $user = $this->userQueryService->getUser((int)$userId);
+            $user = $this->userQueryService->getUser((int) $userId);
             if ($user === null || ($userId = $user->getId()) === null) {
                 throw new IdentityException('User is not found!');
             }

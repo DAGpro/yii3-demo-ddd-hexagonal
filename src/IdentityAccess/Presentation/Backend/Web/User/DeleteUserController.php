@@ -14,9 +14,7 @@ use Yiisoft\Http\Method;
 
 final readonly class DeleteUserController
 {
-    public function __construct(private WebControllerService $webService, private UserServiceInterface $userService)
-    {
-    }
+    public function __construct(private WebControllerService $webService, private UserServiceInterface $userService) {}
 
     public function remove(Request $request, LoggerInterface $logger): ?ResponseInterface
     {
@@ -27,16 +25,16 @@ final readonly class DeleteUserController
                 'The request must be a POST method and have a user_id parameter!',
                 'backend/user',
                 [],
-                'danger'
+                'danger',
             );
         }
 
         try {
-            $this->userService->deleteUser((int)$body['user_id']);
+            $this->userService->deleteUser((int) $body['user_id']);
 
             return $this->webService->sessionFlashAndRedirect(
                 'User successfully removed',
-                'backend/user'
+                'backend/user',
             );
         } catch (IdentityException $e) {
             $logger->error($e);
@@ -47,12 +45,12 @@ final readonly class DeleteUserController
 
     public function clearUsers(Request $request, LoggerInterface $logger): ?ResponseInterface
     {
-        if ( $request->getMethod() !== Method::POST) {
+        if ($request->getMethod() !== Method::POST) {
             return $this->webService->sessionFlashAndRedirect(
                 'The request must be a POST method!',
                 'backend/user',
                 [],
-                'danger'
+                'danger',
             );
         }
 

@@ -14,8 +14,7 @@ final readonly class UserService implements UserServiceInterface
 {
     public function __construct(
         private UserRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws IdentityException

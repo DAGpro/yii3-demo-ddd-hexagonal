@@ -16,7 +16,7 @@ use Yiisoft\Yii\Console\ExitCode;
 
 #[AsCommand(
     'access:removeAll',
-    'Remove all access control rights!'
+    'Remove all access control rights!',
 )]
 final class RemoveAllAccessRightsCommand extends Command
 {
@@ -43,7 +43,7 @@ final class RemoveAllAccessRightsCommand extends Command
             $io->success('Removed all access rights!');
         } catch (Throwable $t) {
             $io->error($t->getMessage());
-            return (int)$t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
+            return (int) $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }
 
         return ExitCode::OK;

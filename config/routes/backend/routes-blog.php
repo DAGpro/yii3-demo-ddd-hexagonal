@@ -17,7 +17,7 @@ return [
         ->routes(
             Group::create('/post')
                 ->routes(
-                // Post page
+                    // Post page
                     Route::get('/[page/{page:\d+}]')
                         ->name('backend/post')
                         ->middleware(Authentication::class)
@@ -74,10 +74,9 @@ return [
                 ->middleware(Authentication::class)
                 ->middleware(fn(AccessPermissionChecker $checker) => $checker->withPermission('deleteTag'))
                 ->action([TagController::class, 'delete']),
-
             Group::create('/comment')
                 ->routes(
-                // comments
+                    // comments
                     Route::get('/[page/{page}]')
                         ->name('backend/comment')
                         ->middleware(Authentication::class)
@@ -105,9 +104,11 @@ return [
                     Route::methods([Method::GET, Method::POST], '/moderate/{comment_id}')
                         ->name('backend/comment/moderate')
                         ->middleware(Authentication::class)
-                        ->middleware(fn(AccessPermissionChecker $checker)
-                            => $checker->withPermission('moderateComment',
-                        ),
+                        ->middleware(
+                            fn(AccessPermissionChecker $checker)
+                            => $checker->withPermission(
+                                'moderateComment',
+                            ),
                         )
                         ->action([CommentController::class, 'moderateComment']),
                     //Delete comments
@@ -117,6 +118,5 @@ return [
                         ->middleware(fn(AccessPermissionChecker $checker) => $checker->withPermission('deleteComment'))
                         ->action([CommentController::class, 'delete']),
                 ),
-
         ),
 ];

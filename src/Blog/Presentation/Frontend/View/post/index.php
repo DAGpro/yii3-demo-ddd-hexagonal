@@ -31,7 +31,8 @@ $this->setTitle($item->getTitle());
     <div>
         <span class="text-muted"><?= $item->getPublishedAt() === null
                 ? $translator->translate('blog.not.published.post')
-                : $translator->translate('blog.published.post',
+                : $translator->translate(
+                    'blog.published.post',
                     ['date' => $item->getPublishedAt()?->format('H:i:s d.m.Y')],
                 ) ?> by</span>
         <?php

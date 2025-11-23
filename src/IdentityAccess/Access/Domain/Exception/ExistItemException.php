@@ -6,7 +6,4 @@ namespace App\IdentityAccess\Access\Domain\Exception;
 
 use Exception;
 
-final class ExistItemException extends Exception
-{
-
-}
+final class ExistItemException extends Exception {}

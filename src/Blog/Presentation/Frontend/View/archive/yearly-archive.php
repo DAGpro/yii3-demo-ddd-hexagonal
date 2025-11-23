@@ -26,7 +26,8 @@ use Yiisoft\View\WebView;
 $this->setTitle($translator->translate('blog.archive.for-year', ['year' => $year]));
 
 ?>
-<h1><?= $translator->translate('blog.archive.for-year',
+<h1><?= $translator->translate(
+        'blog.archive.for-year',
         ['year' => '<small class="text-muted">' . $year . '</small>'],
     ) ?></h1>
 <div class="row">

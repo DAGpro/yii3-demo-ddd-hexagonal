@@ -31,7 +31,7 @@ final readonly class TagController
         ReadPostQueryServiceInterface $postQueryService,
     ): Response {
         $label = $currentRoute->getArgument('label');
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
 
         if ($label === null) {
             return $this->webService->notFound();

@@ -16,8 +16,7 @@ final readonly class AuthorPostQueryService implements AuthorPostQueryServiceInt
 {
     public function __construct(
         private PostRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * @param Author $author

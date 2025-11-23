@@ -42,14 +42,15 @@ final class ContactMailer
             'content' => $form->getPropertyValue('body'),
         ]);
 
-        $content = $this->view->render(dirname(__DIR__) . '/Contact/mail/layouts/html',
+        $content = $this->view->render(
+            dirname(__DIR__) . '/Contact/mail/layouts/html',
             ['content' => $messageContent],
         );
 
         $message = new Message(
-            from: [(string)$form->getPropertyValue('email') => (string)$form->getPropertyValue('name')],
+            from: [(string) $form->getPropertyValue('email') => (string) $form->getPropertyValue('name')],
             to: [$this->to],
-            subject: (string)$form->getPropertyValue('subject') ?: null,
+            subject: (string) $form->getPropertyValue('subject') ?: null,
             textBody: $content,
         );
 
@@ -61,7 +62,7 @@ final class ContactMailer
                     if ($uploadFile->getError() === UPLOAD_ERR_OK) {
                         $message = $message->withAddedAttachments(
                             File::fromContent(
-                                (string)$uploadFile->getStream(),
+                                (string) $uploadFile->getStream(),
                                 $uploadFile->getClientFilename(),
                                 $uploadFile->getClientMediaType(),
                             ),

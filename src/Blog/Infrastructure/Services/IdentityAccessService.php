@@ -18,8 +18,7 @@ final readonly class IdentityAccessService
         private AuthorizationService $authorizationService,
         private AuthenticationService $authenticationService,
         private UserQueryServiceInterface $userQueryService,
-    ) {
-    }
+    ) {}
 
     public function findAuthor(string $authorName): ?Author
     {

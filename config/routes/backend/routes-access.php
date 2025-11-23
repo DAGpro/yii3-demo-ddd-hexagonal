@@ -17,7 +17,7 @@ return [
         ->routes(
             Group::create('/access')
                 ->routes(
-                //Access Rights Index
+                    //Access Rights Index
                     Route::get('[page/{page:\d+}]')
                         ->name('backend/access')
                         ->middleware(Authentication::class)

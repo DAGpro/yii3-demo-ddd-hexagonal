@@ -18,8 +18,7 @@ class Author
         private readonly int $authorId,
         #[Column(type: 'string(191)')]
         private readonly string $authorName,
-    ) {
-    }
+    ) {}
 
     public function getId(): int
     {

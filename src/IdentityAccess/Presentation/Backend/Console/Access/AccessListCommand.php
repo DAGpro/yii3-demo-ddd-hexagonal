@@ -20,7 +20,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'access:list',
     'List of access rights with children',
-    help: 'This command shows a list of permissions with children'
+    help: 'This command shows a list of permissions with children',
 )]
 final class AccessListCommand extends Command
 {

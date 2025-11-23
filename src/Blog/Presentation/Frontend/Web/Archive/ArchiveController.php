@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection DuplicatedCode */
 
 declare(strict_types=1);
@@ -33,9 +34,9 @@ final readonly class ArchiveController
         CurrentRoute $currentRoute,
         ArchivePostQueryServiceInterface $archivePostQueryService,
     ): Response {
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
-        $year = (int)$currentRoute->getArgument('year', '0');
-        $month = (int)$currentRoute->getArgument('month', '0');
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
+        $year = (int) $currentRoute->getArgument('year', '0');
+        $month = (int) $currentRoute->getArgument('month', '0');
 
         $dataReader = $archivePostQueryService->getMonthlyArchive($year, $month);
 
@@ -57,7 +58,7 @@ final readonly class ArchiveController
         CurrentRoute $currentRoute,
         ArchivePostQueryServiceInterface $archivePostQueryService,
     ): Response {
-        $year = (int)$currentRoute->getArgument('year', '0');
+        $year = (int) $currentRoute->getArgument('year', '0');
 
         $data = [
             'year' => $year,

@@ -15,8 +15,7 @@ final readonly class ModerateCommentQueryService implements ModerateCommentQuery
 {
     public function __construct(
         private CommentRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function findAllPreloaded(): DataReaderInterface

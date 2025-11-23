@@ -13,8 +13,7 @@ final class FlashMessage extends Widget
 {
     public function __construct(
         private readonly FlashInterface $flash,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function render(): string

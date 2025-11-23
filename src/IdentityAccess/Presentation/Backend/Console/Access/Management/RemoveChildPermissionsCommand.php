@@ -20,7 +20,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'access:removeChildPermissions',
     'Removing a child permission from a role in access control rights',
-    help: 'This command removes the child permission from a role in access control rights.'
+    help: 'This command removes the child permission from a role in access control rights.',
 )]
 final class RemoveChildPermissionsCommand extends Command
 {
@@ -43,8 +43,8 @@ final class RemoveChildPermissionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $parentRole = (string)$input->getArgument('parentRole');
-        $childPermission = (string)$input->getArgument('childPermission');
+        $parentRole = (string) $input->getArgument('parentRole');
+        $childPermission = (string) $input->getArgument('childPermission');
 
         try {
             $parentRoleDTO = new RoleDTO($parentRole);

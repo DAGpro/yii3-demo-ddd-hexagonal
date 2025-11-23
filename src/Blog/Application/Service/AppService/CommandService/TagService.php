@@ -12,8 +12,7 @@ final readonly class TagService implements TagServiceInterface
 {
     public function __construct(
         private TagRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws BlogNotFoundException

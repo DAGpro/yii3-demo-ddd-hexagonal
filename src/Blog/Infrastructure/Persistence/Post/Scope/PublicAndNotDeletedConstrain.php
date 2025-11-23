@@ -12,6 +12,6 @@ final class PublicAndNotDeletedConstrain implements ScopeInterface
     #[\Override]
     public function apply(QueryBuilder $query): void
     {
-        $query->where('deleted_at', '=', null)->andWhere('public' , '=', 1);
+        $query->where('deleted_at', '=', null)->andWhere('public', '=', 1);
     }
 }

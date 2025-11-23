@@ -49,7 +49,6 @@ $error ??= null;
                                 ->addButtonAttributes(['id' => 'login-button'])
                                 ->name('login-button')
                                 ->content($translator->translate('button.submit')),
-
                         )
                     ?>
                 </div>

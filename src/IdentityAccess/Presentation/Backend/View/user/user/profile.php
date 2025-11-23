@@ -9,7 +9,6 @@ use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\Translator;
 use Yiisoft\View\WebView;
 
-
 /**
  * @var User $item
  * @var Translator $translator

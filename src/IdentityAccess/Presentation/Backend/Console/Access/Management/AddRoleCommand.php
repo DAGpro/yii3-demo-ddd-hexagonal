@@ -19,7 +19,8 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'access:addRole',
     'Add role from access control rights',
-    help: 'This command allows you to add role from access control rights')]
+    help: 'This command allows you to add role from access control rights',
+)]
 final class AddRoleCommand extends Command
 {
     public function __construct(
@@ -39,7 +40,7 @@ final class AddRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = (string)$input->getArgument('role');
+        $roleName = (string) $input->getArgument('role');
 
         try {
             $roleDTO = new RoleDTO($roleName);

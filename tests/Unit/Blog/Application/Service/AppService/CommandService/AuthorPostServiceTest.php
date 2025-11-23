@@ -120,7 +120,7 @@ final class AuthorPostServiceTest extends Unit
             ->method('save')
             ->with(
                 $this->callback(
-                /** @param iterable<Post> $posts */
+                    /** @param iterable<Post> $posts */
                     function (array $posts) use ($newTitle, $newContent, $tags) {
                         $this->assertIsArray($posts);
                         $this->assertCount(1, $posts);

@@ -40,7 +40,7 @@ final readonly class CommentController
     ): Response {
         $paginator = $commentQueryService->getFeedPaginator();
         if ($currentRoute->getArgument('next') !== null) {
-            $paginator = $paginator->withToken(PageToken::next((string)$currentRoute->getArgument('next')));
+            $paginator = $paginator->withToken(PageToken::next((string) $currentRoute->getArgument('next')));
         }
 
         if ($this->isAjaxRequest($request)) {
@@ -127,7 +127,7 @@ final readonly class CommentController
         FormHydrator $formHydrator,
         CommentServiceInterface $commentService,
     ): Response {
-        $commentId = (int)$currentRoute->getArgument('comment_id');
+        $commentId = (int) $currentRoute->getArgument('comment_id');
 
         $comment = $commentQueryService->getComment($commentId);
         if ($comment === null) {

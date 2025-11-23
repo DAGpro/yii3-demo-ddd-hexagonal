@@ -26,7 +26,7 @@ use Yiisoft\Security\Random;
  */
 #[Entity(
     repository: PostRepository::class,
-    scope: PublicAndNotDeletedConstrain::class
+    scope: PublicAndNotDeletedConstrain::class,
 )]
 #[Index(columns: ['public', 'published_at'])]
 #[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
@@ -53,7 +53,7 @@ class Post
     #[ManyToMany(
         target: Tag::class,
         through: PostTag::class,
-        fkAction: 'CASCADE'
+        fkAction: 'CASCADE',
     )]
     private readonly PivotedCollection $tags;
     private ?int $tag_id = null;

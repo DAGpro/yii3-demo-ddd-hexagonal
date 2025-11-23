@@ -22,8 +22,7 @@ final class LoginForm extends FormModel implements RulesProviderInterface
     public function __construct(
         private readonly UserQueryServiceInterface $userService,
         private readonly TranslatorInterface $translator,
-    ) {
-    }
+    ) {}
 
     public function getLogin(): string
     {
@@ -73,7 +72,8 @@ final class LoginForm extends FormModel implements RulesProviderInterface
                 $user = $this->userService->findByLogin($this->login);
 
                 if ($user === null || !$user->validatePassword($this->password)) {
-                    $result->addError($this->translator->translate('validator.invalid.login.password'),
+                    $result->addError(
+                        $this->translator->translate('validator.invalid.login.password'),
                         valuePath: ['login'],
                     );
                 }

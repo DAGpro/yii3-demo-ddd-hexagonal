@@ -14,8 +14,7 @@ final readonly class ModerateCommentService implements ModerateCommentServiceInt
     public function __construct(
         private CommentRepositoryInterface $repository,
         private ModerateCommentQueryServiceInterface $commentQueryService,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws BlogNotFoundException

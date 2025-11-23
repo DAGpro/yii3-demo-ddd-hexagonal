@@ -8,7 +8,6 @@ use App\Blog\Domain\Exception\BlogNotFoundException;
 
 interface ModerateCommentServiceInterface
 {
-
     public function draft(int $commentId): void;
 
     /**

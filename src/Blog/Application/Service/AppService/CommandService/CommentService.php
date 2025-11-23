@@ -18,8 +18,7 @@ final readonly class CommentService implements CommentServiceInterface
         private CommentRepositoryInterface $repository,
         private ReadPostQueryServiceInterface $postQueryService,
         private CommentQueryServiceInterface $commentQueryService,
-    ) {
-    }
+    ) {}
 
     /**
      * @TODO Frontend

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\User\Domain;
 
-
 use App\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
@@ -12,7 +11,6 @@ use Cycle\Annotated\Annotation\Table\Index;
 use Cycle\ORM\Entity\Behavior;
 use DateTimeImmutable;
 use Yiisoft\Security\PasswordHasher;
-
 
 /**
  * @psalm-suppress ClassMustBeFinal

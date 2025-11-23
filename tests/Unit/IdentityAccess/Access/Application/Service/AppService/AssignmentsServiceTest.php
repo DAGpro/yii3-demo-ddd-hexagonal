@@ -61,7 +61,7 @@ class AssignmentsServiceTest extends Unit
     public function testGetUserIdsByRole(): void
     {
         $roleDTO = new RoleDTO(self::TEST_ROLE_NAME);
-        $expectedUserIds = [(string)self::TEST_USER_ID, '2', '3'];
+        $expectedUserIds = [(string) self::TEST_USER_ID, '2', '3'];
 
         $this->manager->addRole(new Role(self::TEST_ROLE_NAME));
         $this->manager->assign(self::TEST_ROLE_NAME, self::TEST_USER_ID);

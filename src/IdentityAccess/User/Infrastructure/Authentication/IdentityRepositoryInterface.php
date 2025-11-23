@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\User\Infrastructure\Authentication;
 
-
 use App\IdentityAccess\User\Domain\User;
 use Throwable;
 

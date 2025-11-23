@@ -17,8 +17,7 @@ final readonly class AccessRightsService implements AccessRightsServiceInterface
     public function __construct(
         private Manager $manager,
         private ItemsStorageInterface $storage,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function existRole(string $roleName): bool

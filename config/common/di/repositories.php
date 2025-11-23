@@ -35,7 +35,8 @@ return [
         return $container->get(ORMInterface::class)->getRepository(Identity::class);
     },
 
-    \Yiisoft\Auth\IdentityRepositoryInterface::class => static function (ContainerInterface $container,
+    \Yiisoft\Auth\IdentityRepositoryInterface::class => static function (
+        ContainerInterface $container,
     ): IdentityRepositoryInterface {
         return $container->get(ORMInterface::class)->getRepository(Identity::class);
     },

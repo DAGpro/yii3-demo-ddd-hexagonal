@@ -26,7 +26,7 @@ return [
     // Blog routes
     Group::create('/blog')
         ->routes(
-        // Index
+            // Index
             Route::get('[/page/{page:\d+}]')
                 ->name('blog/index')
                 ->middleware(
@@ -35,22 +35,20 @@ return [
                         ReadPostQueryServiceInterface $readPostQueryService,
                     )
                         => new HttpCacheMiddleware(
-                        $responseFactory,
-                        lastModifiedProvider: new readonly class($readPostQueryService) implements
-                            LastModifiedProviderInterface {
+                            $responseFactory,
+                            lastModifiedProvider: new readonly class ($readPostQueryService) implements
+                                LastModifiedProviderInterface {
+                                public function __construct(
+                                    private ReadPostQueryServiceInterface $readPostQueryService,
+                                ) {}
 
-                            public function __construct(
-                                private ReadPostQueryServiceInterface $readPostQueryService,
-                            ) {
-                            }
-
-                            #[Override]
-                            public function get(ServerRequestInterface $request): DateTimeImmutable
-                            {
-                                return $this->readPostQueryService->getMaxUpdatedAt();
-                            }
-                        },
-                    ),
+                                #[Override]
+                                public function get(ServerRequestInterface $request): DateTimeImmutable
+                                {
+                                    return $this->readPostQueryService->getMaxUpdatedAt();
+                                }
+                            },
+                        ),
                 )
                 ->action([BlogController::class, 'index']),
             // Post page
@@ -63,29 +61,27 @@ return [
                         CurrentRoute $currentRoute,
                     )
                         => new HttpCacheMiddleware(
-                        $responseFactory,
-                        eTagProvider: new readonly class($readPostQueryService, $currentRoute) implements
-                            ETagProviderInterface {
+                            $responseFactory,
+                            eTagProvider: new readonly class ($readPostQueryService, $currentRoute) implements
+                                ETagProviderInterface {
+                                public function __construct(
+                                    private ReadPostQueryServiceInterface $readPostQueryService,
+                                    private CurrentRoute $currentRoute,
+                                ) {}
 
-                            public function __construct(
-                                private ReadPostQueryServiceInterface $readPostQueryService,
-                                private CurrentRoute $currentRoute,
-                            ) {
-                            }
+                                #[Override]
+                                public function get(ServerRequestInterface $request): ?ETag
+                                {
+                                    $post = $this->readPostQueryService->getPostBySlug(
+                                        $this->currentRoute->getArgument('slug') ?? '',
+                                    );
 
-                            #[Override]
-                            public function get(ServerRequestInterface $request): ?ETag
-                            {
-                                $post = $this->readPostQueryService->getPostBySlug(
-                                    $this->currentRoute->getArgument('slug') ?? '',
-                                );
-
-                                return $post ? new ETag(
-                                    $post->getSlug() . '-' . $post->getUpdatedAt()->getTimestamp(),
-                                ) : null;
-                            }
-                        },
-                    ),
+                                    return $post ? new ETag(
+                                        $post->getSlug() . '-' . $post->getUpdatedAt()->getTimestamp(),
+                                    ) : null;
+                                }
+                            },
+                        ),
                 )
                 ->action([PostController::class, 'index']),
 
@@ -97,7 +93,7 @@ return [
             // Archive
             Group::create('/archive')
                 ->routes(
-                // Index page
+                    // Index page
                     Route::get('[/page/{page:\d+}]')
                         ->name('blog/archive/index')
                         ->action([ArchiveController::class, 'index']),
@@ -110,10 +106,9 @@ return [
                         ->name('blog/archive/month')
                         ->action([ArchiveController::class, 'monthlyArchive']),
                 ),
-
             Group::create('/author')
                 ->routes(
-                // List author post page
+                    // List author post page
                     Route::get('/{author}/posts[/page/{page}]')
                         ->name('blog/author/posts')
                         ->middleware(

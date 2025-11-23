@@ -22,8 +22,7 @@ final readonly class AuthorPostService implements AuthorPostServiceInterface
         private PostRepositoryInterface $repository,
         private AuthorPostQueryServiceInterface $postQueryService,
         private TagRepositoryInterface $tagRepository,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function create(PostCreateDTO $postCreateDTO, Author $author): void

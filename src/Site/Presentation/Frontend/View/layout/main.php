@@ -110,25 +110,32 @@ $this->beginPage();
                 Dropdown::widget()
                     ->togglerContent($translator->translate('menu.language'))
                     ->items(
-                        DropdownItem::link($translator->translate('layout.language.english'),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.english'),
                             $url->generateFromCurrent(['_language' => 'en']),
                         ),
-                        DropdownItem::link($translator->translate('layout.language.russian'),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.russian'),
                             $url->generateFromCurrent(['_language' => 'ru']),
                         ),
-                        DropdownItem::link($translator->translate('layout.language.chinese'),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.chinese'),
                             $url->generateFromCurrent(['_language' => 'zh']),
                         ),
-                        DropdownItem::link($translator->translate('layout.language.spanish'),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.spanish'),
                             $url->generateFromCurrent(['_language' => 'es']),
                         ),
-                        DropdownItem::link($translator->translate('layout.language.hindi'),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.hindi'),
                             $url->generateFromCurrent(['_language' => 'hi']),
                         ),
-                        DropdownItem::link($translator->translate('layout.language.arabic'),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.arabic'),
                             $url->generateFromCurrent(['_language' => 'ar']),
                         ),
-                        DropdownItem::link($translator->translate('layout.language.portuguese'),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.portuguese'),
                             $url->generateFromCurrent(['_language' => 'pt']),
                         ),
                     ),
@@ -162,7 +169,8 @@ $this->beginPage();
                                             ->addButtonAttributes(['class' => 'btn btn-sm btn-outline-danger'])
                                             ->containerClass('mb-1')
                                             ->content(
-                                                $translator->translate('menu.logout',
+                                                $translator->translate(
+                                                    'menu.logout',
                                                     ['login' => Html::encode($user->getLogin())],
                                                 ),
                                             )

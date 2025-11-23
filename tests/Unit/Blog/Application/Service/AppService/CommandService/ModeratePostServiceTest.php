@@ -59,7 +59,7 @@ final class ModeratePostServiceTest extends Unit
             ->method('save')
             ->with(
                 $this->callback(
-                /** @param array<Post> $posts */
+                    /** @param array<Post> $posts */
                     function (array $posts) {
                         $this->assertIsArray($posts);
                         $this->assertCount(1, $posts);
@@ -133,7 +133,7 @@ final class ModeratePostServiceTest extends Unit
             ->method('save')
             ->with(
                 $this->callback(
-                /** @param array<Post> $posts */
+                    /** @param array<Post> $posts */
                     function (array $posts) use ($newTitle, $newContent) {
                         $post = $posts[0];
                         $this->assertEquals($newTitle, $post->getTitle());

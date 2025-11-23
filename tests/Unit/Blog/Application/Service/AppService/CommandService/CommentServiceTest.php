@@ -108,7 +108,7 @@ final class CommentServiceTest extends Unit
             ->expects($this->once())
             ->method('save')
             ->with(
-            /** @var iterable<Comment> $comments */
+                /** @var iterable<Comment> $comments */
                 $this->callback(
                     function (array $comments) use ($newCommentText) {
                         $this->assertIsArray($comments);

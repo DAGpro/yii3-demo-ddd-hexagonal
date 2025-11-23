@@ -15,18 +15,16 @@ use Yiisoft\Router\CurrentRoute;
 #[OA\Tag(name: 'user', description: 'User')]
 final readonly class ApiUserController
 {
-
     public function __construct(
         private DataResponseFactoryInterface $responseFactory,
-    ) {
-    }
+    ) {}
 
     #[OA\Get(
         path: '/api/user',
         tags: ['user'],
         responses: [
-            new OA\Response(response: 200, description: 'Get users list')
-        ]
+            new OA\Response(response: 200, description: 'Get users list'),
+        ],
     )]
     public function index(UserQueryServiceInterface $userQueryService): ResponseInterface
     {
@@ -60,12 +58,12 @@ final readonly class ApiUserController
                 name: 'login',
                 in: 'path',
                 required: true,
-                schema: new OA\Schema(type: 'string')
-            )
+                schema: new OA\Schema(type: 'string'),
+            ),
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Get user info')
-        ]
+            new OA\Response(response: 200, description: 'Get user info'),
+        ],
     )]
     public function profile(UserQueryServiceInterface $userQueryService, CurrentRoute $currentRoute): ResponseInterface
     {

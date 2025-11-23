@@ -19,7 +19,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'access:viewRole',
     'View role and child roles and permissions',
-    help: 'This command shows a role, child roles and permissions'
+    help: 'This command shows a role, child roles and permissions',
 )]
 final class ViewRoleCommand extends Command
 {
@@ -40,7 +40,7 @@ final class ViewRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = (string)$input->getArgument('role');
+        $roleName = (string) $input->getArgument('role');
         $role = $this->accessRightsService->getRoleByName($roleName);
 
         if (!$role) {

@@ -43,9 +43,10 @@ echo Article::tag()
                             ->content(
                                 $post->getPublishedAt() === null
                                     ? $translator->translate('blog.not.published.post')
-                                    : $translator->translate('blog.published.post',
-                                    ['date' => $post->getPublishedAt()?->format('H:i:s d.m.Y')],
-                                ),
+                                    : $translator->translate(
+                                        'blog.published.post',
+                                        ['date' => $post->getPublishedAt()?->format('H:i:s d.m.Y')],
+                                    ),
                             ),
                         A::tag()
                             ->class('mr-3')

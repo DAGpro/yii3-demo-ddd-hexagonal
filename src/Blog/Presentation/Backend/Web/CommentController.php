@@ -21,7 +21,7 @@ use Yiisoft\Yii\View\Renderer\ViewRenderer;
 final readonly class CommentController
 {
     private const int COMMENT_PER_PAGE = 10;
-    
+
     private ViewRenderer $view;
 
     public function __construct(
@@ -37,9 +37,9 @@ final readonly class CommentController
 
     public function index(Request $request, CurrentRoute $currentRoute): ResponseInterface
     {
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
         $queryParams = $request->getQueryParams();
-        $sort = (string)($queryParams['sort'] ?? 'id');
+        $sort = (string) ($queryParams['sort'] ?? 'id');
         $order = OrderHelper::stringToArray($sort);
 
         $dataReader = $this->commentQueryService->findAllPreloaded();
@@ -63,7 +63,7 @@ final readonly class CommentController
 
     public function view(CurrentRoute $currentRoute): ResponseInterface
     {
-        $commentId = (int)$currentRoute->getArgument('comment_id');
+        $commentId = (int) $currentRoute->getArgument('comment_id');
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
             return $this->webService->notFound();
         }
@@ -91,7 +91,7 @@ final readonly class CommentController
         }
 
         try {
-            $this->commentService->draft((int)$commentId);
+            $this->commentService->draft((int) $commentId);
         } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
@@ -99,7 +99,7 @@ final readonly class CommentController
         return $this->webService->sessionFlashAndRedirect(
             'Comment moved to draft!',
             'backend/comment/view',
-            ['comment_id' => (int)$commentId],
+            ['comment_id' => (int) $commentId],
         );
     }
 
@@ -118,7 +118,7 @@ final readonly class CommentController
         }
 
         try {
-            $this->commentService->public((int)$commentId);
+            $this->commentService->public((int) $commentId);
         } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
@@ -126,7 +126,7 @@ final readonly class CommentController
         return $this->webService->sessionFlashAndRedirect(
             'Comment published!',
             'backend/comment/view',
-            ['comment_id' => (int)$commentId],
+            ['comment_id' => (int) $commentId],
         );
     }
 
@@ -135,7 +135,7 @@ final readonly class CommentController
         CurrentRoute $currentRoute,
         FormHydrator $formHydrator,
     ): ResponseInterface {
-        $commentId = (int)$currentRoute->getArgument('comment_id');
+        $commentId = (int) $currentRoute->getArgument('comment_id');
         if (($comment = $this->commentQueryService->getComment($commentId)) === null) {
             return $this->webService->notFound();
         }
@@ -178,7 +178,7 @@ final readonly class CommentController
         }
 
         try {
-            $this->commentService->delete((int)$commentId);
+            $this->commentService->delete((int) $commentId);
         } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }

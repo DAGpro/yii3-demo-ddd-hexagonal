@@ -12,7 +12,7 @@ return [
         'class' => FileMailer::class,
         '__construct()' => [
             'path' => DynamicReference::to(
-                static fn(Aliases $aliases) => $aliases->get('@runtime/mail')
+                static fn(Aliases $aliases) => $aliases->get('@runtime/mail'),
             ),
         ],
     ],

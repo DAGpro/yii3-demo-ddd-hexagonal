@@ -48,8 +48,7 @@ final class SignupForm extends FormModel implements RulesProviderInterface
     public function __construct(
         private readonly UserQueryServiceInterface $userService,
         private readonly TranslatorInterface $translator,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function getPropertyLabels(): array
@@ -81,7 +80,8 @@ final class SignupForm extends FormModel implements RulesProviderInterface
             function (): Result {
                 $result = new Result();
                 if ($this->password !== $this->passwordVerify) {
-                    $result->addError($this->translator->translate('validator.password.not.match'),
+                    $result->addError(
+                        $this->translator->translate('validator.password.not.match'),
                         valuePath: ['passwordVerify'],
                     );
                 }

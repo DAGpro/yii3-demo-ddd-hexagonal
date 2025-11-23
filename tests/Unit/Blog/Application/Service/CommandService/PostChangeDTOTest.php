@@ -10,7 +10,6 @@ use Error;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-
 #[CoversClass(PostChangeDTO::class)]
 final class PostChangeDTOTest extends Unit
 {

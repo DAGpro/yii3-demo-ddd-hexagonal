@@ -34,7 +34,7 @@ final readonly class AssignmentsController
 
         return $this->viewRenderer->render('assignments', [
             'users' => $usersAssignments,
-            'currentUrl' => 'assignments'
+            'currentUrl' => 'assignments',
         ]);
 
     }
@@ -46,12 +46,13 @@ final readonly class AssignmentsController
             return $this->webService->sessionFlashAndRedirect(
                 'The request must have a user_id argument',
                 'backend/access/assignments',
-                [], 'danger'
+                [],
+                'danger',
             );
         }
 
         try {
-            $user = $this->userQueryService->getUser((int)$userId);
+            $user = $this->userQueryService->getUser((int) $userId);
             if ($user === null) {
                 throw new IdentityException('User is not found!');
             }

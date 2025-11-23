@@ -34,8 +34,7 @@ final class RoleDTO
         private readonly ?string $description = null,
         private readonly ?int $created_at = null,
         private readonly ?int $updated_at = null,
-    ) {
-    }
+    ) {}
 
     public function getName(): string
     {

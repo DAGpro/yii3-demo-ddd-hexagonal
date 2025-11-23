@@ -6,7 +6,6 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Translator\CategorySource;
 use Yiisoft\Translator\IntlMessageFormatter;
 use Yiisoft\Translator\Message\Php\MessageSource;
-use Yiisoft\Translator\MessageFormatterInterface;
 
 /** @var array $params */
 

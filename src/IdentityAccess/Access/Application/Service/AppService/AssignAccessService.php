@@ -23,8 +23,7 @@ final readonly class AssignAccessService implements AssignAccessServiceInterface
         private AccessRightsServiceInterface $accessRightsService,
         private AssignmentsStorageInterface $storage,
         private AssignmentsServiceInterface $assignmentsService,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws AssignedItemException

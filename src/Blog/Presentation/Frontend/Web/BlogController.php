@@ -33,7 +33,7 @@ final readonly class BlogController
         ArchivePostQueryServiceInterface $archivePostQueryService,
         IdentityAccessService $identityAccessService,
     ): Response {
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
 
         $dataReader = $postQueryService->findAllPreloaded();
 

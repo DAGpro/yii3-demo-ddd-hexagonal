@@ -24,8 +24,7 @@ final readonly class AssignmentsService implements AssignmentsServiceInterface
         private AccessRightsServiceInterface $accessRightsService,
         private UserQueryServiceInterface $userQueryService,
         private Manager $manager,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function getUserIdsByRole(RoleDTO $roleDTO): array
@@ -71,7 +70,7 @@ final readonly class AssignmentsService implements AssignmentsServiceInterface
     #[Override]
     public function userHasRole(string|int $userId, string $roleName): bool
     {
-        return $this->assignmentsStorage->get($roleName, (string)$userId) !== null;
+        return $this->assignmentsStorage->get($roleName, (string) $userId) !== null;
     }
 
     #[Override]
@@ -98,7 +97,7 @@ final readonly class AssignmentsService implements AssignmentsServiceInterface
 
         $rolesDTO = $this->getRolesByUser($userId);
         //getByUserId method is used instead of getPermissionsByUser, so as not to load inherited permissions
-        $userAssignments = $this->assignmentsStorage->getByUserId((string)$userId);
+        $userAssignments = $this->assignmentsStorage->getByUserId((string) $userId);
         if (empty($rolesDTO) && empty($userAssignments)) {
             return new UserAssignmentsDTO($user);
         }
@@ -134,9 +133,9 @@ final readonly class AssignmentsService implements AssignmentsServiceInterface
                 continue;
             }
 
-            if (isset($assignments[(string)$userId])) {
+            if (isset($assignments[(string) $userId])) {
                 /** @var array<string, mixed> $userAssignments */
-                $userAssignments = $assignments[(string)$userId];
+                $userAssignments = $assignments[(string) $userId];
                 $roles = [];
                 $permissions = [];
 

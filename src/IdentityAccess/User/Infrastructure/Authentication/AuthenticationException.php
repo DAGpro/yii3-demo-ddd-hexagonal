@@ -6,6 +6,4 @@ namespace App\IdentityAccess\User\Infrastructure\Authentication;
 
 use Exception;
 
-final class AuthenticationException extends Exception
-{
-}
+final class AuthenticationException extends Exception {}

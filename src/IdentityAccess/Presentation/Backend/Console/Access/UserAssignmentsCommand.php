@@ -44,7 +44,7 @@ final class UserAssignmentsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $userId = (int)$input->getArgument('userId');
+        $userId = (int) $input->getArgument('userId');
 
         try {
             $user = $this->userQueryService->getUser($userId);

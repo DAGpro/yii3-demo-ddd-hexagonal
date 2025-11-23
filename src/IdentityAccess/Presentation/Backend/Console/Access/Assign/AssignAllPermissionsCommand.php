@@ -23,7 +23,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'assign:allPermissions',
     'Assign RBAC all permissions to given user',
-    help: 'This command allows you to assign RBAC all permissions to user'
+    help: 'This command allows you to assign RBAC all permissions to user',
 )]
 final class AssignAllPermissionsCommand extends Command
 {
@@ -47,10 +47,10 @@ final class AssignAllPermissionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $userId = (string)$input->getArgument('userId');
+        $userId = (string) $input->getArgument('userId');
 
         try {
-            $user = $this->userService->getUser((int)$userId);
+            $user = $this->userService->getUser((int) $userId);
             if ($user === null) {
                 throw new IdentityException('User is not found!');
             }

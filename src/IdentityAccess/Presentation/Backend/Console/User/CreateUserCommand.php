@@ -54,9 +54,9 @@ final class CreateUserCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $login = (string)$input->getArgument('login');
-        $password = (string)$input->getArgument('password');
-        $isAdmin = (bool)$input->getArgument('isAdmin');
+        $login = (string) $input->getArgument('login');
+        $password = (string) $input->getArgument('password');
+        $isAdmin = (bool) $input->getArgument('isAdmin');
 
         try {
             $result = $this->validator->validate(
@@ -92,13 +92,13 @@ final class CreateUserCommand extends Command
                     throw new RuntimeException('Role admin is NULL');
                 }
 
-                $this->assignAccessService->assignRole($role, (string)$user->getId());
+                $this->assignAccessService->assignRole($role, (string) $user->getId());
             }
 
             $io->success('User created');
         } catch (Throwable $t) {
             $io->error($t->getMessage());
-            return (int)$t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
+            return (int) $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
         }
         return ExitCode::OK;
     }

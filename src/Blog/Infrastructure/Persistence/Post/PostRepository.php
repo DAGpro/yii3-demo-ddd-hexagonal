@@ -209,7 +209,7 @@ final class PostRepository extends Select\Repository implements PostRepositoryIn
     #[Override]
     public function getMaxUpdatedAt(): DateTimeImmutable
     {
-        $time = (string)($this->select()->max('updated_at') ?? 'now');
+        $time = (string) ($this->select()->max('updated_at') ?? 'now');
 
         return new DateTimeImmutable($time);
     }

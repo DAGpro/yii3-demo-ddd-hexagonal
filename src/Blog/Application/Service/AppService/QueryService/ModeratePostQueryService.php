@@ -15,8 +15,7 @@ final readonly class ModeratePostQueryService implements ModeratePostQueryServic
 {
     public function __construct(
         private PostRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * Get posts without filter with preloaded Users and Tags

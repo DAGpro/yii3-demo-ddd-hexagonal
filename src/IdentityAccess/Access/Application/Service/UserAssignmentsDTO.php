@@ -18,12 +18,11 @@ final readonly class UserAssignmentsDTO
          * @var array<PermissionDTO>
          */
         private array $permissions = [],
-    ) {
-    }
+    ) {}
 
     public function getId(): string
     {
-        return (string)$this->user->getId();
+        return (string) $this->user->getId();
     }
 
     public function getLogin(): string

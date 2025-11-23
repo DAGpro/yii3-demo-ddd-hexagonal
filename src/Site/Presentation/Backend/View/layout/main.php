@@ -126,13 +126,17 @@ $this->beginPage();
                     Dropdown::widget()
                         ->togglerContent($translator->translate('menu.language'))
                         ->items(
-                            DropdownItem::link($translator->translate('layout.language.english'),
-                                $url->generate($currentRouteName,
+                            DropdownItem::link(
+                                $translator->translate('layout.language.english'),
+                                $url->generate(
+                                    $currentRouteName,
                                     array_merge($currentRoute->getArguments(), ['_language' => 'en']),
                                 ),
                             ),
-                            DropdownItem::link($translator->translate('layout.language.russian'),
-                                $url->generate($currentRouteName,
+                            DropdownItem::link(
+                                $translator->translate('layout.language.russian'),
+                                $url->generate(
+                                    $currentRouteName,
                                     array_merge($currentRoute->getArguments(), ['_language' => 'ru']),
                                 ),
                             ),
@@ -143,13 +147,17 @@ $this->beginPage();
                     Dropdown::widget()
                         ->togglerContent($translator->translate('menu.language'))
                         ->items(
-                            DropdownItem::link($translator->translate('layout.language.english'),
-                                $url->generate($currentRouteName,
+                            DropdownItem::link(
+                                $translator->translate('layout.language.english'),
+                                $url->generate(
+                                    $currentRouteName,
                                     array_merge($currentRoute->getArguments(), ['_language' => 'en']),
                                 ),
                             ),
-                            DropdownItem::link($translator->translate('layout.language.russian'),
-                                $url->generate($currentRouteName,
+                            DropdownItem::link(
+                                $translator->translate('layout.language.russian'),
+                                $url->generate(
+                                    $currentRouteName,
                                     array_merge($currentRoute->getArguments(), ['_language' => 'ru']),
                                 ),
                             ),
@@ -157,22 +165,22 @@ $this->beginPage();
 
                 ],
             )
-        ?>
+?>
         <?= $user === null ? '' :
-            Form::tag()
-                ->action($url->generate('auth/logout'))
-                ->csrf($csrf)
-                ->content(
-                    Field::submitButton(
-                        $translator->translate(
-                            'menu.logout',
-                            ['login' => Html::encode($user->getLogin())],
-                        ),
-                    )
-                        ->containerClass('mb-1')
-                        ->buttonClass('btn btn-primary btn-sm mt-1'),
-                )
-        ?>
+    Form::tag()
+        ->action($url->generate('auth/logout'))
+        ->csrf($csrf)
+        ->content(
+            Field::submitButton(
+                $translator->translate(
+                    'menu.logout',
+                    ['login' => Html::encode($user->getLogin())],
+                ),
+            )
+                ->containerClass('mb-1')
+                ->buttonClass('btn btn-primary btn-sm mt-1'),
+        )
+?>
         <?= NavBar::end() ?>
     </header>
 

@@ -19,7 +19,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'user:delete',
     'Deletes a user',
-    help: 'This command allows you to delete a user'
+    help: 'This command allows you to delete a user',
 )]
 final class DeleteUserCommand extends Command
 {
@@ -42,7 +42,7 @@ final class DeleteUserCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $login = (string)$input->getArgument('login');
+        $login = (string) $input->getArgument('login');
 
         try {
             $user = $this->userQueryService->findByLogin($login);

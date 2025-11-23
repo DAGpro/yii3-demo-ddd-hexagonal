@@ -11,8 +11,7 @@ final readonly class PermissionDTO
         private ?string $description = null,
         private ?int $created_at = null,
         private ?int $updated_at = null,
-    ) {
-    }
+    ) {}
 
     public function getName(): string
     {

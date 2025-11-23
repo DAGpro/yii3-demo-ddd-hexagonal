@@ -36,7 +36,7 @@ final readonly class PostController
 
     public function index(CurrentRoute $currentRoute): ResponseInterface
     {
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
 
         $dataReader = $this->postQueryService->findAllPreloaded();
 
@@ -54,7 +54,7 @@ final readonly class PostController
 
     public function view(CurrentRoute $currentRoute): ResponseInterface
     {
-        $postId = (int)$currentRoute->getArgument('post_id');
+        $postId = (int) $currentRoute->getArgument('post_id');
         if (($post = $this->postQueryService->getPost($postId)) === null) {
             return $this->webService->notFound();
         }
@@ -82,7 +82,7 @@ final readonly class PostController
         }
 
         try {
-            $this->postService->draft((int)$postId);
+            $this->postService->draft((int) $postId);
         } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
@@ -90,7 +90,7 @@ final readonly class PostController
         return $this->webService->sessionFlashAndRedirect(
             'Post moved to draft!',
             'backend/post/view',
-            ['post_id' => (int)$postId],
+            ['post_id' => (int) $postId],
         );
     }
 
@@ -109,7 +109,7 @@ final readonly class PostController
         }
 
         try {
-            $this->postService->public((int)$postId);
+            $this->postService->public((int) $postId);
         } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }
@@ -117,7 +117,7 @@ final readonly class PostController
         return $this->webService->sessionFlashAndRedirect(
             'Post published!',
             'backend/post/view',
-            ['post_id' => (int)$postId],
+            ['post_id' => (int) $postId],
         );
     }
 
@@ -126,7 +126,7 @@ final readonly class PostController
         CurrentRoute $currentRoute,
         FormHydrator $formHydrator,
     ): ResponseInterface {
-        $postId = (int)$currentRoute->getArgument('post_id');
+        $postId = (int) $currentRoute->getArgument('post_id');
         if (($post = $this->postQueryService->getPost($postId)) === null || ($postId = $post->getId()) === null) {
             return $this->webService->notFound();
         }
@@ -172,7 +172,7 @@ final readonly class PostController
         }
 
         try {
-            $this->postService->delete((int)$postId);
+            $this->postService->delete((int) $postId);
         } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }

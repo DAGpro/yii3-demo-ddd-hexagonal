@@ -37,16 +37,13 @@ return [
                 ->name('user/cabinet')
                 ->middleware(Authentication::class)
                 ->action([CabinetController::class, 'index']),
-
             Route::post('cabinet/delete')
                 ->name('user/cabinet/delete')
                 ->middleware(Authentication::class)
                 ->action([CabinetController::class, 'deleteAccount']),
-
             Route::get('/all[/page/{page}]')
                 ->name('user/index')
                 ->action([UserController::class, 'index']),
-
             Route::get('/profile/{login}')
                 ->name('user/profile')
                 ->action([UserController::class, 'profile']),

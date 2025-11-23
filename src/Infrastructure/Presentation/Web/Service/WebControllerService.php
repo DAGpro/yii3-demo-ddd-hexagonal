@@ -17,8 +17,7 @@ final readonly class WebControllerService
         private ResponseFactoryInterface $responseFactory,
         private FlashInterface $flash,
         private UrlGeneratorInterface $urlGenerator,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, string|int|float|bool|null> $routeArguments

@@ -30,15 +30,15 @@ $this->setTitle($translator->translate('view-404.not-found'));
                     ->class('text-muted')
                     ->render(),
             ])
-            ?>
+?>
         </p>
         <p>
             <?= A::tag()
-                ->content($translator->translate('view-404.go.home'))
-                ->url($url->generate('site/index'))
-                ->class('btn btn-outline-primary mt-5')
-                ->render();
-            ?>
+    ->content($translator->translate('view-404.go.home'))
+    ->url($url->generate('site/index'))
+    ->class('btn btn-outline-primary mt-5')
+    ->render();
+?>
         </p>
     </div>
 </div>

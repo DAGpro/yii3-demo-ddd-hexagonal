@@ -35,7 +35,7 @@ final readonly class TagController
 
     public function index(CurrentRoute $currentRoute): ResponseInterface
     {
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
 
         $dataReader = $this->tagQueryService->findAllPreloaded();
 
@@ -54,7 +54,7 @@ final readonly class TagController
         CurrentRoute $currentRoute,
         FormHydrator $formHydrator,
     ): ResponseInterface {
-        $tagId = (int)$currentRoute->getArgument('tag_id');
+        $tagId = (int) $currentRoute->getArgument('tag_id');
 
         if (($tag = $this->tagQueryService->getTag($tagId)) === null || ($tagId = $tag->getId()) === null) {
             return $this->webService->notFound();
@@ -93,7 +93,7 @@ final readonly class TagController
         }
 
         try {
-            $this->tagService->delete((int)$tagId);
+            $this->tagService->delete((int) $tagId);
         } catch (BlogNotFoundException) {
             return $this->webService->notFound();
         }

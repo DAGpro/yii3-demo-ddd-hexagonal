@@ -48,15 +48,16 @@ final class ModerateCommentServiceTest extends Unit
         $this->commentRepository
             ->expects($this->once())
             ->method('save')
-            ->with($this->callback(
-                function ($comments) {
-                    $this->assertIsArray($comments);
-                    $this->assertCount(1, $comments);
-                    $comment = $comments[0];
-                    $this->assertFalse($comment->isPublic());
-                    return true;
-                },
-            ),
+            ->with(
+                $this->callback(
+                    function ($comments) {
+                        $this->assertIsArray($comments);
+                        $this->assertCount(1, $comments);
+                        $comment = $comments[0];
+                        $this->assertFalse($comment->isPublic());
+                        return true;
+                    },
+                ),
             );
 
         $this->service->draft($this->commentId);
@@ -99,12 +100,13 @@ final class ModerateCommentServiceTest extends Unit
         $this->commentRepository
             ->expects($this->once())
             ->method('save')
-            ->with($this->callback(
-                function ($comments) {
-                    $this->assertTrue($comments[0]->isPublic());
-                    return true;
-                },
-            ),
+            ->with(
+                $this->callback(
+                    function ($comments) {
+                        $this->assertTrue($comments[0]->isPublic());
+                        return true;
+                    },
+                ),
             );
 
         $this->service->public($this->commentId);
@@ -128,7 +130,7 @@ final class ModerateCommentServiceTest extends Unit
             ->method('save')
             ->with(
                 $this->callback(
-                /** @var iterable<Comment> $comments */
+                    /** @var iterable<Comment> $comments */
                     function (array $comments) use ($newText) {
                         $this->assertEquals($newText, $comments[0]->getContent());
                         $this->assertTrue($comments[0]->isPublic());
@@ -158,7 +160,7 @@ final class ModerateCommentServiceTest extends Unit
             ->expects($this->once())
             ->method('save')
             ->with(
-            /** @var iterable<Comment> $comments */
+                /** @var iterable<Comment> $comments */
                 $this->callback(
                     function (array $comments) use ($newText) {
                         $this->assertEquals($newText, $comments[0]->getContent());

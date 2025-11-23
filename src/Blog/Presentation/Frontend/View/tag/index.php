@@ -18,7 +18,6 @@ use Yiisoft\View\WebView;
 use Yiisoft\Yii\DataView\Pagination\OffsetPagination;
 use Yiisoft\Yii\DataView\Pagination\PaginationContext;
 
-
 /**
  * @var OffsetPaginator $paginator
  * @var TranslatorInterface $translator

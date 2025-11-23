@@ -28,14 +28,14 @@ final class UserController
         ServerRequestInterface $request,
         CurrentRoute $currentRoute,
     ): Response {
-        $page = (int)$currentRoute->getArgument('page', '1');
+        $page = (int) $currentRoute->getArgument('page', '1');
         $sortOrderString = $request->getQueryParams();
 
         $dataReader = $userQueryService
             ->findAllPreloaded()
             ->withSort(
                 Sort::only(['id', 'login'])
-                    ->withOrderString((string)($sortOrderString['sort'] ?? '')),
+                    ->withOrderString((string) ($sortOrderString['sort'] ?? '')),
             );
 
         $paginator = new OffsetPaginator($dataReader)

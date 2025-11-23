@@ -127,7 +127,7 @@ final class RoleDTOTest extends Unit
     {
         $role1 = new RoleDTO('moderator');
         $role2 = new RoleDTO('editor');
-        
+
         $dto = new RoleDTO('admin');
         $dto->withNestedRoles([$role1, $role2]);
 
@@ -138,7 +138,7 @@ final class RoleDTOTest extends Unit
     {
         $permission1 = new PermissionDTO('create_post');
         $permission2 = new PermissionDTO('edit_post');
-        
+
         $dto = new RoleDTO('admin');
         $dto->withChildPermissions([$permission1, $permission2]);
 
@@ -157,7 +157,7 @@ final class RoleDTOTest extends Unit
     {
         $permission1 = new PermissionDTO('create_post');
         $permission2 = new PermissionDTO('edit_post');
-        
+
         $dto = new RoleDTO('admin');
         $dto->withNestedPermissions(['create' => $permission1, 'edit' => $permission2]);
 
@@ -180,16 +180,16 @@ final class RoleDTOTest extends Unit
         $role2 = new RoleDTO('editor');
         $permission1 = new PermissionDTO('create_post');
         $permission2 = new PermissionDTO('edit_post');
-        
+
         $dto = new RoleDTO('admin');
         $dto->withChildRoles([$role1, $role2]);
         $dto->withChildPermissions([$permission1, $permission2]);
 
         $expected = [
             'moderator[ permissions: create_post, edit_post]',
-            'editor[ permissions: create_post, edit_post]'
+            'editor[ permissions: create_post, edit_post]',
         ];
-        
+
         $this->assertSame($expected, $dto->getChildRolesNameWithPermissionName());
     }
 
@@ -197,7 +197,7 @@ final class RoleDTOTest extends Unit
     {
         $dto = new RoleDTO('admin');
         $dto->withChildRoles([]);
-        
+
         $this->assertSame([], $dto->getChildRolesNameWithPermissionName());
     }
 }

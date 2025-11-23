@@ -20,7 +20,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'access:removePermission',
     'Remove permission from access control rights',
-    help: 'This command allows you to remove permission from access control rights'
+    help: 'This command allows you to remove permission from access control rights',
 )]
 final class RemovePermissionCommand extends Command
 {
@@ -41,7 +41,7 @@ final class RemovePermissionCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $permissionName = (string)$input->getArgument('permission');
+        $permissionName = (string) $input->getArgument('permission');
 
         try {
             $permissionDTO = new PermissionDTO($permissionName);

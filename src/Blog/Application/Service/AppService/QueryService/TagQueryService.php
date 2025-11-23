@@ -15,8 +15,7 @@ final readonly class TagQueryService implements TagQueryServiceInterface
 {
     public function __construct(
         private TagRepositoryInterface $tagRepository,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function findAllPreloaded(): DataReaderInterface

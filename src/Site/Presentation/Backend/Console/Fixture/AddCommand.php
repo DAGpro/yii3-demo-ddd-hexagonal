@@ -77,7 +77,7 @@ final class AddCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $count = (int)$input->getArgument('count');
+        $count = (int) $input->getArgument('count');
         // get faker
         if (!class_exists(Factory::class)) {
             $io->error('Faker should be installed. Run `composer install --dev`');
@@ -95,7 +95,7 @@ final class AddCommand extends Command
 
             $db->begin();
             $this->addUsers($count);
-            $this->addAccessRightsToUsers((int)round($count / 3));
+            $this->addAccessRightsToUsers((int) round($count / 3));
             $this->addTags($count);
             $this->addPosts($count);
             $db->commit();
@@ -224,13 +224,16 @@ final class AddCommand extends Command
             $public ? $post->publish() : $post->toDraft();
             if ($public) {
                 $twoYearsAgo = strtotime('-2 years');
-                $post->setPublishedAt(new DateTimeImmutable(date('r',
-                    random_int(
-                        (int)min(time(), $twoYearsAgo),
-                        (int)max(time(), $twoYearsAgo),
+                $post->setPublishedAt(
+                    new DateTimeImmutable(
+                        date(
+                            'r',
+                            random_int(
+                                (int) min(time(), $twoYearsAgo),
+                                (int) max(time(), $twoYearsAgo),
+                            ),
+                        ),
                     ),
-                ),
-                ),
                 );
             }
             // link tags
@@ -269,7 +272,7 @@ final class AddCommand extends Command
         // add comments
 
         $comments = [];
-        $commentCount = (int)round((float)$count / 2.5);
+        $commentCount = (int) round((float) $count / 2.5);
         /** @var Post $post */
         foreach ($postsSaveds as $post) {
             for ($j = 0; $j <= $commentCount; ++$j) {
@@ -287,13 +290,16 @@ final class AddCommand extends Command
                 $commentPublic ? $comment->publish() : $comment->toDraft();
                 if ($commentPublic) {
                     $oneYearAgo = strtotime('-1 year');
-                    $comment->setPublishedAt(new DateTimeImmutable(date('r',
-                        random_int(
-                            (int)min(time(), $oneYearAgo),
-                            (int)max(time(), $oneYearAgo),
+                    $comment->setPublishedAt(
+                        new DateTimeImmutable(
+                            date(
+                                'r',
+                                random_int(
+                                    (int) min(time(), $oneYearAgo),
+                                    (int) max(time(), $oneYearAgo),
+                                ),
+                            ),
                         ),
-                    ),
-                    ),
                     );
                 }
 

@@ -40,7 +40,7 @@ final class AddPermissionCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $permissionName = (string)$input->getArgument('permission');
+        $permissionName = (string) $input->getArgument('permission');
 
         try {
             $permissionDTO = new PermissionDTO($permissionName);

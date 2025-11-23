@@ -20,8 +20,7 @@ final class PostCard extends Widget
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Post $post,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function render(): string

@@ -18,8 +18,7 @@ class Commentator
         private readonly int $commentatorId,
         #[Column(type: 'string(191)')]
         private readonly string $commentatorName,
-    ) {
-    }
+    ) {}
 
     public function getId(): int
     {

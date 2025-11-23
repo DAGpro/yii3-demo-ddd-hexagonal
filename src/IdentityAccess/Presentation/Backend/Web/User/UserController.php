@@ -30,11 +30,12 @@ final readonly class UserController
 
     public function index(CurrentRoute $currentRoute): Response
     {
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
 
         $dataReader = $this->userQueryService
             ->findAllPreloaded()
-            ->withSort(Sort::only(['login', 'id'])
+            ->withSort(
+                Sort::only(['login', 'id'])
                 ->withOrderString('id'),
             );
 
@@ -57,7 +58,7 @@ final readonly class UserController
             );
         }
 
-        $item = $this->userQueryService->getUser((int)$userId);
+        $item = $this->userQueryService->getUser((int) $userId);
         if ($item === null) {
             return $this->webService->notFound();
         }

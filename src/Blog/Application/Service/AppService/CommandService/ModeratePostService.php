@@ -17,8 +17,7 @@ final readonly class ModeratePostService implements ModeratePostServiceInterface
         private ModeratePostQueryServiceInterface $postQueryService,
         private PostRepositoryInterface $repository,
         private TagRepositoryInterface $tagRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws BlogNotFoundException

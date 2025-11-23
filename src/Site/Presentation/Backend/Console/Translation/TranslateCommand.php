@@ -31,8 +31,8 @@ final class TranslateCommand extends Command
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $message = (string)$input->getArgument('message');
-        $locale = (string)$input->getArgument('locale');
+        $message = (string) $input->getArgument('message');
+        $locale = (string) $input->getArgument('locale');
 
         $output->writeln($this->translator->translate($message, [], null, $locale));
         return 0;

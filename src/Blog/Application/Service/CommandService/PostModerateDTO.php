@@ -6,15 +6,13 @@ namespace App\Blog\Application\Service\CommandService;
 
 final readonly class PostModerateDTO
 {
-
     public function __construct(
         private string $title,
         private string $content,
         private bool $public,
         /** @var string[] */
         private array $tags,
-    ) {
-    }
+    ) {}
 
     public function getTitle(): string
     {

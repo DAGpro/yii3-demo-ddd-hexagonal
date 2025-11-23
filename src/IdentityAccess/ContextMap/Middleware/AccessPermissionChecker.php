@@ -24,8 +24,7 @@ final class AccessPermissionChecker implements MiddlewareInterface
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly AuthenticationService $authenticationService,
         private readonly AuthorizationService $authorizationService,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -39,7 +38,7 @@ final class AccessPermissionChecker implements MiddlewareInterface
             throw new InvalidArgumentException('Permission not set.');
         }
 
-        if (!$this->authorizationService->userHasPermission((string)$user->getId(), $this->permission)) {
+        if (!$this->authorizationService->userHasPermission((string) $user->getId(), $this->permission)) {
             return $this->responseFactory->createResponse(Status::FORBIDDEN);
         }
 

@@ -6,7 +6,4 @@ namespace App\Blog\Domain\Exception;
 
 use Exception;
 
-final class BlogAccessDeniedException extends Exception
-{
-
-}
+final class BlogAccessDeniedException extends Exception {}

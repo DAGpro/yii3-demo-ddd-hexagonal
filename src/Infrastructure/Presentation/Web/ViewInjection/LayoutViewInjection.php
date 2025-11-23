@@ -14,8 +14,7 @@ final readonly class LayoutViewInjection implements LayoutParametersInjectionInt
     public function __construct(
         private AuthenticationService $authenticationService,
         private AuthorizationService $authorizationService,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function getLayoutParameters(): array
@@ -24,9 +23,10 @@ final readonly class LayoutViewInjection implements LayoutParametersInjectionInt
         return [
             'brandLabel' => 'Yii Demo',
             'user' => $user,
-            'canAddPost' => $user !== null && $this->authorizationService->userHasRole((string)$user->getId(),
-                    'author',
-                ),
+            'canAddPost' => $user !== null && $this->authorizationService->userHasRole(
+                (string) $user->getId(),
+                'author',
+            ),
         ];
     }
 }

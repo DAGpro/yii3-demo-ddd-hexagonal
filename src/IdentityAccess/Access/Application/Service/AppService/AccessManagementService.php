@@ -25,8 +25,7 @@ final readonly class AccessManagementService implements AccessManagementServiceI
         private ItemsStorageInterface $storage,
         private AccessRightsServiceInterface $accessRightsService,
         private AssignmentsServiceInterface $assignmentsService,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ExistItemException
@@ -50,7 +49,8 @@ final readonly class AccessManagementService implements AccessManagementServiceI
         $this->throwExceptionIfNotExistRole($roleDTO);
 
         if ($this->assignmentsService->isAssignedRoleToUsers($roleDTO)) {
-            throw new AssignedItemException('This role is assigned to users.
+            throw new AssignedItemException(
+                'This role is assigned to users.
                 Change assign the role to users before deleting the role!',
             );
         }
@@ -81,7 +81,8 @@ final readonly class AccessManagementService implements AccessManagementServiceI
         $this->throwExceptionIfNotExistPermission($permissionDTO);
 
         if ($this->assignmentsService->isAssignedPermissionToUsers($permissionDTO)) {
-            throw new AssignedItemException('This permission is assigned to users.
+            throw new AssignedItemException(
+                'This permission is assigned to users.
                 change assign the permission to users before deleting the permission!',
             );
         }

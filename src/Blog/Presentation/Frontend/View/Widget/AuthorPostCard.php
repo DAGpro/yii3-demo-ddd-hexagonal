@@ -22,8 +22,7 @@ final class AuthorPostCard extends Widget
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly TranslatorInterface $translator,
         private readonly Post $post,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function render(): string
@@ -94,9 +93,10 @@ final class AuthorPostCard extends Widget
             ->content(
                 (($publishedAt = $this->post->getPublishedAt()) === null)
                     ? $this->translator->translate('blog.not.published.post')
-                    : $this->translator->translate('blog.published.post',
-                    ['date' => $publishedAt->format('M, d')],
-                ),
+                    : $this->translator->translate(
+                        'blog.published.post',
+                        ['date' => $publishedAt->format('M, d')],
+                    ),
                 ' by ',
                 A::tag()
                     ->class('mb-1 text-muted')

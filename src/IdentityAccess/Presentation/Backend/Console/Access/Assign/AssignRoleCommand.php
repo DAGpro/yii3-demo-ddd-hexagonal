@@ -27,7 +27,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'assign:role',
     'Assign RBAC role to given user',
-    help: 'This command allows you to assign RBAC role to user'
+    help: 'This command allows you to assign RBAC role to user',
 )]
 final class AssignRoleCommand extends Command
 {
@@ -53,8 +53,8 @@ final class AssignRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = (string)$input->getArgument('role');
-        $userId = (string)$input->getArgument('userId');
+        $roleName = (string) $input->getArgument('role');
+        $userId = (string) $input->getArgument('userId');
 
         try {
             if (!$this->accessRightsService->existRole($roleName)) {
@@ -72,7 +72,7 @@ final class AssignRoleCommand extends Command
                 $this->accessManagementService->addRole($role);
             }
 
-            $user = $this->userQueryService->getUser((int)$userId);
+            $user = $this->userQueryService->getUser((int) $userId);
             if ($user === null || ($userId = $user->getId()) === null) {
                 throw new IdentityException('This user was not found!');
             }

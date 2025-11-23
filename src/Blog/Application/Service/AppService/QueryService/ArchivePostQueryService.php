@@ -14,8 +14,7 @@ final readonly class ArchivePostQueryService implements ArchivePostQueryServiceI
 {
     public function __construct(
         private PostRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * @param int<0, max>|null $limit

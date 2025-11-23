@@ -41,7 +41,7 @@ final class AccessManagementServiceTest extends Unit
     protected UnitTester $tester;
 
     private AccessManagementService $service;
-    
+
     private Manager $manager;
 
     private AccessRightsServiceInterface $accessRightsService;

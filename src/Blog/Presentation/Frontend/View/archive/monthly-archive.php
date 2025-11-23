@@ -51,7 +51,8 @@ $pagination = Div::tag()
         if ($pageSize > 0) {
             echo P::tag()
                 ->content(
-                    $translator->translate('pagination-summary',
+                    $translator->translate(
+                        'pagination-summary',
                         ['pageSize' => $pageSize, 'total' => $paginator->getTotalItems()],
                     ),
                 )

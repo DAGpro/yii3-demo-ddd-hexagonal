@@ -83,7 +83,7 @@ echo Carousel::widget()
         <div class="tab-content border border-1 border-top-0 card-body p-3" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                 <h4 class="card-title text-muted mt-2 mb-1"><?= $translator->translate('view-site.add.demo.access.rights',
-                    ) ?></h4>
+                ) ?></h4>
                 <div>
                     <code><?= "{$binPath} fixture:addAccess" ?></code>
                 </div>

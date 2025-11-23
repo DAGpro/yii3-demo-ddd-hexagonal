@@ -11,8 +11,7 @@ final readonly class AuthorizationService
 {
     public function __construct(
         private AssignmentsServiceInterface $assignmentsService,
-    ) {
-    }
+    ) {}
 
     public function userHasPermission(string|int $userId, string $permission): bool
     {

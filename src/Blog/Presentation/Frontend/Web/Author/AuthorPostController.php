@@ -39,7 +39,7 @@ final readonly class AuthorPostController
         CurrentRoute $currentRoute,
         AuthorPostQueryServiceInterface $postQueryService,
     ): Response {
-        $pageNum = max(1, (int)$currentRoute->getArgument('page', '1'));
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
         if (!($author = $this->identityAccessService->getAuthor())) {
             return $this->webService->accessDenied();
         }
@@ -101,7 +101,8 @@ final readonly class AuthorPostController
             return $this->webService->redirect('blog/author/posts', ['author' => $author->getName()]);
         }
 
-        return $this->view->render('form_post',
+        return $this->view->render(
+            'form_post',
             [
                 'title' => 'Add post',
                 'action' => ['route' => 'blog/author/post/add'],
@@ -142,7 +143,9 @@ final readonly class AuthorPostController
                 $this->postService->edit(
                     $post->getSlug(),
                     new PostChangeDTO(
-                        $form->getTitle(), $form->getContent(), $form->getTags(),
+                        $form->getTitle(),
+                        $form->getContent(),
+                        $form->getTags(),
                     ),
                     $author,
                 );
@@ -153,7 +156,8 @@ final readonly class AuthorPostController
             return $this->webService->redirect('blog/author/post/view', ['slug' => $post->getSlug()]);
         }
 
-        return $this->view->render('form_post',
+        return $this->view->render(
+            'form_post',
             [
                 'title' => 'Edit post',
                 'action' => ['route' => 'blog/author/post/edit', 'arguments' => ['slug' => $slug]],

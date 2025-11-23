@@ -145,7 +145,8 @@ class AuthorizationServiceTest extends Unit
     protected function _before(): void
     {
         $this->assignmentsService = $this->createMock(AssignmentsServiceInterface::class);
-        $this->authorizationService = new AuthorizationService($this->assignmentsService,
+        $this->authorizationService = new AuthorizationService(
+            $this->assignmentsService,
         );
     }
 }

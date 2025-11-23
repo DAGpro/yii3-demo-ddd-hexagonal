@@ -23,8 +23,7 @@ final class CreateUserForm extends FormModel implements RulesProviderInterface
     public function __construct(
         private readonly UserQueryServiceInterface $userService,
         private readonly TranslatorInterface $translator,
-    ) {
-    }
+    ) {}
 
     public function getAttributeLabels(): array
     {

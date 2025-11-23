@@ -14,8 +14,7 @@ final readonly class UserQueryService implements UserQueryServiceInterface
 {
     public function __construct(
         private UserRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     #[Override]
     public function findAllPreloaded(): DataReaderInterface

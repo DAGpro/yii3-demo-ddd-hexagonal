@@ -18,7 +18,6 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use Yiisoft\Data\Cycle\Reader\EntityReader;
 
-
 #[CoversClass(ModeratePostQueryService::class)]
 final class ModeratePostQueryServiceTest extends Unit
 {

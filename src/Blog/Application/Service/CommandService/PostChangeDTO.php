@@ -11,8 +11,7 @@ final readonly class PostChangeDTO
         private string $content,
         /** @var string[] */
         private array $tags,
-    ) {
-    }
+    ) {}
 
     public function getTitle(): string
     {

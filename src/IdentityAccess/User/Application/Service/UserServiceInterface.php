@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\User\Application\Service;
 
-
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
 
 interface UserServiceInterface

@@ -35,7 +35,7 @@ class Identity implements CookieLoginIdentityInterface
     #[Override]
     public function getId(): ?string
     {
-        return (string)$this->id;
+        return (string) $this->id;
     }
 
     #[Override]

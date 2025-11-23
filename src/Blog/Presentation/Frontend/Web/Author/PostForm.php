@@ -13,7 +13,6 @@ use Yiisoft\Validator\Rule\Length;
 use Yiisoft\Validator\Rule\Required;
 use Yiisoft\Validator\RulesProviderInterface;
 
-
 final class PostForm extends FormModel implements RulesProviderInterface
 {
     private string $title;

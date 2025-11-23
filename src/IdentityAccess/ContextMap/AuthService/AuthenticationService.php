@@ -19,8 +19,7 @@ final readonly class AuthenticationService
         private CurrentUser $currentUser,
         private UserQueryServiceInterface $userQueryService,
         private IdentityRepositoryInterface $identityRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws AuthenticationException

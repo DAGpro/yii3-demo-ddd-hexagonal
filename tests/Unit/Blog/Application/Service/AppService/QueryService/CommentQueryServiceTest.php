@@ -101,7 +101,8 @@ final class CommentQueryServiceTest extends Unit
     public function testGetCommentWhenCommentExists(): void
     {
         $commentId = 1;
-        $comment = new Comment("Test comment",
+        $comment = new Comment(
+            "Test comment",
             new Post("Test", "Test content", new Author(1, 'Author')),
             new Commentator(1, 'Commentator'),
         );

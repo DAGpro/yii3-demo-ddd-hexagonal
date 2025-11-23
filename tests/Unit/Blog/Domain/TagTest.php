@@ -120,7 +120,8 @@ final class TagTest extends Unit
         // Check that adding the same post adds it again
         $initialCount = count($this->tag->getPosts());
         $this->tag->addPost($post1);
-        $this->assertCount($initialCount + 1,
+        $this->assertCount(
+            $initialCount + 1,
             $this->tag->getPosts(),
             'Добавление существующего поста добавляет его снова',
         );

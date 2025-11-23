@@ -14,9 +14,7 @@ use Cycle\ORM\Select\QueryBuilder;
  */
 final readonly class PublicScope implements ConstrainInterface
 {
-    public function __construct(private ?array $publicOrCondition = null)
-    {
-    }
+    public function __construct(private ?array $publicOrCondition = null) {}
 
     #[\Override]
     public function apply(QueryBuilder $query): void

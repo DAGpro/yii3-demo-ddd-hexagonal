@@ -41,7 +41,7 @@ final class RemoveRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $roleName = (string)$input->getArgument('role');
+        $roleName = (string) $input->getArgument('role');
 
         try {
             $roleDTO = new RoleDTO($roleName);

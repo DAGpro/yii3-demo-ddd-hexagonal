@@ -43,7 +43,7 @@ final class AddAllChildPermissionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $parentRole = (string)$input->getArgument('parentRole');
+        $parentRole = (string) $input->getArgument('parentRole');
 
         try {
             $parentRoleDTO = new RoleDTO($parentRole);

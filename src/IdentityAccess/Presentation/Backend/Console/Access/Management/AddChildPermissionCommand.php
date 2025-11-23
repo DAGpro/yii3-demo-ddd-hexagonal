@@ -21,7 +21,7 @@ use Yiisoft\Yii\Console\ExitCode;
 #[AsCommand(
     'access:addChildPermission',
     'Add child permission for a role in access control rights',
-    help: 'This command add a child permission to a role in access control rights'
+    help: 'This command add a child permission to a role in access control rights',
 )]
 final class AddChildPermissionCommand extends Command
 {
@@ -44,8 +44,8 @@ final class AddChildPermissionCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $parentRole = (string)$input->getArgument('parentRole');
-        $childPermission = (string)$input->getArgument('childPermission');
+        $parentRole = (string) $input->getArgument('parentRole');
+        $childPermission = (string) $input->getArgument('childPermission');
 
         try {
             $parentRoleDTO = new RoleDTO($parentRole);

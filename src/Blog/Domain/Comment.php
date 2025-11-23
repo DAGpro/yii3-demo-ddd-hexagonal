@@ -20,7 +20,7 @@ use DateTimeImmutable;
  */
 #[Entity(
     repository: CommentRepository::class,
-    scope: PublicAndNotDeletedConstrain::class
+    scope: PublicAndNotDeletedConstrain::class,
 )]
 #[Index(columns: ['public', 'published_at'])]
 #[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
@@ -49,10 +49,8 @@ class Comment
     public function __construct(
         #[Column(type: 'text')]
         private string $content,
-
         #[BelongsTo(target: Post::class, nullable: false)]
         private Post $post,
-
         #[Embedded(target: Commentator::class)]
         private Commentator $commentator,
     ) {
