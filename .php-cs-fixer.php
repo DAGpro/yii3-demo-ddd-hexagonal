@@ -15,6 +15,12 @@ $finder = new Finder()
         $root . '/src',
         $root . '/tests',
     ])
+    ->exclude([
+        '**/View',
+        '**/view',
+        '**/views',
+    ])
+    ->notPath(['#/views/#', '#/View/#', '#/view/#'])
     ->append([
         $root . '/public/index.php',
     ]);

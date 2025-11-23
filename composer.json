@@ -127,7 +127,9 @@
             "App\\Installer::copyEnvFile"
         ],
         "test": "codecept run",
-        "test-watch": "phpunit-watcher watch"
+        "test-watch": "phpunit-watcher watch",
+        "cs-fix": "php-cs-fixer fix --config=.php-cs-fixer.php --allow-risky=yes",
+        "cs-check": "php-cs-fixer fix --config=.php-cs-fixer.php --allow-risky=yes --dry-run --diff"
     },
     "extra": {
         "branch-alias": {
