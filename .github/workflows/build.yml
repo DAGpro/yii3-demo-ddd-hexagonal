@@ -70,6 +70,16 @@ jobs:
       - name: Install dependencies with composer
         run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
       - name: Run tests with codeception
         run: |
           php -S 127.0.0.1:8080 -t public > ./runtime/yii.log 2>&1 &
