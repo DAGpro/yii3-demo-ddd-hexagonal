@@ -21,9 +21,6 @@ on:
       - 'infection.json.dist'
       - 'psalm.xml'
 
-  schedule:
-    - cron: '0 0 * * *'
-
 name: build
 
 jobs:
@@ -76,4 +73,6 @@ jobs:
       - name: Run tests with codeception
         run: |
           php -S 127.0.0.1:8080 -t public > ./runtime/yii.log 2>&1 &
+          sleep 2
+          curl -s http://127.0.0.1:8080 > /dev/null || (cat ./runtime/yii.log && exit 1)
           vendor/bin/codecept run

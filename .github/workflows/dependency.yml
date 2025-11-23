@@ -21,9 +21,6 @@ on:
       - 'phpunit.xml.dist'
       - 'psalm.xml'
 
-  schedule:
-    - cron: '0 0 * * *'
-
 name: dependency checker
 
 jobs:
@@ -62,8 +59,8 @@ jobs:
       - name: Update composer
         run: composer self-update
 
-      - name: Install maglnet/composer-require-checker
-        run: composer require maglnet/composer-require-checker:^4.18
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
 
-      - name: Check dependency
-        run: vendor/bin/composer-require-checker
+      - name: Run composer dependency analyzer
+        run: vendor/bin/composer-dependency-analyser --config=composer-dependency-analyser.php

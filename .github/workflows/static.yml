@@ -21,9 +21,6 @@ on:
       - 'infection.json.dist'
       - 'phpunit.xml.dist'
 
-  schedule:
-    - cron: '0 0 * * *'
-
 name: static analysis
 
 jobs:
