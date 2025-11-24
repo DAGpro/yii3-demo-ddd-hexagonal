@@ -223,12 +223,9 @@ class TagRepositoryTest extends Unit
         $selectQuery = $this->createMock(SelectQuery::class);
 
         $this->select
-            ->expects($this->exactly(2))
-            ->method('__call')
-            ->willReturnMap([
-                ['groupBy', ['posts.@.tag_id'], $this->select],
-                ['groupBy', ['label'], $this->select],
-            ]);
+            ->expects($this->once())
+            ->method('with')
+            ->willReturn($this->select);
 
         $this->select
             ->expects($this->once())
@@ -239,6 +236,12 @@ class TagRepositoryTest extends Unit
             ->expects($this->once())
             ->method('columns')
             ->with(['label', 'count(*) count'])
+            ->willReturn($selectQuery);
+
+        $selectQuery
+            ->expects($this->once())
+            ->method('groupBy')
+            ->with('tag.label, tag_id')
             ->willReturn($selectQuery);
 
         $result = $this->repository->getTagMentions();
