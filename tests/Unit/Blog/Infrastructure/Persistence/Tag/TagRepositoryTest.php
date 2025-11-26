@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Blog\Infrastructure\Persistence\Tag;
 
 use App\Blog\Domain\Tag;
-use App\Blog\Infrastructure\Persistence\Tag\TagRepository;
+use App\Blog\Slice\Tag\Repository\TagRepository;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;

@@ -39,13 +39,13 @@ return [
             '@src' => '@root/src',
             '@vendor' => '@root/vendor',
             '@layout' => '@src/Site/Presentation/Frontend/View/layout',
-            '@view' => '@src/Site/Presentation/Frontend/View',
-            '@backendLayout' => '@src/Site/Presentation/Backend/View/layout',
-            '@backendView' => '@src/Site/Presentation/Backend/View',
-            '@blogView' => '@src/Blog/Presentation/Frontend/View',
-            '@blogBackendView' => '@src/Blog/Presentation/Backend/View',
-            '@identityView' => '@src/IdentityAccess/Presentation/Frontend/View',
-            '@identityBackendView' => '@src/IdentityAccess/Presentation/Backend/View',
+            '@view' => '@src/Site/Presentation/Frontend/Web/view',
+            '@backendLayout' => '@src/Site/Presentation/Backend/Web/view/layout',
+            '@backendView' => '@src/Site/Presentation/Backend/Web/view',
+            '@blog' => '@src/Blog',
+            '@identityAccess' => '@src/IdentityAccess',
+            '@identityUser' => '@src/IdentityAccess/User',
+            '@site' => '@src/Site',
         ],
     ],
 
@@ -190,7 +190,7 @@ return [
     'yiisoft/yii-swagger' => [
         'annotation-paths' => [
             '@src/Site/Presentation/Frontend/Api',
-            '@src/IdentityAccess/Presentation/Frontend/Api',
+            '@src/IdentityAccess/User/Slice/User/Presentation/Frontend/Api',
         ],
     ],
 

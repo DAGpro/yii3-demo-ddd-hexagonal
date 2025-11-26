@@ -13,7 +13,6 @@ use Yiisoft\Swagger\Action\SwaggerJson;
 use Yiisoft\Swagger\Action\SwaggerUi;
 
 return [
-    // Lonely pages of site
     Route::get('/')
         ->action([SiteController::class, 'index'])
         ->name('site/index'),
@@ -26,7 +25,6 @@ return [
         ->action([ContactController::class, 'contact'])
         ->name('site/contact'),
 
-    // Swagger routes
     Group::create('/swagger')
         ->routes(
             Route::get('')

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Site\Presentation\Backend\Console\Fixture;
 
-use App\IdentityAccess\Access\Application\Service\AccessManagementServiceInterface;
-use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
-use App\IdentityAccess\Access\Application\Service\PermissionDTO;
-use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Slice\Service\AccessManagementServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\AccessRightsServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\PermissionDTO;
+use App\IdentityAccess\Access\Slice\Service\RoleDTO;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

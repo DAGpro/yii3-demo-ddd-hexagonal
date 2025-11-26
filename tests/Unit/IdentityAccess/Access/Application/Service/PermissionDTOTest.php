@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\IdentityAccess\Access\Application\Service;
 
-use App\IdentityAccess\Access\Application\Service\PermissionDTO;
+use App\IdentityAccess\Access\Slice\Service\PermissionDTO;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use PHPUnit\Framework\Attributes\CoversClass;

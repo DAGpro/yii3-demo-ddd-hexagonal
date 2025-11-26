@@ -13,10 +13,11 @@ final readonly class SiteController
 
     public function __construct(ViewRenderer $viewRenderer)
     {
-        $this->viewRenderer = $viewRenderer
+        $viewRenderer = $viewRenderer
             ->withController($this)
             ->withLayout('@backendLayout/main')
             ->withViewPath('@backendView');
+        $this->viewRenderer = $viewRenderer->withControllerName('site');
     }
 
     public function index(): ResponseInterface

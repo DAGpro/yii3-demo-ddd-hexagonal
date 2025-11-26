@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\AppService\CommandService;
 
-use App\Blog\Application\Service\AppService\CommandService\TagService;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\TagRepositoryInterface;
 use App\Blog\Domain\Tag;
+use App\Blog\Slice\Tag\Service\CommandService\TagService;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Exception;

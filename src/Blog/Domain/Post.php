@@ -6,9 +6,9 @@ namespace App\Blog\Domain;
 
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
-use App\Blog\Infrastructure\Persistence\Post\PostRepository;
-use App\Blog\Infrastructure\Persistence\Post\PostTag;
-use App\Blog\Infrastructure\Persistence\Post\Scope\PublicAndNotDeletedConstrain;
+use App\Blog\Slice\Post\Repository\PostRepository;
+use App\Blog\Slice\Post\Repository\PostTag;
+use App\Blog\Slice\Post\Repository\Scope\PublicAndNotDeletedConstrain;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\Embedded;
@@ -32,7 +32,6 @@ use Yiisoft\Security\Random;
 #[Behavior\CreatedAt(field: 'created_at', column: 'created_at')]
 #[Behavior\UpdatedAt(field: 'updated_at', column: 'updated_at')]
 #[Behavior\SoftDelete(field: 'deleted_at', column: 'deleted_at')]
-
 class Post
 {
     #[Column(type: 'primary')]

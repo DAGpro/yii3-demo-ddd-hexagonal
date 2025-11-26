@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Blog\Infrastructure\Persistence\Comment;
 
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
-use App\Blog\Infrastructure\Persistence\Comment\CommentRepository;
+use App\Blog\Slice\Comment\Infrastructure\Repository\CommentRepository;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;

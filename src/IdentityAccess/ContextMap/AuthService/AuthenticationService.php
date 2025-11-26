@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\ContextMap\AuthService;
 
-use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Authentication\AuthenticationException;
 use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
 use App\IdentityAccess\User\Infrastructure\Authentication\IdentityRepositoryInterface;
+use App\IdentityAccess\User\Slice\User\UserQueryServiceInterface;
 use Throwable;
 use Yiisoft\Auth\IdentityInterface;
 use Yiisoft\User\CurrentUser;

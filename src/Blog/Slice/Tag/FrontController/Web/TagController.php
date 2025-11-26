@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Blog\Slice\Tag\FrontController\Web;
+
+use App\Blog\Slice\Post\Service\QueryService\ReadPostQueryServiceInterface;
+use App\Blog\Slice\Tag\Service\QueryService\TagQueryServiceInterface;
+use App\Infrastructure\Presentation\Web\Service\WebControllerService;
+use Psr\Http\Message\ResponseInterface as Response;
+use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Router\CurrentRoute;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
+
+final readonly class TagController
+{
+    private const int POSTS_PER_PAGE = 5;
+
+    private ViewRenderer $view;
+
+    public function __construct(
+        ViewRenderer $viewRenderer,
+        private WebControllerService $webService,
+    ) {
+        $this->view = $viewRenderer->withViewPath(__DIR__ . '/view');
+    }
+
+    public function index(
+        CurrentRoute $currentRoute,
+        TagQueryServiceInterface $tagQueryService,
+        ReadPostQueryServiceInterface $postQueryService,
+    ): Response {
+        $label = $currentRoute->getArgument('label');
+        $pageNum = max(1, (int) $currentRoute->getArgument('page', '1'));
+
+        if ($label === null) {
+            return $this->webService->notFound();
+        }
+
+        $tag = $tagQueryService->findByLabel($label);
+        if ($tag === null) {
+            return $this->webService->notFound();
+        }
+
+        $paginator = new OffsetPaginator($postQueryService->findByTag($tag))
+            ->withPageSize(self::POSTS_PER_PAGE)
+            ->withCurrentPage($pageNum);
+
+        return $this->view->render('index', [
+            'item' => $tag,
+            'paginator' => $paginator,
+        ]);
+    }
+}

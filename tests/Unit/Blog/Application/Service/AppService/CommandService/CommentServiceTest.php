@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\AppService\CommandService;
 
-use App\Blog\Application\Service\AppService\CommandService\CommentService;
-use App\Blog\Application\Service\QueryService\CommentQueryServiceInterface;
-use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
+use App\Blog\Slice\Comment\Application\Service\CommandService\CommentService;
+use App\Blog\Slice\Comment\Application\Service\QueryService\CommentQueryServiceInterface;
+use App\Blog\Slice\Post\Service\QueryService\ReadPostQueryServiceInterface;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Override;

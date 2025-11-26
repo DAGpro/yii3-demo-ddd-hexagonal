@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\AppService\CommandService;
 
-use App\Blog\Application\Service\AppService\CommandService\ModeratePostService;
-use App\Blog\Application\Service\CommandService\PostModerateDTO;
-use App\Blog\Application\Service\QueryService\ModeratePostQueryServiceInterface;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Port\TagRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
+use App\Blog\Slice\Post\Service\CommandService\ModeratePostService;
+use App\Blog\Slice\Post\Service\CommandService\PostModerateDTO;
+use App\Blog\Slice\Post\Service\QueryService\ModeratePostQueryServiceInterface;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Exception;
@@ -110,7 +110,12 @@ final class ModeratePostServiceTest extends Unit
         $newContent = 'Updated Content';
         $newTags = ['new-tag1', 'new-tag2'];
 
-        $postModerateDTO = new PostModerateDTO($newTitle, $newContent, true, $newTags);
+        $postModerateDTO = new PostModerateDTO(
+            $newTitle,
+            $newContent,
+            true,
+            $newTags,
+        );
 
         $this->postQueryService
             ->expects($this->once())
@@ -152,7 +157,12 @@ final class ModeratePostServiceTest extends Unit
      */
     public function testModeratePostWithDraft(): void
     {
-        $postModerateDTO = new PostModerateDTO('Title', 'Content', false, []);
+        $postModerateDTO = new PostModerateDTO(
+            'Title',
+            'Content',
+            false,
+            [],
+        );
 
         $this->postQueryService
             ->expects($this->once())
@@ -239,7 +249,12 @@ final class ModeratePostServiceTest extends Unit
 
     public function testModerateThrowsExceptionWhenPostNotFound(): void
     {
-        $postModerateDTO = new PostModerateDTO('Title', 'Content', true, []);
+        $postModerateDTO = new PostModerateDTO(
+            'Title',
+            'Content',
+            true,
+            [],
+        );
 
         $this->postQueryService
             ->expects($this->once())

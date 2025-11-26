@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\ContextMap\AuthService;
 
-use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
-use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Slice\Service\AssignmentsServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\RoleDTO;
 
 final readonly class AuthorizationService
 {

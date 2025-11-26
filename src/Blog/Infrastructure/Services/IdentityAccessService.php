@@ -10,7 +10,7 @@ use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
 use App\IdentityAccess\ContextMap\AuthService\AuthenticationService;
 use App\IdentityAccess\ContextMap\AuthService\AuthorizationService;
-use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\User\Slice\User\UserQueryServiceInterface;
 
 final readonly class IdentityAccessService
 {

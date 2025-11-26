@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\IdentityAccess\User\Infrastructure\Persistence;
 
 use App\IdentityAccess\User\Domain\User;
-use App\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
+use App\IdentityAccess\User\Slice\User\Repository\UserRepository;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\DatabaseInterface;

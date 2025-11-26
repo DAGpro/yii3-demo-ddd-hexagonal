@@ -28,7 +28,7 @@ final readonly class ContactController
     ) {
         $this->viewRenderer = $viewRenderer
             ->withControllerName('contact')
-            ->withViewPath(__DIR__ . '/views');
+            ->withViewPath(__DIR__ . '/view');
     }
 
     /**

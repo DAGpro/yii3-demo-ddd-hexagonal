@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\AppService\QueryService;
 
-use App\Blog\Application\Service\AppService\QueryService\AuthorPostQueryService;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
+use App\Blog\Slice\Post\Service\QueryService\AuthorPostQueryService;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;
@@ -135,6 +135,8 @@ final class AuthorPostQueryServiceTest extends Unit
         $this->select = $this->createMock(Select::class);
         $this->postRepository = $this->createMock(PostRepositoryInterface::class);
 
-        $this->authorPostQueryService = new AuthorPostQueryService($this->postRepository);
+        $this->authorPostQueryService = new AuthorPostQueryService(
+            $this->postRepository,
+        );
     }
 }

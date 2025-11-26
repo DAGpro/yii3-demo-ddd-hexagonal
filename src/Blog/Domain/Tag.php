@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Blog\Domain;
 
-use App\Blog\Infrastructure\Persistence\Post\PostTag;
-use App\Blog\Infrastructure\Persistence\Tag\TagRepository;
+use App\Blog\Slice\Post\Repository\PostTag;
+use App\Blog\Slice\Tag\Repository\TagRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\ManyToMany;
