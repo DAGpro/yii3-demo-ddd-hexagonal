@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\AppService\QueryService;
 
-use App\Blog\Application\Service\AppService\QueryService\ModeratePostQueryService;
 use App\Blog\Domain\Port\PostRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
+use App\Blog\Slice\Post\Service\QueryService\ModeratePostQueryService;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;

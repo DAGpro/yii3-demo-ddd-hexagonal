@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\AppService\QueryService;
 
-use App\Blog\Application\Service\AppService\QueryService\CommentQueryService;
 use App\Blog\Domain\Comment;
 use App\Blog\Domain\Port\CommentRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\User\Author;
 use App\Blog\Domain\User\Commentator;
+use App\Blog\Slice\Comment\Application\Service\QueryService\CommentQueryService;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;

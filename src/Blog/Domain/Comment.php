@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Blog\Domain;
 
 use App\Blog\Domain\User\Commentator;
-use App\Blog\Infrastructure\Persistence\Comment\CommentRepository;
-use App\Blog\Infrastructure\Persistence\Post\Scope\PublicAndNotDeletedConstrain;
+use App\Blog\Slice\Comment\Infrastructure\Repository\CommentRepository;
+use App\Blog\Slice\Post\Repository\Scope\PublicAndNotDeletedConstrain;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;

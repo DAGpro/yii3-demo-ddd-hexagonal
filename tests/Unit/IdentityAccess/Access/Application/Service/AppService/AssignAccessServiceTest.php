@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\IdentityAccess\Access\Application\Service\AppService;
 
-use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
-use App\IdentityAccess\Access\Application\Service\AppService\AccessRightsService;
-use App\IdentityAccess\Access\Application\Service\AppService\AssignAccessService;
-use App\IdentityAccess\Access\Application\Service\AppService\AssignmentsService;
-use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
-use App\IdentityAccess\Access\Application\Service\PermissionDTO;
-use App\IdentityAccess\Access\Application\Service\RoleDTO;
 use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
 use App\IdentityAccess\Access\Domain\Exception\NotExistItemException;
-use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\AccessRightsServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\AppService\AccessRightsService;
+use App\IdentityAccess\Access\Slice\Service\AppService\AssignAccessService;
+use App\IdentityAccess\Access\Slice\Service\AppService\AssignmentsService;
+use App\IdentityAccess\Access\Slice\Service\AssignmentsServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\PermissionDTO;
+use App\IdentityAccess\Access\Slice\Service\RoleDTO;
 use App\IdentityAccess\User\Domain\User;
+use App\IdentityAccess\User\Slice\User\Service\UserQueryServiceInterface;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Override;

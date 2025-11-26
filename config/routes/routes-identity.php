@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\IdentityAccess\Presentation\Frontend\Api\User\ApiUserController;
-use App\IdentityAccess\Presentation\Frontend\Web\Auth\AuthController;
-use App\IdentityAccess\Presentation\Frontend\Web\Auth\SignupController;
-use App\IdentityAccess\Presentation\Frontend\Web\User\CabinetController;
-use App\IdentityAccess\Presentation\Frontend\Web\User\UserController;
+use App\IdentityAccess\User\Slice\Auth\AuthController;
+use App\IdentityAccess\User\Slice\Auth\SignupController;
+use App\IdentityAccess\User\Slice\User\Presentation\Frontend\Api\ApiUserController;
+use App\IdentityAccess\User\Slice\User\Presentation\Frontend\Web\CabinetController;
+use App\IdentityAccess\User\Slice\User\Presentation\Frontend\Web\UserController;
 use App\Infrastructure\Presentation\Api\Middleware\ApiDataWrapper;
 use App\Site\Presentation\Frontend\Api\Controller\Actions\ApiInfo;
 use Yiisoft\Auth\Middleware\Authentication;

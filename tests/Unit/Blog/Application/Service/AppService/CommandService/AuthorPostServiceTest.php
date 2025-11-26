@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\AppService\CommandService;
 
-use App\Blog\Application\Service\AppService\CommandService\AuthorPostService;
-use App\Blog\Application\Service\CommandService\PostChangeDTO;
-use App\Blog\Application\Service\CommandService\PostCreateDTO;
-use App\Blog\Application\Service\QueryService\AuthorPostQueryServiceInterface;
 use App\Blog\Domain\Exception\BlogAccessDeniedException;
 use App\Blog\Domain\Exception\BlogNotFoundException;
 use App\Blog\Domain\Port\PostRepositoryInterface;
@@ -15,6 +11,10 @@ use App\Blog\Domain\Port\TagRepositoryInterface;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
+use App\Blog\Slice\Post\Service\CommandService\AuthorPostService;
+use App\Blog\Slice\Post\Service\CommandService\PostChangeDTO;
+use App\Blog\Slice\Post\Service\CommandService\PostCreateDTO;
+use App\Blog\Slice\Post\Service\QueryService\AuthorPostQueryServiceInterface;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Exception;

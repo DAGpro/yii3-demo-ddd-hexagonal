@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use App\IdentityAccess\Access\Slice\Controller\Backend\Web\AccessManagementController;
+use App\IdentityAccess\Access\Slice\Controller\Backend\Web\AccessRightsController;
+use App\IdentityAccess\Access\Slice\Controller\Backend\Web\AssignAccessController;
+use App\IdentityAccess\Access\Slice\Controller\Backend\Web\AssignmentsController;
 use App\IdentityAccess\ContextMap\Middleware\AccessRoleChecker;
-use App\IdentityAccess\Presentation\Backend\Web\Access\AccessManagementController;
-use App\IdentityAccess\Presentation\Backend\Web\Access\AccessRightsController;
-use App\IdentityAccess\Presentation\Backend\Web\Access\AssignAccessController;
-use App\IdentityAccess\Presentation\Backend\Web\Access\AssignmentsController;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
@@ -31,13 +31,11 @@ return [
                         ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->middleware(Authentication::class)
                         ->action([AccessRightsController::class, 'permissionsList']),
-                    //Assignments
                     Route::get('/assignments')
                         ->name('backend/access/assignments')
                         ->middleware(Authentication::class)
                         ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))
                         ->action([AssignmentsController::class, 'assignments']),
-                    //User assignments
                     Route::get('/user-assignments/{user_id}')
                         ->name('backend/access/user-assignments')
                         ->middleware(fn(AccessRoleChecker $checker) => $checker->withRole('admin'))

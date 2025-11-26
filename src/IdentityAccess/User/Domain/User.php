@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\IdentityAccess\User\Domain;
 
-use App\IdentityAccess\User\Infrastructure\Persistence\UserRepository;
+use App\IdentityAccess\User\Slice\User\UserRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Table\Index;

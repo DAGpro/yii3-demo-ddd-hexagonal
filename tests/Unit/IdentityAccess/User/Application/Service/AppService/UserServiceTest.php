@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\IdentityAccess\User\Application\Service\AppService;
 
-use App\IdentityAccess\User\Application\Service\AppService\UserService;
-use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
+use App\IdentityAccess\User\Slice\User\Service\AppService\UserService;
+use App\IdentityAccess\User\Slice\User\Service\UserQueryServiceInterface;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Override;

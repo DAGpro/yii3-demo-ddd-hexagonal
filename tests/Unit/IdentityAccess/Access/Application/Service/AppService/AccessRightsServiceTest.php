@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\IdentityAccess\Access\Application\Service\AppService;
 
-use App\IdentityAccess\Access\Application\Service\AppService\AccessRightsService;
-use App\IdentityAccess\Access\Application\Service\PermissionDTO;
-use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Slice\Service\AppService\AccessRightsService;
+use App\IdentityAccess\Access\Slice\Service\PermissionDTO;
+use App\IdentityAccess\Access\Slice\Service\RoleDTO;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Override;
@@ -295,7 +295,10 @@ final class AccessRightsServiceTest extends Unit
             $this->createMock(RuleFactoryInterface::class),
         );
 
-        $this->service = new AccessRightsService($this->manager, $this->getItemStorage());
+        $this->service = new AccessRightsService(
+            $this->manager,
+            $this->getItemStorage(),
+        );
 
         // Clear any default roles that might be set
         $this->manager->setDefaultRoleNames([]);

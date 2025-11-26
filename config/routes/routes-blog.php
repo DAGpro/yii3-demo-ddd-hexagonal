@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Blog\Application\Service\QueryService\ReadPostQueryServiceInterface;
-use App\Blog\Presentation\Frontend\Web\Archive\ArchiveController;
-use App\Blog\Presentation\Frontend\Web\Author\AuthorPostController;
-use App\Blog\Presentation\Frontend\Web\BlogController;
-use App\Blog\Presentation\Frontend\Web\Comment\CommentController;
-use App\Blog\Presentation\Frontend\Web\Post\PostController;
-use App\Blog\Presentation\Frontend\Web\Tag\TagController;
+use App\Blog\Slice\Blog\FrontController\BlogController;
+use App\Blog\Slice\Comment\Presentation\Frontend\Web\CommentController;
+use App\Blog\Slice\Post\Controller\Frontend\Web\Archive\ArchiveController;
+use App\Blog\Slice\Post\Controller\Frontend\Web\Author\AuthorPostController;
+use App\Blog\Slice\Post\Controller\Frontend\Web\Post\PostController;
+use App\Blog\Slice\Post\Service\QueryService\ReadPostQueryServiceInterface;
+use App\Blog\Slice\Tag\FrontController\Web\TagController;
 use App\IdentityAccess\ContextMap\Middleware\AccessPermissionChecker;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;

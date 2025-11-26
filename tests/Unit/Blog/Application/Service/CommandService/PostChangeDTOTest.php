@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Blog\Application\Service\CommandService;
 
-use App\Blog\Application\Service\CommandService\PostChangeDTO;
+use App\Blog\Slice\Post\Service\CommandService\PostChangeDTO;
 use Codeception\Test\Unit;
 use Error;
 use Override;

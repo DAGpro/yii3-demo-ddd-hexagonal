@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Blog\Infrastructure\Persistence\Post;
 use App\Blog\Domain\Post;
 use App\Blog\Domain\Tag;
 use App\Blog\Domain\User\Author;
-use App\Blog\Infrastructure\Persistence\Post\PostRepository;
+use App\Blog\Slice\Post\Repository\PostRepository;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\DatabaseInterface;
@@ -20,7 +20,6 @@ use Cycle\ORM\EntityManagerInterface;
 use Cycle\ORM\FactoryInterface;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
-use Cycle\ORM\Select\LoaderInterface;
 use Cycle\ORM\Select\QueryBuilder;
 use Cycle\ORM\Select\SourceInterface;
 use Cycle\ORM\Service\SourceProviderInterface;
@@ -42,16 +41,6 @@ final class PostRepositoryTest extends Unit
     private EntityManagerInterface&MockObject $entityManager;
 
     private PostRepository $repository;
-
-    private QueryBuilder $queryBuilder;
-
-    private SourceInterface&MockObject $source;
-
-    private LoaderInterface&MockObject $loader;
-
-    private DatabaseInterface&MockObject $database;
-
-    private CompilerInterface&MockObject $compiler;
 
     /**
      * @throws Exception
@@ -683,10 +672,9 @@ final class PostRepositoryTest extends Unit
 
     public function getBuilder(DriverInterface&MockObject $driver): void
     {
-        $this->loader = $this->createMock(LoaderInterface::class);
-        $this->source = $this->createMock(SourceInterface::class);
-        $this->database = $this->createMock(DatabaseInterface::class);
-        $this->compiler = $this->createMock(CompilerInterface::class);
+        $source = $this->createMock(SourceInterface::class);
+        $database = $this->createMock(DatabaseInterface::class);
+        $compiler = $this->createMock(CompilerInterface::class);
 
         $schema = $this->createMock(SchemaInterface::class);
         $schema
@@ -695,13 +683,13 @@ final class PostRepositoryTest extends Unit
             ->willReturn([]);
 
         $sourceProvider = $this->createMock(SourceProviderInterface::class);
-        $sourceProvider->method('getSource')->willReturn($this->source);
-        $this->source->method('getDatabase')->willReturn($this->database);
-        $this->database->method('getDriver')->willReturn($driver);
-        $driver->method('getQueryCompiler')->willReturn($this->compiler);
-        $this->compiler->method('quoteIdentifier')->willReturn('`quoteIdentifier`');
+        $sourceProvider->method('getSource')->willReturn($source);
+        $source->method('getDatabase')->willReturn($database);
+        $database->method('getDriver')->willReturn($driver);
+        $driver->method('getQueryCompiler')->willReturn($compiler);
+        $compiler->method('quoteIdentifier')->willReturn('`quoteIdentifier`');
 
-        $this->queryBuilder = new QueryBuilder(
+        $queryBuilder = new QueryBuilder(
             $this->createMock(SelectQuery::class),
             new Select\RootLoader(
                 $schema,
@@ -712,7 +700,7 @@ final class PostRepositoryTest extends Unit
             ),
         );
 
-        $this->select->method('getBuilder')->willReturn($this->queryBuilder);
+        $this->select->method('getBuilder')->willReturn($queryBuilder);
     }
 
     /**

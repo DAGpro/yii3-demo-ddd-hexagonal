@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use App\IdentityAccess\ContextMap\Middleware\AccessRoleChecker;
-use App\IdentityAccess\Presentation\Backend\Web\User\CreateUserController;
-use App\IdentityAccess\Presentation\Backend\Web\User\DeleteUserController;
-use App\IdentityAccess\Presentation\Backend\Web\User\UserController;
+use App\IdentityAccess\User\Slice\User\Presentation\Backend\Web\CreateUserController;
+use App\IdentityAccess\User\Slice\User\Presentation\Backend\Web\DeleteUserController;
+use App\IdentityAccess\User\Slice\User\Presentation\Backend\Web\UserController;
 use Yiisoft\Auth\Middleware\Authentication;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\Group;

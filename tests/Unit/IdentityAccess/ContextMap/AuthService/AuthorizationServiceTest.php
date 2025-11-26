@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\IdentityAccess\ContextMap\AuthService;
 
-use App\IdentityAccess\Access\Application\Service\AssignmentsServiceInterface;
-use App\IdentityAccess\Access\Application\Service\RoleDTO;
+use App\IdentityAccess\Access\Slice\Service\AssignmentsServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\RoleDTO;
 use App\IdentityAccess\ContextMap\AuthService\AuthorizationService;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;

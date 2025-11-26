@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\IdentityAccess\User\Slice\User;
+
+use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
+use App\IdentityAccess\User\Domain\User;
+use Override;
+use Yiisoft\Data\Reader\DataReaderInterface;
+
+final readonly class UserQueryService implements UserQueryServiceInterface
+{
+    public function __construct(
+        private UserRepositoryInterface $repository,
+    ) {}
+
+    #[Override]
+    public function findAllPreloaded(): DataReaderInterface
+    {
+        return $this->repository->findAllPreloaded();
+    }
+
+    #[Override]
+    public function getUser(int $userId): ?User
+    {
+        return $this->repository->findUser($userId);
+    }
+
+    #[Override]
+    public function findByLogin(string $login): ?User
+    {
+        return $this->repository->findByLogin($login);
+    }
+
+    /**
+     * @param array<int, int> $userIds
+     * @return iterable<User>
+     */
+    #[Override]
+    public function getUsers(array $userIds): iterable
+    {
+        return $this->repository->getUsers($userIds);
+    }
+}

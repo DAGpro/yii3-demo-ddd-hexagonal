@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\IdentityAccess\User\Application\Service\AppService;
 
-use App\IdentityAccess\User\Application\Service\AppService\UserQueryService;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;
+use App\IdentityAccess\User\Slice\User\Service\AppService\UserQueryService;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Cycle\Database\Driver\DriverInterface;
@@ -180,7 +180,9 @@ class UserQueryServiceTest extends Unit
     {
         $this->select = $this->createMock(Select::class);
         $this->userRepository = $this->createMock(UserRepositoryInterface::class);
-        $this->userQueryService = new UserQueryService($this->userRepository);
+        $this->userQueryService = new UserQueryService(
+            $this->userRepository,
+        );
     }
 
     /**

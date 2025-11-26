@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\IdentityAccess\ContextMap\AuthService;
 
 use App\IdentityAccess\ContextMap\AuthService\AuthenticationService;
-use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Infrastructure\Authentication\AuthenticationException;
 use App\IdentityAccess\User\Infrastructure\Authentication\Identity;
 use App\IdentityAccess\User\Infrastructure\Authentication\IdentityRepositoryInterface;
+use App\IdentityAccess\User\Slice\User\Service\UserQueryServiceInterface;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Override;

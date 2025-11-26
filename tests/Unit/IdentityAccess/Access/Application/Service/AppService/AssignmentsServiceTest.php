@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\IdentityAccess\Access\Application\Service\AppService;
 
-use App\IdentityAccess\Access\Application\Service\AccessRightsServiceInterface;
-use App\IdentityAccess\Access\Application\Service\AppService\AccessRightsService;
-use App\IdentityAccess\Access\Application\Service\AppService\AssignAccessService;
-use App\IdentityAccess\Access\Application\Service\AppService\AssignmentsService;
-use App\IdentityAccess\Access\Application\Service\PermissionDTO;
-use App\IdentityAccess\Access\Application\Service\RoleDTO;
-use App\IdentityAccess\Access\Application\Service\UserAssignmentsDTO;
-use App\IdentityAccess\User\Application\Service\UserQueryServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\AccessRightsServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\AppService\AccessRightsService;
+use App\IdentityAccess\Access\Slice\Service\AppService\AssignmentsService;
+use App\IdentityAccess\Access\Slice\Service\PermissionDTO;
+use App\IdentityAccess\Access\Slice\Service\RoleDTO;
+use App\IdentityAccess\Access\Slice\Service\UserAssignmentsDTO;
 use App\IdentityAccess\User\Domain\User;
+use App\IdentityAccess\User\Slice\User\Service\UserQueryServiceInterface;
 use App\Tests\UnitTester;
 use Codeception\Test\Unit;
 use Override;
@@ -56,12 +55,10 @@ class AssignmentsServiceTest extends Unit
 
     private AssignmentsService $assignmentsService;
 
-    private AssignAccessService $assignService;
-
     public function testGetUserIdsByRole(): void
     {
         $roleDTO = new RoleDTO(self::TEST_ROLE_NAME);
-        $expectedUserIds = [(string) self::TEST_USER_ID, '2', '3'];
+        $expectedUserIds = [(string)self::TEST_USER_ID, '2', '3'];
 
         $this->manager->addRole(new Role(self::TEST_ROLE_NAME));
         $this->manager->assign(self::TEST_ROLE_NAME, self::TEST_USER_ID);
@@ -288,13 +285,6 @@ class AssignmentsServiceTest extends Unit
             $this->accessRightsService,
             $this->userQueryService,
             $this->manager,
-        );
-
-        $this->assignService = new AssignAccessService(
-            $this->manager,
-            $this->accessRightsService,
-            $this->getAssignmentsStorage(),
-            $this->assignmentsService,
         );
     }
 

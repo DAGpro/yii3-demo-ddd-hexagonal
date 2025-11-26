@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Blog\Slice\Comment\Application\Service\QueryService;
+
+use App\Blog\Domain\Comment;
+use Yiisoft\Data\Reader\DataReaderInterface;
+
+interface ModerateCommentQueryServiceInterface
+{
+    public function findAllPreloaded(): DataReaderInterface;
+
+    public function getComment(int $commentId): ?Comment;
+}

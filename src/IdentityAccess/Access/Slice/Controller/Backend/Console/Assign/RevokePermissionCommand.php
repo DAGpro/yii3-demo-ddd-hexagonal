@@ -1,0 +1,68 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\IdentityAccess\Access\Slice\Controller\Backend\Console\Assign;
+
+use App\IdentityAccess\Access\Domain\Exception\AssignedItemException;
+use App\IdentityAccess\Access\Slice\Service\AssignAccessServiceInterface;
+use App\IdentityAccess\Access\Slice\Service\PermissionDTO;
+use App\IdentityAccess\User\Domain\Exception\IdentityException;
+use App\IdentityAccess\User\Slice\User\UserQueryServiceInterface;
+use Override;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Yii\Console\ExitCode;
+
+#[AsCommand(
+    'assign:revokePermission',
+    'Revoke RBAC permission to given user',
+    help: 'This command allows you to revoke RBAC permission to user',
+)]
+final class RevokePermissionCommand extends Command
+{
+    public function __construct(
+        private readonly AssignAccessServiceInterface $assignAccessService,
+        private readonly UserQueryServiceInterface $userQueryService,
+    ) {
+        parent::__construct();
+    }
+
+    #[Override]
+    public function configure(): void
+    {
+        $this
+            ->addArgument('userId', InputArgument::REQUIRED, 'User id')
+            ->addArgument('permission', InputArgument::REQUIRED, 'RBAC permission');
+    }
+
+    #[Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+
+        $permissionName = (string) $input->getArgument('permission');
+        $userId = (string) $input->getArgument('userId');
+
+        try {
+            $user = $this->userQueryService->getUser((int) $userId);
+            if ($user === null || ($userId = $user->getId()) === null) {
+                throw new IdentityException('User is not found!');
+            }
+
+            $permissionDTO = new PermissionDTO($permissionName);
+            $this->assignAccessService->revokePermission($permissionDTO, $userId);
+
+            $io->success('Permission was revoke to given user');
+        } catch (AssignedItemException|IdentityException $t) {
+            $io->error($t->getMessage());
+            return $t->getCode() ?: ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+}
