@@ -52,6 +52,9 @@ add-fixture-access:
 add-fixture:
 	docker compose run --rm app ./yii fixture:add ${n:-20}
 
+create-user:
+	docker compose run --rm app ./yii user:create ${login} ${password} ${isAdmin:-0}
+
 assign-role:
 	docker compose run --rm app ./yii assign:addRole ${user_id} admin
 
