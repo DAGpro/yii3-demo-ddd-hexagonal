@@ -37,8 +37,7 @@ You'll need at least PHP 8.4.
 7. Run `./yii user:create <login> <password> [isAdmin=0]` or via docker
    `make create-user <login> <password> [isAdmin=0]` to create a user.
 8. Or Run `./yii assign:assignRole <userId> admin` or via docker `make assign-role <userId> admin` add admin rights to
-   the
-   user to access the backend
+   the user to access the backend
 
 ## Console
 
