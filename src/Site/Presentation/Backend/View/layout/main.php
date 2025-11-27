@@ -112,75 +112,55 @@ $this->beginPage();
             ->currentPath($currentRoute->getUri()?->getPath() ?? '/')
             ->addAttributes(['class' => 'navbar-nav me-2'])
             ->items(
-                ...$user?->getId() === null
-                ?
-                [
-                    NavLink::to(
-                        $translator->translate('menu.login'),
-                        $url->generate('auth/login'),
-                    ),
-                    NavLink::to(
-                        $translator->translate('menu.signup'),
-                        $url->generate('auth/signup'),
-                    ),
-                    Dropdown::widget()
-                        ->togglerContent($translator->translate('menu.language'))
-                        ->items(
-                            DropdownItem::link(
-                                $translator->translate('layout.language.english'),
-                                $url->generate(
-                                    $currentRouteName,
-                                    array_merge($currentRoute->getArguments(), ['_language' => 'en']),
-                                ),
-                            ),
-                            DropdownItem::link(
-                                $translator->translate('layout.language.russian'),
-                                $url->generate(
-                                    $currentRouteName,
-                                    array_merge($currentRoute->getArguments(), ['_language' => 'ru']),
-                                ),
-                            ),
+                Dropdown::widget()
+                    ->togglerContent($translator->translate('menu.language'))
+                    ->items(
+                        DropdownItem::link(
+                            $translator->translate('layout.language.english'),
+                            $url->generateFromCurrent(['_language' => 'en']),
                         ),
-                ]
-                :
-                [
-                    Dropdown::widget()
-                        ->togglerContent($translator->translate('menu.language'))
-                        ->items(
-                            DropdownItem::link(
-                                $translator->translate('layout.language.english'),
-                                $url->generate(
-                                    $currentRouteName,
-                                    array_merge($currentRoute->getArguments(), ['_language' => 'en']),
-                                ),
-                            ),
-                            DropdownItem::link(
-                                $translator->translate('layout.language.russian'),
-                                $url->generate(
-                                    $currentRouteName,
-                                    array_merge($currentRoute->getArguments(), ['_language' => 'ru']),
-                                ),
-                            ),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.russian'),
+                            $url->generateFromCurrent(['_language' => 'ru']),
                         ),
-
-                ],
+                        DropdownItem::link(
+                            $translator->translate('layout.language.chinese'),
+                            $url->generateFromCurrent(['_language' => 'zh']),
+                        ),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.spanish'),
+                            $url->generateFromCurrent(['_language' => 'es']),
+                        ),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.hindi'),
+                            $url->generateFromCurrent(['_language' => 'hi']),
+                        ),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.arabic'),
+                            $url->generateFromCurrent(['_language' => 'ar']),
+                        ),
+                        DropdownItem::link(
+                            $translator->translate('layout.language.portuguese'),
+                            $url->generateFromCurrent(['_language' => 'pt']),
+                        ),
+                    ),
             )
-?>
+        ?>
         <?= $user === null ? '' :
-    Form::tag()
-        ->action($url->generate('auth/logout'))
-        ->csrf($csrf)
-        ->content(
-            Field::submitButton(
-                $translator->translate(
-                    'menu.logout',
-                    ['login' => Html::encode($user->getLogin())],
-                ),
-            )
-                ->containerClass('mb-1')
-                ->buttonClass('btn btn-primary btn-sm mt-1'),
-        )
-?>
+            Form::tag()
+                ->action($url->generate('auth/logout'))
+                ->csrf($csrf)
+                ->content(
+                    Field::submitButton(
+                        $translator->translate(
+                            'menu.logout',
+                            ['login' => Html::encode($user->getLogin())],
+                        ),
+                    )
+                        ->containerClass('mb-1')
+                        ->buttonClass('btn btn-primary btn-sm mt-1'),
+                )
+        ?>
         <?= NavBar::end() ?>
     </header>
 
