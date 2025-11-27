@@ -30,7 +30,6 @@ return [
         ->name('auth/signup')
         ->action([SignupController::class, 'signup']),
 
-    // Identity routes
     Group::create('/user')
         ->routes(
             Route::get('/cabinet')

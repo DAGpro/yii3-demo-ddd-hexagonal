@@ -12,7 +12,6 @@ use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
 
 return [
-    // User routes
     Group::create('/backend')
         ->routes(
             Group::create('/user')

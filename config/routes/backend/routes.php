@@ -9,7 +9,6 @@ use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
 
 return [
-    //Dashboard
     Group::create('/backend')
         ->routes(
             Route::get('')
