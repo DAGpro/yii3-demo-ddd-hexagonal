@@ -34,7 +34,10 @@ You'll need at least PHP 8.4.
    In this case you should create migrations to sync changes of entities with DB.
 5. Run `./yii fixture:addAccess` or via docker `make add-fixture-access` to create demo access rights
 6. Run `./yii fixture:add <count>` or via docker `make add-fixture <count>` to create some random data.
-7. Run `./yii assign:assignRole <userId> admin` or via docker `make assign-role <userId> admin` add admin rights to the
+7. Run `./yii user:create <login> <password> [isAdmin=0]` or via docker
+   `make create-user <login> <password> [isAdmin=0]` to create a user.
+8. Or Run `./yii assign:assignRole <userId> admin` or via docker `make assign-role <userId> admin` add admin rights to
+   the
    user to access the backend
 
 ## Console
