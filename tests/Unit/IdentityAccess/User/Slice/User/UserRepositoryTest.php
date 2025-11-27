@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\IdentityAccess\User\Slice\User\Repository;
+namespace App\Tests\Unit\IdentityAccess\User\Slice\User;
 
 use App\IdentityAccess\User\Domain\User;
 use App\IdentityAccess\User\Slice\User\UserRepository;

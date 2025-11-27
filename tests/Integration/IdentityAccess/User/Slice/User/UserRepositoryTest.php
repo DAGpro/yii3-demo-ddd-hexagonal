@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\IdentityAccess\User\Infrastructure\Persistence;
+namespace App\Tests\Integration\IdentityAccess\User\Slice\User;
 
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
 use App\IdentityAccess\User\Domain\User;

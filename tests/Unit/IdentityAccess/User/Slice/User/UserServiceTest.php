@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\IdentityAccess\User\Slice\User\Service\AppService;
+namespace App\Tests\Unit\IdentityAccess\User\Slice\User;
 
 use App\IdentityAccess\User\Domain\Exception\IdentityException;
 use App\IdentityAccess\User\Domain\Port\UserRepositoryInterface;
