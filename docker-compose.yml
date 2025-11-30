@@ -7,4 +7,4 @@ services:
       - ./:/app:cached
       - ~/.composer-docker/cache:/root/.composer/cache:delegated,consistent
     ports:
-      - '30080:80'
+      - '8080:80'
