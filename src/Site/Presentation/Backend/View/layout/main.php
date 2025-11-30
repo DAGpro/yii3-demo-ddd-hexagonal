@@ -149,6 +149,7 @@ $this->beginPage();
         <?= $user === null ? '' :
             Form::tag()
                 ->action($url->generate('auth/logout'))
+                ->method('post')
                 ->csrf($csrf)
                 ->content(
                     Field::submitButton(
